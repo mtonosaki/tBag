@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		020D80B02E2CB8C6007D3452 /* Tono in Frameworks */ = {isa = PBXBuildFile; productRef = 020D80AF2E2CB8C6007D3452 /* Tono */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		0242394E2E1BB3E300B13629 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -65,6 +69,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				020D80B02E2CB8C6007D3452 /* Tono in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -85,12 +90,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		020D80AE2E2CB8C6007D3452 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		024239332E1BB3E300B13629 = {
 			isa = PBXGroup;
 			children = (
 				0242393E2E1BB3E300B13629 /* tBag */,
 				024239502E1BB3E300B13629 /* tBagTests */,
 				0242395A2E1BB3E300B13629 /* tBagUITests */,
+				020D80AE2E2CB8C6007D3452 /* Frameworks */,
 				0242393D2E1BB3E300B13629 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -125,6 +138,7 @@
 			);
 			name = tBag;
 			packageProductDependencies = (
+				020D80AF2E2CB8C6007D3452 /* Tono */,
 			);
 			productName = tBag;
 			productReference = 0242393C2E1BB3E300B13629 /* tBag.app */;
@@ -208,6 +222,9 @@
 			);
 			mainGroup = 024239332E1BB3E300B13629;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				020D80AD2E2CB826007D3452 /* XCRemoteSwiftPackageReference "TonoSwift" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 0242393D2E1BB3E300B13629 /* Products */;
 			projectDirPath = "";
@@ -575,6 +592,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		020D80AD2E2CB826007D3452 /* XCRemoteSwiftPackageReference "TonoSwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/mtonosaki/TonoSwift";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		020D80AF2E2CB8C6007D3452 /* Tono */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 020D80AD2E2CB826007D3452 /* XCRemoteSwiftPackageReference "TonoSwift" */;
+			productName = Tono;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 024239342E1BB3E300B13629 /* Project object */;
 }

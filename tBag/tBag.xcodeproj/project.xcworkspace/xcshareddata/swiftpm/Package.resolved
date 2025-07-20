@@ -1,0 +1,15 @@
+{
+  "originHash" : "ffeb79f9ef5538c0f8333d46014e37df254cc2be3065f35531583448b60727d2",
+  "pins" : [
+    {
+      "identity" : "tonoswift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/mtonosaki/TonoSwift",
+      "state" : {
+        "branch" : "main",
+        "revision" : "dbe94fcd5ca25f628f5a3ac380f8c0ddb42a4b9a"
+      }
+    }
+  ],
+  "version" : 3
+}
