@@ -36,17 +36,19 @@ struct FormCard<Content: View>: View {
                     Label(text, systemImage: systemImage)
                         .font(.caption)
                         .foregroundColor(.secondary)
-                    Spacer()
-                    Button {
-                        if let copyText = copyText() {
-                            UIPasteboard.general.string = copyText
-                            toast?("Copy \(text)")
+                    if let copyText = copyText() {
+                        if !copyText.isEmpty {
+                            Spacer()
+                            Button {
+                                UIPasteboard.general.string = copyText
+                                toast?("Copy \(text)")
+                            } label: {
+                                Image(systemName: "doc.on.clipboard")
+                            }
+                            .font(.caption)
+                            .foregroundColor(.secondary)
                         }
-                    } label: {
-                        Image(systemName: "doc.on.clipboard")
                     }
-                    .font(.caption)
-                    .foregroundColor(.secondary)
                 }
                 content
             }
