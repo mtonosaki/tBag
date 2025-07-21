@@ -14,6 +14,7 @@ class AppController: ObservableObject {
     @Published var path = NavigationPath()
     
     static let sample = AppController(accountId: "ffffffff-1111-2222-3333-444455556666")
+    static let sampleNoAccount = AppController()
     
     init(){}
     

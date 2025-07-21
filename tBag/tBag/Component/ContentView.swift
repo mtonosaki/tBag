@@ -12,9 +12,10 @@ struct ContentView: View {
     @State private var isAccountRequired: Bool = false
     
     var body: some View {
-        ZStack {
-            Hoge()
+        VStack {
+            PasswordListView()
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onAppear {
             if appController.accountId.isEmpty {
                 isAccountRequired = true
@@ -22,11 +23,12 @@ struct ContentView: View {
         }
         .sheet(isPresented: $isAccountRequired){
             AccountView()
+                .presentationDetents([.height(240)])
         }
     }
 }
 
 #Preview {
     ContentView()
-        .environmentObject(AppController.sample)
+        .environmentObject(AppController.sampleNoAccount)
 }

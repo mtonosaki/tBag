@@ -25,10 +25,12 @@ struct tBagApp: App {
     }()
 
     @StateObject private var appController = AppController()
+    @State private var toastHandler: ToastHandler = .init()
     
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .displayToast(handledBy: toastHandler)
         }
         .modelContainer(sharedModelContainer)
         .environmentObject(appController)

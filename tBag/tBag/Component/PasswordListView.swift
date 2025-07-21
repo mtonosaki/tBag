@@ -8,16 +8,17 @@
 import SwiftUI
 import SwiftData
 
-struct NoteView: View {
+struct PasswordListView: View {
     @Environment(\.modelContext) private var modelContext
-    @Query private var items: [Item]
+    @EnvironmentObject var appController: AppController
+    @Query(filter: #Predicate<Item>{ $0.type == "pw"}, sort: \Item.sortKey) private var items: [Item]
 
     var body: some View {
         NavigationSplitView {
             List {
                 ForEach(items) { item in
                     NavigationLink {
-                        Text("Item at \(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))")
+                        PasswordEditorView(item)
                     } label: {
                         Text(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))
                     }
@@ -41,7 +42,7 @@ struct NoteView: View {
 
     private func addItem() {
         withAnimation {
-            let newItem = Item(timestamp: Date())
+            let newItem = Item(accountId: appController.accountId, type: .Password)
             modelContext.insert(newItem)
         }
     }
@@ -55,7 +56,8 @@ struct NoteView: View {
     }
 }
 
+
 #Preview {
-    NoteView()
+    PasswordListView()
         .modelContainer(for: Item.self, inMemory: true)
 }
