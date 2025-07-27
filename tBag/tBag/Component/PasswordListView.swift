@@ -20,11 +20,7 @@ struct PasswordListView: View {
                     NavigationLink {
                         PasswordEditorView(item)
                     } label: {
-                        if item.caption.isEmpty {
-                            Text(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))
-                        } else {
-                            Text(item.caption)
-                        }
+                        PasswordListRecord(item)
                     }
                 }
                 .onDelete(perform: deleteItems)

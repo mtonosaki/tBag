@@ -184,7 +184,7 @@ struct PasswordEditorView: View {
 
 #Preview {
     PasswordEditorView(Item(
-        accountId: "de305d54-75b4-431b-adb2-eb6b9e546013",
+        accountId: UUID().uuidString,
         type: .Password,
         timestamp: Date(),
         sortKey: "ほげたろう",
