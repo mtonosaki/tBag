@@ -53,31 +53,43 @@ struct PasswordEditorView: View {
                 }
                 FormCard("Rubi", systemImage: "character.textbox.ja"){
                     TextField("あいうえお", text: $item.sortKey)
-                        .autocapitalization(.none)
+                        .textInputAutocapitalization(.never)
+                        .keyboardType(.default)
                         .disableAutocorrection(true)
+                        .textContentType(.name)
                 }
                 FormCard("Caption", systemImage: "character.bubble") {
                     TextField("item title", text: $item.caption)
-                }
-                FormCard("Account ID", systemImage: "person.circle", copyText: { accountId }){
-                    TextField("your account", text: $accountId)
-                        .autocapitalization(.none)
+                        .textInputAutocapitalization(.never)
+                        .keyboardType(.default)
                         .disableAutocorrection(true)
+                        .textContentType(.name)
+                }
+                FormCard("AccountID", systemImage: "person.circle", copyText: { accountId }){
+                    TextField("hoge123", text: $accountId)
+                        .textInputAutocapitalization(.never)
+                        .keyboardType(.default)
+                        .disableAutocorrection(true)
+                        .textContentType(.username)
                         .onChange(of: accountId, updateItem("accountId"))
                 }
                 FormCard("Password", systemImage: "lock.circle", copyText: { password }){
                     HStack {
                         if isOpenPassword {
                             TextField("password", text: $password)
-                                .autocapitalization(.none)
+                                .textInputAutocapitalization(.never)
+                                .keyboardType(.default)
                                 .disableAutocorrection(true)
+                                .textContentType(.password)
                                 .font(.custom("Courier New", size: 23))
                                 .bold()
                                 .onChange(of: password, updateItem("password"))
                         } else {
                             SecureField("password", text: $password)
-                                .autocapitalization(.none)
+                                .textInputAutocapitalization(.never)
+                                .keyboardType(.default)
                                 .disableAutocorrection(true)
+                                .textContentType(.password)
                                 .onChange(of: password, updateItem("password"))
                         }
                         Button{
@@ -90,8 +102,10 @@ struct PasswordEditorView: View {
                 }
                 FormCard("email", systemImage: "mail", copyText: { email }){
                     TextField("hoge @ example.com", text: $email)
-                        .autocapitalization(.none)
+                        .textInputAutocapitalization(.never)
+                        .keyboardType(.default)
                         .disableAutocorrection(true)
+                        .textContentType(.emailAddress)
                         .onChange(of: email, updateItem("email"))
                 }
                 FormCard("Tags", systemImage: "tag"){
@@ -115,7 +129,9 @@ struct PasswordEditorView: View {
                 }
                 FormCard("Remarks", systemImage: "doc.plaintext"){
                     TextEditor(text: $remarks)
-                        .autocapitalization(.none)
+                        .textInputAutocapitalization(.never)
+                        .keyboardType(.default)
+                        .disableAutocorrection(true)
                         .frame(minHeight: 48)
                         .padding(4)
                         .overlay(
