@@ -14,31 +14,10 @@ struct PasswordEditorView: View {
     
     @Bindable var item: Item
     
-    @State private var rubi: String
-    @State private var caption: String
-    @State private var accountId: String
-    @State private var password: String
     @State private var isOpenPassword: Bool = false
-    @State private var email: String
-    @State private var filterHome: Bool
-    @State private var filterOffice: Bool
-    @State private var filterDeleted: Bool
-    @State private var remarks: String
-    
+        
     init(_ item: Item) {
         self.item = item
-        self.rubi  = item.sortKey
-        self.caption = item.caption
-        self.accountId = item.attributes["accountId"] ?? ""
-        self.password = item.attributes["password"] ?? ""
-        self.email = item.attributes["email"] ?? ""
-        
-        let tags = item.attributes["tags"] ?? ""
-        self.filterHome = tags.contains("#home")
-        self.filterOffice = tags.contains("#office")
-        self.filterDeleted = tags.contains("#deleted")
-        
-        self.remarks = "\(item.attributes["remarks"] ?? "")."
     }
     
     var body: some View {
@@ -65,32 +44,38 @@ struct PasswordEditorView: View {
                         .disableAutocorrection(true)
                         .textContentType(.name)
                 }
-                FormCard("AccountID", systemImage: "person.circle", copyText: { accountId }){
-                    TextField("hoge123", text: $accountId)
+                FormCard("AccountID", systemImage: "person.circle", copyText: { item.attributes["accountId"] }){
+                    TextField("hoge123", text: Binding(
+                        get: { item.attributes["accountId"] ?? "" },
+                        set: { item.attributes["accountId"] = $0 }
+                    ))
                         .textInputAutocapitalization(.never)
                         .keyboardType(.default)
                         .disableAutocorrection(true)
                         .textContentType(.username)
-                        .onChange(of: accountId, updateItem("accountId"))
                 }
-                FormCard("Password", systemImage: "lock.circle", copyText: { password }){
+                FormCard("Password", systemImage: "lock.circle", copyText: { item.attributes["password"] }){
                     HStack {
                         if isOpenPassword {
-                            TextField("password", text: $password)
+                            TextField("password", text: Binding(
+                                get: { item.attributes["password"] ?? "" },
+                                set: { item.attributes["password"] = $0 }
+                            ))
                                 .textInputAutocapitalization(.never)
                                 .keyboardType(.default)
                                 .disableAutocorrection(true)
                                 .textContentType(.password)
                                 .font(.custom("Courier New", size: 23))
                                 .bold()
-                                .onChange(of: password, updateItem("password"))
                         } else {
-                            SecureField("password", text: $password)
+                            SecureField("password", text: Binding(
+                                get: { item.attributes["password"] ?? "" },
+                                set: { item.attributes["password"] = $0 }
+                            ))
                                 .textInputAutocapitalization(.never)
                                 .keyboardType(.default)
                                 .disableAutocorrection(true)
                                 .textContentType(.password)
-                                .onChange(of: password, updateItem("password"))
                         }
                         Button{
                             isOpenPassword = !isOpenPassword
@@ -100,35 +85,43 @@ struct PasswordEditorView: View {
                         }
                     }
                 }
-                FormCard("email", systemImage: "mail", copyText: { email }){
-                    TextField("hoge @ example.com", text: $email)
+                FormCard("email", systemImage: "mail", copyText: { item.attributes["email"] }){
+                    TextField("hoge @ example.com", text: Binding(
+                        get: { item.attributes["email"] ?? ""},
+                        set: { item.attributes["email"] = $0 }
+                    ))
                         .textInputAutocapitalization(.never)
                         .keyboardType(.default)
                         .disableAutocorrection(true)
                         .textContentType(.emailAddress)
-                        .onChange(of: email, updateItem("email"))
                 }
                 FormCard("Tags", systemImage: "tag"){
                     FlowLayout(spacing: 24) {
-                        Toggle(isOn: $filterHome){
+                        Toggle(isOn: Binding(
+                            get: { item.containsTag("#home")},
+                            set: { $0 ? item.addTag("#home") : item.removeTag("#home") }
+                        )){
                             Image(systemName: "house")
                         }
-                        .onChange(of: filterHome, updateItemTags("#home"))
-                        
-                        Toggle(isOn: $filterOffice){
+                        Toggle(isOn: Binding(
+                            get: { item.containsTag("#office") },
+                            set: { $0 ? item.addTag("#office") : item.removeTag("#office") }
+                        )){
                             Image(systemName: "building.2")
                         }
-                        .onChange(of: filterOffice, updateItemTags("#office"))
-                        
-                        Toggle(isOn: $filterDeleted){
+                        Toggle(isOn: Binding(
+                            get: { item.containsTag("#deleted") },
+                            set: { $0 ? item.addTag("#deleted") : item.removeTag("#deleted") }
+                        )){
                             Image(systemName: "trash")
                         }
-                        .onChange(of: filterDeleted, updateItemTags("#deleted"))
-                        
                     }.frame(maxWidth: .infinity, alignment: .leading)
                 }
                 FormCard("Remarks", systemImage: "doc.plaintext"){
-                    TextEditor(text: $remarks)
+                    TextEditor(text: Binding(
+                        get: { item.attributes["remarks"] ?? "" },
+                        set: { item.attributes["remarks"] = $0 },
+                    ))
                         .textInputAutocapitalization(.never)
                         .keyboardType(.default)
                         .disableAutocorrection(true)
@@ -138,7 +131,6 @@ struct PasswordEditorView: View {
                             RoundedRectangle(cornerRadius: 10)
                                 .stroke(Color.gray, lineWidth: 0.5)
                         )
-                        .onChange(of: remarks, updateItem("remarks"))
                 }
                 .padding(.bottom, 12)
             }
@@ -155,27 +147,6 @@ struct PasswordEditorView: View {
         }
         .navigationTitle(item.isEmpty() ? "New Item" : item.caption)
         .background(Color.bgColorPassword)
-        .onAppear {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                self.remarks = String(self.remarks.dropLast()) // auto rerender TextEditor to set proper height
-            }
-        }
-    }
-    
-    func updateItem(_ key: String) -> (_ oldValue: String, _ newValue: String) -> Void {
-        return { oldValue, newValue in
-            self.item.attributes[key] = newValue
-        }
-    }
-    
-    func updateItemTags(_ key: String) -> (_ oldValue: Bool, _ newValue: Bool) -> Void {
-        return { oldValue, newValue in
-            let tagsString = self.item.attributes["tags"] ?? ""
-            let tags = tagsString.split(separator: ",").map{ $0.trimmingCharacters(in: .whitespaces)}.filter{ $0 != key }
-            let newTags = newValue ? tags + [key] : tags
-            let newTagsString = newTags.joined(separator: ",")
-            self.item.attributes["tags"] = newTagsString
-        }
     }
 }
 

@@ -44,6 +44,28 @@ final class Item {
     func isEmpty() -> Bool {
         return caption.isEmpty
     }
+    
+    func containsTag(_ tag: String) -> Bool {
+        guard let tagsString = attributes["tags"] else { return false }
+        let tags = tagsString.split(separator: ",").map{ $0.trimmingCharacters(in: .whitespaces)}
+        return tags.contains(tag)
+    }
+    
+    func addTag(_ tag: String) {
+        let tagsString = attributes["tags"] ?? ""
+        let tags = tagsString.split(separator: ",").map{ $0.trimmingCharacters(in: .whitespaces)}.filter{ $0 != tag }
+        let newTags = (tags + [tag]).sorted()
+        let newTagsString = newTags.joined(separator: ",")
+        attributes["tags"] = newTagsString
+    }
+    
+    func removeTag(_ tag: String) {
+        let tagsString = attributes["tags"] ?? ""
+        let tags = tagsString.split(separator: ",").map{ $0.trimmingCharacters(in: .whitespaces)}.filter{ $0 != tag }
+        let newTags = tags.sorted()
+        let newTagsString = newTags.joined(separator: ",")
+        attributes["tags"] = newTagsString
+    }
 }
 
 public enum ItemType: String {
