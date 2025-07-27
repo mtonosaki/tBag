@@ -98,10 +98,10 @@ struct ScrollLetter: View {
             .font(.custom("Courier New", size: 12))
             .padding(.horizontal, 6)
             .padding(.vertical,4)
+            .contentShape(Rectangle())
             .foregroundColor(isHover ?  Color.accentText :  Color.accentColor)
             .background(isHover ? Color.accentColor :  Color.clear)
-            .contentShape(Rectangle())
-            .cornerRadius(8)
+            .offset(x: isHover ? -4 : 0, y: 0)
             .animation(.easeInOut(duration: 0.2), value: isHover)
             .onHover { isHover in
                 withAnimation {
