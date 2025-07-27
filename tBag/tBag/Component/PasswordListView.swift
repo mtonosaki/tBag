@@ -61,19 +61,7 @@ struct PasswordListView: View {
                 .overlay(alignment: .trailing) {
                     VStack(spacing: 0){
                         ForEach(sectionHeaders, id: \.self){ firstLetter in
-                            Text(firstLetter)
-                                .font(.caption)
-                                .fontWeight(.bold)
-                                .foregroundColor(.accentColor)
-                                .padding(.horizontal, 8)
-                                .padding(.vertical,2)
-                                .background(Color.clear)
-                                .contentShape(Rectangle())
-                                .onTapGesture {
-                                    withAnimation {
-                                        proxy.scrollTo(firstLetter, anchor: .top)
-                                    }
-                                }
+                            ScrollLetter(firstLetter: firstLetter, proxy: proxy)
                         }
                     }
                 }
@@ -96,6 +84,35 @@ struct PasswordListView: View {
                 modelContext.delete(items[index])
             }
         }
+    }
+}
+
+struct ScrollLetter: View {
+    let firstLetter: String
+    let proxy: ScrollViewProxy
+
+    @State var isHover = false
+    
+    var body: some View {
+        Text(firstLetter)
+            .font(.custom("Courier New", size: 12))
+            .padding(.horizontal, 6)
+            .padding(.vertical,4)
+            .foregroundColor(isHover ?  Color.accentText :  Color.accentColor)
+            .background(isHover ? Color.accentColor :  Color.clear)
+            .contentShape(Rectangle())
+            .cornerRadius(8)
+            .animation(.easeInOut(duration: 0.2), value: isHover)
+            .onHover { isHover in
+                withAnimation {
+                    self.isHover = isHover
+                }
+            }
+            .onTapGesture {
+                withAnimation {
+                    proxy.scrollTo(firstLetter, anchor: .top)
+                }
+            }
     }
 }
 

@@ -45,10 +45,7 @@ struct PasswordEditorView: View {
                         .textContentType(.name)
                 }
                 FormCard("AccountID", systemImage: "person.circle", copyText: { item.attributes["accountId"] }){
-                    TextField("hoge123", text: Binding(
-                        get: { item.attributes["accountId"] ?? "" },
-                        set: { item.attributes["accountId"] = $0 }
-                    ))
+                    TextField("hoge123", text: StringBinding("accountId"))
                         .textInputAutocapitalization(.never)
                         .keyboardType(.default)
                         .disableAutocorrection(true)
@@ -57,10 +54,7 @@ struct PasswordEditorView: View {
                 FormCard("Password", systemImage: "lock.circle", copyText: { item.attributes["password"] }){
                     HStack {
                         if isOpenPassword {
-                            TextField("password", text: Binding(
-                                get: { item.attributes["password"] ?? "" },
-                                set: { item.attributes["password"] = $0 }
-                            ))
+                            TextField("password", text: StringBinding("password"))
                                 .textInputAutocapitalization(.never)
                                 .keyboardType(.default)
                                 .disableAutocorrection(true)
@@ -86,10 +80,7 @@ struct PasswordEditorView: View {
                     }
                 }
                 FormCard("email", systemImage: "mail", copyText: { item.attributes["email"] }){
-                    TextField("hoge @ example.com", text: Binding(
-                        get: { item.attributes["email"] ?? ""},
-                        set: { item.attributes["email"] = $0 }
-                    ))
+                    TextField("hoge @ example.com", text: StringBinding("email"))
                         .textInputAutocapitalization(.never)
                         .keyboardType(.default)
                         .disableAutocorrection(true)
@@ -97,31 +88,19 @@ struct PasswordEditorView: View {
                 }
                 FormCard("Tags", systemImage: "tag"){
                     FlowLayout(spacing: 24) {
-                        Toggle(isOn: Binding(
-                            get: { item.containsTag("#home")},
-                            set: { $0 ? item.addTag("#home") : item.removeTag("#home") }
-                        )){
+                        Toggle(isOn: TagBinding("#home")){
                             Image(systemName: "house")
                         }
-                        Toggle(isOn: Binding(
-                            get: { item.containsTag("#office") },
-                            set: { $0 ? item.addTag("#office") : item.removeTag("#office") }
-                        )){
+                        Toggle(isOn: TagBinding("#office")){
                             Image(systemName: "building.2")
                         }
-                        Toggle(isOn: Binding(
-                            get: { item.containsTag("#deleted") },
-                            set: { $0 ? item.addTag("#deleted") : item.removeTag("#deleted") }
-                        )){
+                        Toggle(isOn: TagBinding("#deleted")){
                             Image(systemName: "trash")
                         }
                     }.frame(maxWidth: .infinity, alignment: .leading)
                 }
                 FormCard("Remarks", systemImage: "doc.plaintext"){
-                    TextEditor(text: Binding(
-                        get: { item.attributes["remarks"] ?? "" },
-                        set: { item.attributes["remarks"] = $0 },
-                    ))
+                    TextEditor(text: StringBinding("remarks"))
                         .textInputAutocapitalization(.never)
                         .keyboardType(.default)
                         .disableAutocorrection(true)
@@ -148,8 +127,21 @@ struct PasswordEditorView: View {
         .navigationTitle(item.isEmpty() ? "New Item" : item.caption)
         .background(Color.bgColorPassword)
     }
-}
+    
+    func StringBinding(_ key: String) -> Binding<String> {
+        return Binding(
+            get: { item.attributes[key] ?? "" },
+            set: { item.attributes[key] = $0 }
+        )
+    }
 
+    func TagBinding(_ key: String) -> Binding<Bool> {
+        return Binding(
+            get: { item.containsTag(key) },
+            set: { $0 ? item.addTag(key) : item.removeTag(key) }
+        )
+    }
+}
 
 
 
