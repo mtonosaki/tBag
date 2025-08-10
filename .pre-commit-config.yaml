@@ -1,0 +1,8 @@
+repos:
+  - repo: local
+    hooks:
+      - id: check-private-email
+        name: Check for email
+        entry: check-email.sh
+        language: script
+        stages: [commit]
