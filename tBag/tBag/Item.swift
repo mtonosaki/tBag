@@ -10,15 +10,16 @@ import SwiftData
 
 @Model
 final class Item {
-    var accountId: String
+    var id: String = UUID().uuidString
+    var ownerId: String
     var type: String
     var timestamp: Date
     var sortKey: String = ""
     var caption: String = ""
     var attributes: Dictionary<String, String> = [:]
     
-    init(accountId: String, type: ItemType, timestamp: Date, sortKey: String, caption: String, attrubutes: Dictionary<String,String>){
-        self.accountId = accountId
+    init(ownerId: String, type: ItemType, timestamp: Date, sortKey: String, caption: String, attrubutes: Dictionary<String,String>){
+        self.ownerId = ownerId
         self.type = type.rawValue
         self.timestamp = timestamp
         self.sortKey = sortKey
@@ -27,7 +28,8 @@ final class Item {
     }
     
     init(cloneFrom: Item){
-        self.accountId = cloneFrom.accountId
+        self.id = cloneFrom.id
+        self.ownerId = cloneFrom.ownerId
         self.type = cloneFrom.type
         self.timestamp = cloneFrom.timestamp
         self.sortKey = cloneFrom.sortKey
@@ -35,8 +37,8 @@ final class Item {
         self.attributes = cloneFrom.attributes
     }
     
-    init(accountId: String, type: ItemType = .PlaneText) {
-        self.accountId = accountId
+    init(ownerId: String, type: ItemType = .PlaneText) {
+        self.ownerId = ownerId
         self.timestamp = Date()
         self.type = type.rawValue
     }
@@ -72,4 +74,13 @@ public enum ItemType: String {
     case PlaneText = "text"
     case Password = "pw"
 
+}
+
+struct ItemBuilder {
+    static func createNewPasswordItem(ownerAccountId: String) -> Item {
+        let newItem = Item(ownerId: ownerAccountId, type: .Password)
+        newItem.addTag("#home")
+        newItem.addTag("#office")
+        return newItem
+    }
 }

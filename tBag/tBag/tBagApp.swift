@@ -20,7 +20,17 @@ struct tBagApp: App {
         do {
             return try ModelContainer(for: schema, configurations: [modelConfiguration])
         } catch {
-            fatalError("Could not create ModelContainer: \(error)")
+            let storeUrl = modelConfiguration.url
+            do {
+                try FileManager.default.removeItem(at: storeUrl)
+            } catch {
+                fatalError("Fatal error: Failed to delete store file: \(error)")
+            }
+            do {
+                return try ModelContainer(for: schema, configurations: [modelConfiguration])
+            } catch {
+                fatalError("Fatal error: Failed to create new model: \(error)")
+            }
         }
     }()
 

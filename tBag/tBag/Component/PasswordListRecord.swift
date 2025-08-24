@@ -27,11 +27,8 @@ struct PasswordListRecord: View {
                     .foregroundColor(.blue)
                     .opacity(0.3)
                     .padding(.trailing)
-                VStack(alignment: .leading) {
-                    
-                }
+                Text(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))
             }
-            Text(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))
         } else {
             HStack {
                 Image("NoImage")
@@ -53,10 +50,10 @@ struct PasswordListRecord: View {
 }
 
 #Preview {
-    let accountId = UUID().uuidString
+    let ownerId = UUID().uuidString
     let items: [Item] = [
-        Item(accountId: accountId, type: .Password, timestamp: Date(), sortKey: "", caption: "", attrubutes: [:]),
-        Item(accountId: accountId, type: .Password, timestamp: Date(), sortKey: "hoge", caption: "HOGE", attrubutes: [
+        Item(ownerId: ownerId, type: .Password, timestamp: Date(), sortKey: "", caption: "", attrubutes: [:]),
+        Item(ownerId: ownerId, type: .Password, timestamp: Date(), sortKey: "hoge", caption: "HOGE", attrubutes: [
             "accountId": "hoge@example.com"
         ])
     ]

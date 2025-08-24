@@ -116,8 +116,8 @@ struct PasswordEditorView: View {
             .padding(.leading)
             .padding(.trailing)
             
-            Button(item.accountId){
-                UIPasteboard.general.string = item.accountId
+            Button(item.id){
+                UIPasteboard.general.string = item.id
                 toast?("Copy item ID")
             }
             .font(.footnote)
@@ -147,7 +147,7 @@ struct PasswordEditorView: View {
 
 #Preview {
     PasswordEditorView(Item(
-        accountId: UUID().uuidString,
+        ownerId: UUID().uuidString,
         type: .Password,
         timestamp: Date(),
         sortKey: "ほげたろう",

@@ -12,6 +12,7 @@ struct PasswordListView: View {
     @Environment(\.modelContext) private var modelContext
     @EnvironmentObject var appController: AppController
     @Query(filter: #Predicate<Item>{ $0.type == "pw"}) private var items: [Item]
+    @State private var selectedItemId: String?
 
     private var groupedItems: [String: [Item]] {
         var grouped: [String: [Item]] = [:]
@@ -34,26 +35,20 @@ struct PasswordListView: View {
     var body: some View {
         NavigationSplitView {
             ScrollViewReader { proxy in
-                List {
+                List(selection: $selectedItemId) {
                     ForEach(groupedItems.keys.sorted(), id: \.self){ firstLetter in
                         Section(header: Text(firstLetter)){
                             ForEach((groupedItems[firstLetter]?.sorted(by: {$0.caption < $1.caption}) ?? [])) { item in
-                                NavigationLink {
-                                    PasswordEditorView(item)
-                                } label: {
-                                    PasswordListRecord(item)
-                                }
+                                PasswordListRecord(item).tag(item.id)
                             }
-                            .onDelete(perform: deleteItems)
                         }
                     }
                 }
                 .toolbar {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        EditButton()
-                    }
                     ToolbarItem {
-                        Button(action: addItem) {
+                        Button {
+                            addItem()
+                        }  label: {
                             Label("Add Item", systemImage: "plus")
                         }
                     }
@@ -67,22 +62,23 @@ struct PasswordListView: View {
                 }
             }
         } detail: {
-            Text("Select an item")
+            if let selectedId = selectedItemId {
+                if let selectedItem = items.first(where: { $0.id == selectedId }){
+                    PasswordEditorView(selectedItem)
+                } else {
+                    Text("Select an item")
+                }
+            } else {
+                Text("Select an item")
+            }
         }
     }
 
     private func addItem() {
+        let newItem = ItemBuilder.createNewPasswordItem(ownerAccountId: appController.accountId)
         withAnimation {
-            let newItem = Item(accountId: appController.accountId, type: .Password)
             modelContext.insert(newItem)
-        }
-    }
-
-    private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            for index in offsets {
-                modelContext.delete(items[index])
-            }
+            selectedItemId = newItem.id
         }
     }
 }
