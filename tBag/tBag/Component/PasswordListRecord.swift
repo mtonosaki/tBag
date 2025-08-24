@@ -37,9 +37,10 @@ struct PasswordListRecord: View {
                     .frame(width: 48, height: 48)
                 VStack(alignment: .leading) {
                     Text(item.caption)
+                        .font(.headline)
                     HStack {
                         Text(item.attributes["accountId"] ?? "")
-                            .foregroundColor(.passwordListSubCaption)
+                            .opacity(0.5)
                             .font(.subheadline)
                     }
                 }
