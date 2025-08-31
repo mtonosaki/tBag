@@ -9,6 +9,7 @@ import SwiftUI
 import SwiftData
 
 struct PasswordListView: View {
+    @Binding var page: PageType
     @Environment(\.modelContext) private var modelContext
     @EnvironmentObject var appController: AppController
     @Query(filter: #Predicate<Item>{ $0.type == "pw"}) private var items: [Item]
@@ -50,6 +51,13 @@ struct PasswordListView: View {
                             addItem()
                         }  label: {
                             Label("Add Item", systemImage: "plus")
+                        }
+                    }
+                    ToolbarItem {
+                        Button {
+                            page = .sync
+                        } label: {
+                            Label("Sync", systemImage: "arrow.trianglehead.2.clockwise.rotate.90")
                         }
                     }
                 }
@@ -113,6 +121,7 @@ struct ScrollLetter: View {
 }
 
 #Preview {
-    PasswordListView()
+    @Previewable @State var page: PageType = .password
+    PasswordListView(page: $page)
         .modelContainer(for: Item.self, inMemory: true)
 }
