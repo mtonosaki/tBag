@@ -23,7 +23,7 @@ struct ContentView: View {
             case .password:
                 PasswordListView(page: $page)
             case .sync:
-                Sync(page: $page)
+                SyncView(page: $page)
             }
         }
         .transition(.move(edge: .bottom))

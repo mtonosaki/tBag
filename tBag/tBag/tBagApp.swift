@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import GoogleSignIn
 
 @main
 struct tBagApp: App {
@@ -31,6 +32,9 @@ struct tBagApp: App {
         WindowGroup {
             ContentView()
                 .displayToast(handledBy: toastHandler)
+                .onOpenURL { url in
+                    GIDSignIn.sharedInstance.handle(url)
+                }
         }
         .modelContainer(sharedModelContainer)
         .environmentObject(appController)
