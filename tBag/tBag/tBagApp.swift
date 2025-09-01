@@ -64,7 +64,7 @@ struct tBagApp: App {
                 .toolbarBackground(.hidden, for: .windowToolbar)
                 .containerBackground(.thickMaterial, for: .window)
                 .windowMinimizeBehavior(.disabled)
-                .frame(width: 640, height: 340)
+                .frame(width: 640, height: 320)
         }
     )
     .windowResizability(.contentSize)

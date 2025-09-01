@@ -10,10 +10,10 @@ import Tono
 
 struct Info {
     static var version: Any {
-        Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") ?? "(unknown)"
+        Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") ?? "?"
     }
 
     static var build: Any {
-        Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") ?? "(unknown)"
+        Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") ?? "?"
     }
  }

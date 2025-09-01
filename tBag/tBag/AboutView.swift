@@ -8,9 +8,6 @@
 import SwiftUI
 
 struct AboutVew: View {
-    @Environment(\.colorScheme) var colorScheme: ColorScheme
-    let W = 640.0
-
     var body: some View {
         VStack(spacing: 0) {
             Image("Banner")
@@ -27,6 +24,6 @@ struct AboutVew: View {
 #Preview {
     AboutVew()
         #if os(macOS)
-            .frame(width: 640, height: 340)
+            .frame(width: 640, height: 320)
         #endif
 }
