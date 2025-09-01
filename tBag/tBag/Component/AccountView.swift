@@ -77,7 +77,11 @@ struct AccountView: View {
                     .padding()
                 }
                 .formStyle(.columns)
+#if os(iOS)
                 .background(Color(.systemBackground))
+#else
+                .background(Color(NSColor.windowBackgroundColor))
+#endif
                 .padding()
 
                 Spacer()
@@ -88,7 +92,11 @@ struct AccountView: View {
                 .opacity(isAutoRestoring ? 1 : 0)
 
         }
+#if os(iOS)
         .background(Color(.systemGray6))
+#else
+        .background(Color(NSColor.lightGray))
+#endif
         .onAppear {
             
             if isResetLocalDataAtNextLaunch {

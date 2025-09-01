@@ -11,9 +11,9 @@ import SwiftData
 @Model
 final class Item {
     var id: String = UUID().uuidString
-    var ownerId: String
-    var type: String
-    var timestamp: Date
+    var ownerId: String = "no-id"
+    var type: String = ItemType.PlaneText.rawValue
+    var timestamp: Date = Date()
     var sortKey: String = ""
     var caption: String = ""
     var attributes: Dictionary<String, String> = [:]
@@ -39,7 +39,6 @@ final class Item {
     
     init(ownerId: String, type: ItemType = .PlaneText) {
         self.ownerId = ownerId
-        self.timestamp = Date()
         self.type = type.rawValue
     }
     

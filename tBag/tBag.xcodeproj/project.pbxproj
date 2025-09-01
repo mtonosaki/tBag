@@ -7,57 +7,57 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		020D80B02E2CB8C6007D3452 /* Tono in Frameworks */ = {isa = PBXBuildFile; productRef = 020D80AF2E2CB8C6007D3452 /* Tono */; };
+		0239EB972E65C23400760095 /* Tono in Frameworks */ = {isa = PBXBuildFile; productRef = 0239EB962E65C23400760095 /* Tono */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		0242394E2E1BB3E300B13629 /* PBXContainerItemProxy */ = {
+		0239EB5D2E65B90500760095 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 024239342E1BB3E300B13629 /* Project object */;
+			containerPortal = 0239EB432E65B90400760095 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 0242393B2E1BB3E300B13629;
+			remoteGlobalIDString = 0239EB4A2E65B90400760095;
 			remoteInfo = tBag;
 		};
-		024239582E1BB3E300B13629 /* PBXContainerItemProxy */ = {
+		0239EB672E65B90500760095 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 024239342E1BB3E300B13629 /* Project object */;
+			containerPortal = 0239EB432E65B90400760095 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 0242393B2E1BB3E300B13629;
+			remoteGlobalIDString = 0239EB4A2E65B90400760095;
 			remoteInfo = tBag;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		0242393C2E1BB3E300B13629 /* tBag.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = tBag.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		0242394D2E1BB3E300B13629 /* tBagTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = tBagTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		024239572E1BB3E300B13629 /* tBagUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = tBagUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		0239EB4B2E65B90400760095 /* tBag.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = tBag.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		0239EB5C2E65B90500760095 /* tBagTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = tBagTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		0239EB662E65B90500760095 /* tBagUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = tBagUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		0242395F2E1BB3E300B13629 /* Exceptions for "tBag" folder in "tBag" target */ = {
+		0239EB6E2E65B90500760095 /* Exceptions for "tBag" folder in "tBag" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
-			target = 0242393B2E1BB3E300B13629 /* tBag */;
+			target = 0239EB4A2E65B90400760095 /* tBag */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		0242393E2E1BB3E300B13629 /* tBag */ = {
+		0239EB4D2E65B90400760095 /* tBag */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				0242395F2E1BB3E300B13629 /* Exceptions for "tBag" folder in "tBag" target */,
+				0239EB6E2E65B90500760095 /* Exceptions for "tBag" folder in "tBag" target */,
 			);
 			path = tBag;
 			sourceTree = "<group>";
 		};
-		024239502E1BB3E300B13629 /* tBagTests */ = {
+		0239EB5F2E65B90500760095 /* tBagTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = tBagTests;
 			sourceTree = "<group>";
 		};
-		0242395A2E1BB3E300B13629 /* tBagUITests */ = {
+		0239EB692E65B90500760095 /* tBagUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = tBagUITests;
 			sourceTree = "<group>";
@@ -65,22 +65,22 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		024239392E1BB3E300B13629 /* Frameworks */ = {
+		0239EB482E65B90400760095 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				020D80B02E2CB8C6007D3452 /* Tono in Frameworks */,
+				0239EB972E65C23400760095 /* Tono in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		0242394A2E1BB3E300B13629 /* Frameworks */ = {
+		0239EB592E65B90500760095 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		024239542E1BB3E300B13629 /* Frameworks */ = {
+		0239EB632E65B90500760095 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -90,169 +90,169 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		020D80AE2E2CB8C6007D3452 /* Frameworks */ = {
+		0239EB422E65B90400760095 = {
+			isa = PBXGroup;
+			children = (
+				0239EB4D2E65B90400760095 /* tBag */,
+				0239EB5F2E65B90500760095 /* tBagTests */,
+				0239EB692E65B90500760095 /* tBagUITests */,
+				0239EB952E65C23400760095 /* Frameworks */,
+				0239EB4C2E65B90400760095 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		0239EB4C2E65B90400760095 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				0239EB4B2E65B90400760095 /* tBag.app */,
+				0239EB5C2E65B90500760095 /* tBagTests.xctest */,
+				0239EB662E65B90500760095 /* tBagUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		0239EB952E65C23400760095 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		024239332E1BB3E300B13629 = {
-			isa = PBXGroup;
-			children = (
-				0242393E2E1BB3E300B13629 /* tBag */,
-				024239502E1BB3E300B13629 /* tBagTests */,
-				0242395A2E1BB3E300B13629 /* tBagUITests */,
-				020D80AE2E2CB8C6007D3452 /* Frameworks */,
-				0242393D2E1BB3E300B13629 /* Products */,
-			);
-			sourceTree = "<group>";
-		};
-		0242393D2E1BB3E300B13629 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				0242393C2E1BB3E300B13629 /* tBag.app */,
-				0242394D2E1BB3E300B13629 /* tBagTests.xctest */,
-				024239572E1BB3E300B13629 /* tBagUITests.xctest */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		0242393B2E1BB3E300B13629 /* tBag */ = {
+		0239EB4A2E65B90400760095 /* tBag */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 024239602E1BB3E300B13629 /* Build configuration list for PBXNativeTarget "tBag" */;
+			buildConfigurationList = 0239EB6F2E65B90500760095 /* Build configuration list for PBXNativeTarget "tBag" */;
 			buildPhases = (
-				024239382E1BB3E300B13629 /* Sources */,
-				024239392E1BB3E300B13629 /* Frameworks */,
-				0242393A2E1BB3E300B13629 /* Resources */,
+				0239EB472E65B90400760095 /* Sources */,
+				0239EB482E65B90400760095 /* Frameworks */,
+				0239EB492E65B90400760095 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				0242393E2E1BB3E300B13629 /* tBag */,
+				0239EB4D2E65B90400760095 /* tBag */,
 			);
 			name = tBag;
 			packageProductDependencies = (
-				020D80AF2E2CB8C6007D3452 /* Tono */,
+				0239EB962E65C23400760095 /* Tono */,
 			);
 			productName = tBag;
-			productReference = 0242393C2E1BB3E300B13629 /* tBag.app */;
+			productReference = 0239EB4B2E65B90400760095 /* tBag.app */;
 			productType = "com.apple.product-type.application";
 		};
-		0242394C2E1BB3E300B13629 /* tBagTests */ = {
+		0239EB5B2E65B90500760095 /* tBagTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 024239652E1BB3E300B13629 /* Build configuration list for PBXNativeTarget "tBagTests" */;
+			buildConfigurationList = 0239EB742E65B90500760095 /* Build configuration list for PBXNativeTarget "tBagTests" */;
 			buildPhases = (
-				024239492E1BB3E300B13629 /* Sources */,
-				0242394A2E1BB3E300B13629 /* Frameworks */,
-				0242394B2E1BB3E300B13629 /* Resources */,
+				0239EB582E65B90500760095 /* Sources */,
+				0239EB592E65B90500760095 /* Frameworks */,
+				0239EB5A2E65B90500760095 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				0242394F2E1BB3E300B13629 /* PBXTargetDependency */,
+				0239EB5E2E65B90500760095 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				024239502E1BB3E300B13629 /* tBagTests */,
+				0239EB5F2E65B90500760095 /* tBagTests */,
 			);
 			name = tBagTests;
 			packageProductDependencies = (
 			);
 			productName = tBagTests;
-			productReference = 0242394D2E1BB3E300B13629 /* tBagTests.xctest */;
+			productReference = 0239EB5C2E65B90500760095 /* tBagTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		024239562E1BB3E300B13629 /* tBagUITests */ = {
+		0239EB652E65B90500760095 /* tBagUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 024239682E1BB3E300B13629 /* Build configuration list for PBXNativeTarget "tBagUITests" */;
+			buildConfigurationList = 0239EB772E65B90500760095 /* Build configuration list for PBXNativeTarget "tBagUITests" */;
 			buildPhases = (
-				024239532E1BB3E300B13629 /* Sources */,
-				024239542E1BB3E300B13629 /* Frameworks */,
-				024239552E1BB3E300B13629 /* Resources */,
+				0239EB622E65B90500760095 /* Sources */,
+				0239EB632E65B90500760095 /* Frameworks */,
+				0239EB642E65B90500760095 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				024239592E1BB3E300B13629 /* PBXTargetDependency */,
+				0239EB682E65B90500760095 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				0242395A2E1BB3E300B13629 /* tBagUITests */,
+				0239EB692E65B90500760095 /* tBagUITests */,
 			);
 			name = tBagUITests;
 			packageProductDependencies = (
 			);
 			productName = tBagUITests;
-			productReference = 024239572E1BB3E300B13629 /* tBagUITests.xctest */;
+			productReference = 0239EB662E65B90500760095 /* tBagUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		024239342E1BB3E300B13629 /* Project object */ = {
+		0239EB432E65B90400760095 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1640;
 				LastUpgradeCheck = 1640;
 				TargetAttributes = {
-					0242393B2E1BB3E300B13629 = {
+					0239EB4A2E65B90400760095 = {
 						CreatedOnToolsVersion = 16.4;
 					};
-					0242394C2E1BB3E300B13629 = {
+					0239EB5B2E65B90500760095 = {
 						CreatedOnToolsVersion = 16.4;
-						TestTargetID = 0242393B2E1BB3E300B13629;
+						TestTargetID = 0239EB4A2E65B90400760095;
 					};
-					024239562E1BB3E300B13629 = {
+					0239EB652E65B90500760095 = {
 						CreatedOnToolsVersion = 16.4;
-						TestTargetID = 0242393B2E1BB3E300B13629;
+						TestTargetID = 0239EB4A2E65B90400760095;
 					};
 				};
 			};
-			buildConfigurationList = 024239372E1BB3E300B13629 /* Build configuration list for PBXProject "tBag" */;
+			buildConfigurationList = 0239EB462E65B90400760095 /* Build configuration list for PBXProject "tBag" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				Base,
 			);
-			mainGroup = 024239332E1BB3E300B13629;
+			mainGroup = 0239EB422E65B90400760095;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				020D80AD2E2CB826007D3452 /* XCRemoteSwiftPackageReference "TonoSwift" */,
+				0239EB942E65C10400760095 /* XCRemoteSwiftPackageReference "TonoSwift" */,
 			);
 			preferredProjectObjectVersion = 77;
-			productRefGroup = 0242393D2E1BB3E300B13629 /* Products */;
+			productRefGroup = 0239EB4C2E65B90400760095 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				0242393B2E1BB3E300B13629 /* tBag */,
-				0242394C2E1BB3E300B13629 /* tBagTests */,
-				024239562E1BB3E300B13629 /* tBagUITests */,
+				0239EB4A2E65B90400760095 /* tBag */,
+				0239EB5B2E65B90500760095 /* tBagTests */,
+				0239EB652E65B90500760095 /* tBagUITests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		0242393A2E1BB3E300B13629 /* Resources */ = {
+		0239EB492E65B90400760095 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		0242394B2E1BB3E300B13629 /* Resources */ = {
+		0239EB5A2E65B90500760095 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		024239552E1BB3E300B13629 /* Resources */ = {
+		0239EB642E65B90500760095 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -262,21 +262,21 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		024239382E1BB3E300B13629 /* Sources */ = {
+		0239EB472E65B90400760095 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		024239492E1BB3E300B13629 /* Sources */ = {
+		0239EB582E65B90500760095 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		024239532E1BB3E300B13629 /* Sources */ = {
+		0239EB622E65B90500760095 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -286,80 +286,106 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		0242394F2E1BB3E300B13629 /* PBXTargetDependency */ = {
+		0239EB5E2E65B90500760095 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 0242393B2E1BB3E300B13629 /* tBag */;
-			targetProxy = 0242394E2E1BB3E300B13629 /* PBXContainerItemProxy */;
+			target = 0239EB4A2E65B90400760095 /* tBag */;
+			targetProxy = 0239EB5D2E65B90500760095 /* PBXContainerItemProxy */;
 		};
-		024239592E1BB3E300B13629 /* PBXTargetDependency */ = {
+		0239EB682E65B90500760095 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 0242393B2E1BB3E300B13629 /* tBag */;
-			targetProxy = 024239582E1BB3E300B13629 /* PBXContainerItemProxy */;
+			target = 0239EB4A2E65B90400760095 /* tBag */;
+			targetProxy = 0239EB672E65B90500760095 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		024239612E1BB3E300B13629 /* Debug */ = {
+		0239EB702E65B90500760095 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = tBag/tBag.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = 42235ECE62;
+				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = tBag/Info.plist;
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
-				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = tBag;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tomarika.tBag;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				XROS_DEPLOYMENT_TARGET = 2.5;
 			};
 			name = Debug;
 		};
-		024239622E1BB3E300B13629 /* Release */ = {
+		0239EB712E65B90500760095 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = tBag/tBag.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = 42235ECE62;
+				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = tBag/Info.plist;
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
-				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = tBag;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tomarika.tBag;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				XROS_DEPLOYMENT_TARGET = 2.5;
 			};
 			name = Release;
 		};
-		024239632E1BB3E300B13629 /* Debug */ = {
+		0239EB722E65B90500760095 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -412,18 +438,16 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
 		};
-		024239642E1BB3E300B13629 /* Release */ = {
+		0239EB732E65B90500760095 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -470,17 +494,14 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
-				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
-		024239662E1BB3E300B13629 /* Debug */ = {
+		0239EB752E65B90500760095 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -489,17 +510,21 @@
 				DEVELOPMENT_TEAM = 42235ECE62;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				MACOSX_DEPLOYMENT_TARGET = 15.5;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tomarika.tBagTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,7";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/tBag.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/tBag";
+				XROS_DEPLOYMENT_TARGET = 2.5;
 			};
 			name = Debug;
 		};
-		024239672E1BB3E300B13629 /* Release */ = {
+		0239EB762E65B90500760095 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -508,85 +533,99 @@
 				DEVELOPMENT_TEAM = 42235ECE62;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				MACOSX_DEPLOYMENT_TARGET = 15.5;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tomarika.tBagTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,7";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/tBag.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/tBag";
+				XROS_DEPLOYMENT_TARGET = 2.5;
 			};
 			name = Release;
 		};
-		024239692E1BB3E300B13629 /* Debug */ = {
+		0239EB782E65B90500760095 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 42235ECE62;
 				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				MACOSX_DEPLOYMENT_TARGET = 15.5;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tomarika.tBagUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,7";
 				TEST_TARGET_NAME = tBag;
+				XROS_DEPLOYMENT_TARGET = 2.5;
 			};
 			name = Debug;
 		};
-		0242396A2E1BB3E300B13629 /* Release */ = {
+		0239EB792E65B90500760095 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 42235ECE62;
 				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				MACOSX_DEPLOYMENT_TARGET = 15.5;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tomarika.tBagUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,7";
 				TEST_TARGET_NAME = tBag;
+				XROS_DEPLOYMENT_TARGET = 2.5;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		024239372E1BB3E300B13629 /* Build configuration list for PBXProject "tBag" */ = {
+		0239EB462E65B90400760095 /* Build configuration list for PBXProject "tBag" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				024239632E1BB3E300B13629 /* Debug */,
-				024239642E1BB3E300B13629 /* Release */,
+				0239EB722E65B90500760095 /* Debug */,
+				0239EB732E65B90500760095 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		024239602E1BB3E300B13629 /* Build configuration list for PBXNativeTarget "tBag" */ = {
+		0239EB6F2E65B90500760095 /* Build configuration list for PBXNativeTarget "tBag" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				024239612E1BB3E300B13629 /* Debug */,
-				024239622E1BB3E300B13629 /* Release */,
+				0239EB702E65B90500760095 /* Debug */,
+				0239EB712E65B90500760095 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		024239652E1BB3E300B13629 /* Build configuration list for PBXNativeTarget "tBagTests" */ = {
+		0239EB742E65B90500760095 /* Build configuration list for PBXNativeTarget "tBagTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				024239662E1BB3E300B13629 /* Debug */,
-				024239672E1BB3E300B13629 /* Release */,
+				0239EB752E65B90500760095 /* Debug */,
+				0239EB762E65B90500760095 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		024239682E1BB3E300B13629 /* Build configuration list for PBXNativeTarget "tBagUITests" */ = {
+		0239EB772E65B90500760095 /* Build configuration list for PBXNativeTarget "tBagUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				024239692E1BB3E300B13629 /* Debug */,
-				0242396A2E1BB3E300B13629 /* Release */,
+				0239EB782E65B90500760095 /* Debug */,
+				0239EB792E65B90500760095 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -594,7 +633,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		020D80AD2E2CB826007D3452 /* XCRemoteSwiftPackageReference "TonoSwift" */ = {
+		0239EB942E65C10400760095 /* XCRemoteSwiftPackageReference "TonoSwift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/mtonosaki/TonoSwift";
 			requirement = {
@@ -605,12 +644,12 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		020D80AF2E2CB8C6007D3452 /* Tono */ = {
+		0239EB962E65C23400760095 /* Tono */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 020D80AD2E2CB826007D3452 /* XCRemoteSwiftPackageReference "TonoSwift" */;
+			package = 0239EB942E65C10400760095 /* XCRemoteSwiftPackageReference "TonoSwift" */;
 			productName = Tono;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
-	rootObject = 024239342E1BB3E300B13629 /* Project object */;
+	rootObject = 0239EB432E65B90400760095 /* Project object */;
 }

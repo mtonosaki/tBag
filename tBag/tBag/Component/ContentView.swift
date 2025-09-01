@@ -1,8 +1,8 @@
 //
 //  ContentView.swift
-//  MsalSample
+//  tBag
 //
-//  Created by Kazunori Kimura on 2024/01/30.
+//  Created by Manabu Tonosaki on 2025-09-01.
 //
 
 import SwiftUI

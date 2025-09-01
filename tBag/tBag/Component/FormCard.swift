@@ -40,13 +40,22 @@ struct FormCard<Content: View>: View {
                         if !copyText.isEmpty {
                             Spacer()
                             Button {
+#if os(iOS)
                                 UIPasteboard.general.string = copyText
+#else
+                                let pasteboard = NSPasteboard.general
+                                pasteboard.clearContents()
+                                pasteboard.setString(copyText, forType: .string)
+#endif
                                 toast?("Copy \(text)")
                             } label: {
                                 Image(systemName: "doc.on.clipboard")
                             }
                             .font(.caption)
                             .foregroundColor(.secondary)
+#if os(macOS)
+                            .buttonStyle(.plain)
+#endif
                         }
                     }
                 }

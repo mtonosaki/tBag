@@ -2,11 +2,10 @@
 //  tBagTests.swift
 //  tBagTests
 //
-//  Created by Manabu Tonosaki on 2025/07/07.
+//  Created by Manabu Tonosaki on 2025-09-01.
 //
 
 import Testing
-@testable import tBag
 
 struct tBagTests {
 

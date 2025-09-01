@@ -67,6 +67,9 @@ struct PasswordListView: View {
                             ScrollLetter(firstLetter: firstLetter, proxy: proxy)
                         }
                     }
+#if os(macOS)
+                    .padding(.trailing, 8)
+#endif
                 }
             }
         } detail: {
