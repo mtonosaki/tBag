@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		022AEE552E6D1AB800C33E63 /* GoogleAPIClientForRESTCore in Frameworks */ = {isa = PBXBuildFile; productRef = 022AEE542E6D1AB800C33E63 /* GoogleAPIClientForRESTCore */; };
+		022AEE572E6D1AB800C33E63 /* GoogleAPIClientForREST_Drive in Frameworks */ = {isa = PBXBuildFile; productRef = 022AEE562E6D1AB800C33E63 /* GoogleAPIClientForREST_Drive */; };
 		0239EB972E65C23400760095 /* Tono in Frameworks */ = {isa = PBXBuildFile; productRef = 0239EB962E65C23400760095 /* Tono */; };
 		0279A21A2E65F4CC0002BAC5 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 0279A2192E65F4CC0002BAC5 /* GoogleSignIn */; };
 		0279A21C2E65F4CC0002BAC5 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 0279A21B2E65F4CC0002BAC5 /* GoogleSignInSwift */; };
@@ -73,7 +75,9 @@
 			files = (
 				0279A21C2E65F4CC0002BAC5 /* GoogleSignInSwift in Frameworks */,
 				0239EB972E65C23400760095 /* Tono in Frameworks */,
+				022AEE552E6D1AB800C33E63 /* GoogleAPIClientForRESTCore in Frameworks */,
 				0279A21A2E65F4CC0002BAC5 /* GoogleSignIn in Frameworks */,
+				022AEE572E6D1AB800C33E63 /* GoogleAPIClientForREST_Drive in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -145,6 +149,8 @@
 				0239EB962E65C23400760095 /* Tono */,
 				0279A2192E65F4CC0002BAC5 /* GoogleSignIn */,
 				0279A21B2E65F4CC0002BAC5 /* GoogleSignInSwift */,
+				022AEE542E6D1AB800C33E63 /* GoogleAPIClientForRESTCore */,
+				022AEE562E6D1AB800C33E63 /* GoogleAPIClientForREST_Drive */,
 			);
 			productName = tBag;
 			productReference = 0239EB4B2E65B90400760095 /* tBag.app */;
@@ -231,6 +237,7 @@
 			packageReferences = (
 				0239EB942E65C10400760095 /* XCRemoteSwiftPackageReference "TonoSwift" */,
 				0279A2182E65F4CC0002BAC5 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				022AEE532E6D183800C33E63 /* XCRemoteSwiftPackageReference "google-api-objectivec-client-for-rest" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 0239EB4C2E65B90400760095 /* Products */;
@@ -313,7 +320,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = tBag/tBag.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 12;
+				CURRENT_PROJECT_VERSION = 28;
 				DEVELOPMENT_TEAM = 42235ECE62;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -356,7 +363,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = tBag/tBag.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 12;
+				CURRENT_PROJECT_VERSION = 28;
 				DEVELOPMENT_TEAM = 42235ECE62;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -515,7 +522,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 12;
+				CURRENT_PROJECT_VERSION = 28;
 				DEVELOPMENT_TEAM = 42235ECE62;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
@@ -538,7 +545,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 12;
+				CURRENT_PROJECT_VERSION = 28;
 				DEVELOPMENT_TEAM = 42235ECE62;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
@@ -560,7 +567,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 12;
+				CURRENT_PROJECT_VERSION = 28;
 				DEVELOPMENT_TEAM = 42235ECE62;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
@@ -582,7 +589,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 12;
+				CURRENT_PROJECT_VERSION = 28;
 				DEVELOPMENT_TEAM = 42235ECE62;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
@@ -642,6 +649,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		022AEE532E6D183800C33E63 /* XCRemoteSwiftPackageReference "google-api-objectivec-client-for-rest" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/google-api-objectivec-client-for-rest.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 		0239EB942E65C10400760095 /* XCRemoteSwiftPackageReference "TonoSwift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/mtonosaki/TonoSwift";
@@ -661,6 +676,16 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		022AEE542E6D1AB800C33E63 /* GoogleAPIClientForRESTCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 022AEE532E6D183800C33E63 /* XCRemoteSwiftPackageReference "google-api-objectivec-client-for-rest" */;
+			productName = GoogleAPIClientForRESTCore;
+		};
+		022AEE562E6D1AB800C33E63 /* GoogleAPIClientForREST_Drive */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 022AEE532E6D183800C33E63 /* XCRemoteSwiftPackageReference "google-api-objectivec-client-for-rest" */;
+			productName = GoogleAPIClientForREST_Drive;
+		};
 		0239EB962E65C23400760095 /* Tono */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 0239EB942E65C10400760095 /* XCRemoteSwiftPackageReference "TonoSwift" */;

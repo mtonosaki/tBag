@@ -142,7 +142,7 @@ struct PasswordEditorView: View {
             Button(item.id){
 #if os(iOS)
                 UIPasteboard.general.string = item.id
-#else
+#elseif os(macOS)
                 let pasteboard = NSPasteboard.general
                 pasteboard.clearContents()
                 pasteboard.setString(item.id, forType: .string)

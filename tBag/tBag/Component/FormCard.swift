@@ -42,7 +42,7 @@ struct FormCard<Content: View>: View {
                             Button {
 #if os(iOS)
                                 UIPasteboard.general.string = copyText
-#else
+#elseif os(macOS)
                                 let pasteboard = NSPasteboard.general
                                 pasteboard.clearContents()
                                 pasteboard.setString(copyText, forType: .string)

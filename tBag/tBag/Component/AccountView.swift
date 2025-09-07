@@ -79,7 +79,7 @@ struct AccountView: View {
                 .formStyle(.columns)
 #if os(iOS)
                 .background(Color(.systemBackground))
-#else
+#elseif os(macOS)
                 .background(Color(NSColor.windowBackgroundColor))
 #endif
                 .padding()
@@ -94,7 +94,7 @@ struct AccountView: View {
         }
 #if os(iOS)
         .background(Color(.systemGray6))
-#else
+#elseif os(macOS)
         .background(Color(NSColor.lightGray))
 #endif
         .onAppear {
