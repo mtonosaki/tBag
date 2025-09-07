@@ -11,20 +11,22 @@ import GoogleSignInSwift
 
 struct SyncView: View {
     @Binding var page: PageType
-    @Environment(\.modelContext) private var modelContext
+    @ObservedObject var authViewModel: AuthViewModel
     @EnvironmentObject var appController: AppController
-    @Query(filter: #Predicate<Item>{ $0.type == "pw"}) private var items: [Item]
-    @StateObject private var authViewModel = AuthViewModel()
-    let uploader = GoogleDriveUploader()
+    @Environment(\.modelContext) private var modelContext
+    @Query private var items: [Item]
+    
+    private let uploader = GoogleDriveUploader()
 
     var body: some View {
         NavigationStack {
             VStack {
                 if let displayName = authViewModel.userDisplayName {
-                    Text("Hi, \(displayName) !")
-                    .font(.largeTitle)
+                    Text("Hi, \(displayName) !").padding(.bottom, 8)
+                    Text("UserID = \(appController.accountId)")
+                    Text("\(items.count) records")
                     
-                    Button("TEST UPLOAD") {
+                    Button {
                         Task {
                             do {
                                 try await uploader.uploadFile(
@@ -40,11 +42,10 @@ struct SyncView: View {
 
                             }
                         }
+                    } label: {
+                        Label("UPLOAD NOW", systemImage: "icloud.and.arrow.up")
                     }
 
-                    Button("Sign-out") {
-                        authViewModel.signOut()
-                    }
                 } else {
                     Text("To sign in, tap the button below.")
                         .font(.headline)
@@ -66,10 +67,10 @@ struct SyncView: View {
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button {
+                        authViewModel.signOut()
                         page = .password
                     } label: {
                         Text("← Cancel")
-                            
                     }
                     .buttonStyle(.borderless)
                 }
@@ -79,6 +80,33 @@ struct SyncView: View {
 }
 
 #Preview {
-    SyncView(page: .constant(.password))
-        .frame(width: 500, height: 500)
+    SyncView(
+        page: .constant(.password),
+        authViewModel: AuthViewModel(userDisplayName: "Hoge Taro")
+    )
+    .frame(width: 500, height: 500)
+    .modelContainer(makeSampleModelContainer()!)
+    .environmentObject(makeSampleAppController())
+}
+
+func makeSampleAppController() -> AppController {
+    let sampleAppController = AppController()
+    sampleAppController.accountId = "preview-hoge-2222-3333-4444"
+    return sampleAppController
+}
+
+@MainActor func makeSampleModelContainer() -> ModelContainer? {
+    do {
+        let schema = Schema([Item.self])
+        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
+        let modelContainer = try ModelContainer(for: schema, configurations: [modelConfiguration])
+        modelContainer.mainContext.insert(Item.makePasswordDummy("hoge"))
+        modelContainer.mainContext.insert(Item.makePasswordDummy("fuga"))
+        modelContainer.mainContext.insert(Item.makePasswordDummy("piyo"))
+        return modelContainer
+    }
+    catch {
+        print("ERROR-PREVIEW")
+    }
+    return nil
 }

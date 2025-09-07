@@ -22,6 +22,15 @@ class AuthViewModel: ObservableObject {
     @Published var errorMessage: String?
     @Published var user: GIDGoogleUser?
 
+    init() { }
+    
+    convenience init(userDisplayName: String?, errorMessage: String? = nil, user: GIDGoogleUser? = nil) {
+        self.init()
+        self.userDisplayName = userDisplayName
+        self.errorMessage = errorMessage
+        self.user = user
+    }
+
     func signIn() async {
 #if os(iOS)
         guard let windowScene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene,

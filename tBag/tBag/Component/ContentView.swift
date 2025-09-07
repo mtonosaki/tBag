@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 public enum PageType {
     case password
@@ -16,6 +17,7 @@ struct ContentView: View {
     @EnvironmentObject var appController: AppController
     @State private var isAccountRequired: Bool = false
     @State private var page: PageType = .password
+    @State private var authViewModel = AuthViewModel()
     
     var body: some View {
         VStack {
@@ -23,7 +25,7 @@ struct ContentView: View {
             case .password:
                 PasswordListView(page: $page)
             case .sync:
-                SyncView(page: $page)
+                SyncView(page: $page, authViewModel: authViewModel)
             }
         }
         .transition(.move(edge: .bottom))

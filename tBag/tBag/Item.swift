@@ -18,15 +18,6 @@ final class Item {
     var caption: String = ""
     var attributes: Dictionary<String, String> = [:]
     
-    init(ownerId: String, type: ItemType, timestamp: Date, sortKey: String, caption: String, attrubutes: Dictionary<String,String>){
-        self.ownerId = ownerId
-        self.type = type.rawValue
-        self.timestamp = timestamp
-        self.sortKey = sortKey
-        self.caption = caption
-        self.attributes = attrubutes
-    }
-    
     init(cloneFrom: Item){
         self.id = cloneFrom.id
         self.ownerId = cloneFrom.ownerId
@@ -37,9 +28,36 @@ final class Item {
         self.attributes = cloneFrom.attributes
     }
     
-    init(ownerId: String, type: ItemType = .PlaneText) {
+    init(ownerId: String, type: ItemType, timestamp: Date, sortKey: String, caption: String, attrubutes: Dictionary<String,String>){
         self.ownerId = ownerId
         self.type = type.rawValue
+        self.timestamp = timestamp
+        self.sortKey = sortKey
+        self.caption = caption
+        self.attributes = attrubutes
+    }
+    
+    init(ownerId: String, type: ItemType){
+        self.ownerId = ownerId
+        self.type = type.rawValue
+        self.timestamp = Date()
+    }
+    
+    init(ownerId: String){
+        self.id = ownerId
+        self.ownerId = ownerId
+        self.type = ItemType.System.rawValue
+        self.timestamp = Date()
+        self.sortKey = "[user parameter]"
+        self.caption = "[user parameter]"
+    }
+    
+    static func makePasswordDummy(_ caption: String) -> Item {
+        var item = Item(ownerId: "hoge-owner")
+        item.caption = caption
+        item.sortKey = caption
+        item.type = ItemType.Password.rawValue
+        return item
     }
     
     func isEmpty() -> Bool {
@@ -72,7 +90,7 @@ final class Item {
 public enum ItemType: String {
     case PlaneText = "text"
     case Password = "pw"
-
+    case System = "sys"
 }
 
 struct ItemBuilder {

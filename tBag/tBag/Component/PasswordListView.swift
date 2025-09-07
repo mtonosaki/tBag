@@ -10,8 +10,6 @@ import SwiftData
 
 struct PasswordListView: View {
     @Binding var page: PageType
-    @Environment(\.modelContext) private var modelContext
-    @EnvironmentObject var appController: AppController
     @Query(filter: #Predicate<Item>{ $0.type == "pw"}) private var items: [Item]
     @State private var selectedItemId: String?
 
@@ -35,43 +33,8 @@ struct PasswordListView: View {
     
     var body: some View {
         NavigationSplitView {
-            ScrollViewReader { proxy in
-                List(selection: $selectedItemId) {
-                    ForEach(groupedItems.keys.sorted(), id: \.self){ firstLetter in
-                        Section(header: Text(firstLetter)){
-                            ForEach((groupedItems[firstLetter]?.sorted(by: {$0.caption < $1.caption}) ?? [])) { item in
-                                PasswordListRecord(item).tag(item.id)
-                            }
-                        }
-                    }
-                }
-                .toolbar {
-                    ToolbarItem {
-                        Button {
-                            addItem()
-                        }  label: {
-                            Label("Add Item", systemImage: "plus")
-                        }
-                    }
-                    ToolbarItem {
-                        Button {
-                            page = .sync
-                        } label: {
-                            Label("Sync", systemImage: "arrow.trianglehead.2.clockwise.rotate.90")
-                        }
-                    }
-                }
-                .overlay(alignment: .trailing) {
-                    VStack(spacing: 0){
-                        ForEach(sectionHeaders, id: \.self){ firstLetter in
-                            ScrollLetter(firstLetter: firstLetter, proxy: proxy)
-                        }
-                    }
-#if os(macOS)
-                    .padding(.trailing, 8)
-#endif
-                }
-            }
+            PasswordListSideView(page: $page, selectedItemId: $selectedItemId, groupedItems: groupedItems, sectionHeaders: sectionHeaders)
+            
         } detail: {
             if let selectedId = selectedItemId {
                 if let selectedItem = items.first(where: { $0.id == selectedId }){
@@ -82,14 +45,6 @@ struct PasswordListView: View {
             } else {
                 Text("Select an item")
             }
-        }
-    }
-
-    private func addItem() {
-        let newItem = ItemBuilder.createNewPasswordItem(ownerAccountId: appController.accountId)
-        withAnimation {
-            modelContext.insert(newItem)
-            selectedItemId = newItem.id
         }
     }
 }
