@@ -9,7 +9,7 @@ import Foundation
 import SwiftData
 
 @Model
-final class Item {
+final class Item: Encodable {
     var id: String = UUID().uuidString
     var ownerId: String = "no-id"
     var type: String = ItemType.PlaneText.rawValue
@@ -27,6 +27,27 @@ final class Item {
         self.caption = cloneFrom.caption
         self.attributes = cloneFrom.attributes
     }
+    
+    enum CodingKeys: String, CodingKey {
+        case id
+        case ownerId
+        case type
+        case timestamp
+        case sortKey
+        case caption
+        case attributes
+    }
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
+        try container.encode(ownerId, forKey: .ownerId)
+        try container.encode(type, forKey: .type)
+        try container.encode(timestamp, forKey: .timestamp)
+        try container.encode(sortKey, forKey: .sortKey)
+        try container.encode(caption, forKey: .caption)
+        try container.encode(attributes, forKey: .attributes)
+    }
+
     
     init(ownerId: String, type: ItemType, timestamp: Date, sortKey: String, caption: String, attrubutes: Dictionary<String,String>){
         self.ownerId = ownerId
@@ -50,14 +71,6 @@ final class Item {
         self.timestamp = Date()
         self.sortKey = "[user parameter]"
         self.caption = "[user parameter]"
-    }
-    
-    static func makePasswordDummy(_ caption: String) -> Item {
-        var item = Item(ownerId: "hoge-owner")
-        item.caption = caption
-        item.sortKey = caption
-        item.type = ItemType.Password.rawValue
-        return item
     }
     
     func isEmpty() -> Bool {

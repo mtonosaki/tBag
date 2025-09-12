@@ -13,7 +13,7 @@ class GoogleDriveUploader {
 
     func uploadFile(
         fileName: String,
-        fileContent: String,
+        fileContent: Data,
         mimeType: String,
         user: GIDGoogleUser,
     ) async throws -> Void {
@@ -41,7 +41,7 @@ class GoogleDriveUploader {
         // Part No.2 -- content body
         body.append("--\(boundary)\r\n".data(using: .utf8)!)
         body.append("Content-Type: \(mimeType)\r\n\r\n".data(using: .utf8)!)
-        body.append(fileContent.data(using: .utf8)!)
+        body.append(fileContent)
         body.append("\r\n".data(using: .utf8)!)
         
         // Part No.3 -- Terminater
