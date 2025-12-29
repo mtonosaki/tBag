@@ -1,6 +1,7 @@
 # General
 .DS_Store
 GoogleService-Info.plist
+Secrets.xcconfig
 
 # Xcode
 #
@@ -64,3 +65,4 @@ fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots/**/*.png
 fastlane/test_output
+tBag/tBag/Secrets.xcconfig

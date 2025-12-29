@@ -32,6 +32,8 @@ class AuthViewModel: ObservableObject {
     }
 
     func signIn() async {
+        configureSignIn()
+        
 #if os(iOS)
         guard let windowScene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene,
               let presentingWindow = windowScene.windows.first(where: { $0.isKeyWindow })?.rootViewController else {
@@ -57,9 +59,29 @@ class AuthViewModel: ObservableObject {
         }
     }
     
+    private func configureSignIn() {
+        guard let clientID = Bundle.main.object(forInfoDictionaryKey: "GIDClientID") as? String, !clientID.isEmpty else {
+            self.errorMessage = "Fatal Error: GIDClientID not found in Info.plist"
+            return
+        }
+        guard let hostedDomain = Bundle.main.object(forInfoDictionaryKey: "AuthenticationDomain") as? String, !clientID.isEmpty else {
+            self.errorMessage = "Fatal Error: AuthenticationDomain not found in Info.plist"
+            return
+        }
+                
+        let config = GIDConfiguration(
+            clientID: clientID,
+            serverClientID: nil,
+            hostedDomain: hostedDomain,
+            openIDRealm: nil
+        )
+        GIDSignIn.sharedInstance.configuration = config
+    }
+    
     func signOut() {
         GIDSignIn.sharedInstance.signOut()
         self.userDisplayName = nil
         self.errorMessage = nil
     }
 }
+

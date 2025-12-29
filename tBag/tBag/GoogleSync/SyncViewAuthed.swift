@@ -8,17 +8,16 @@
 import SwiftUI
 import SwiftData
 
-struct SyncViewUpload: View {
+struct SyncViewAuthed: View {
     @ObservedObject var authViewModel: AuthViewModel
     var displayName: String
     
     @EnvironmentObject var appController: AppController
+    @EnvironmentObject var viewConfig: ViewConfig
     @State var status: String = ""
     @State var progressTotal: Double = 0.0
     @State var progressValue: Double = 0.0
     @Query private var items: [Item]
-    
-    private let uploader = GoogleDriveUploader()
     
     var body: some View {
         VStack {
@@ -34,15 +33,33 @@ struct SyncViewUpload: View {
 #endif
             Text("\(items.count) records")
             
-            Button {
-                upload()
-            } label: {
-                Label("UPLOAD NOW", systemImage: "icloud.and.arrow.up").padding()
+            HStack(spacing: 24) {
+                Button {
+                    backupToCloud()
+                } label: {
+                    VStack(spacing: 0){
+                        Label("BACKUP", systemImage: "icloud.and.arrow.up")
+                        Text("to Google Drive")
+                    }.padding()
+                }
+                .buttonStyle(.glassProminent)
+                .padding(.vertical)
+                .disabled(progressTotal > 0.0)
+                
+                Button {
+                    
+                } label: {
+                    VStack(spacing: 0){
+                        Label("RESTORE", systemImage: "icloud.and.arrow.down")
+                        Text("local data will be removed")
+                    }.padding()
+                }
+                .buttonStyle(.glassProminent)
+                .padding(.vertical)
+                .disabled(progressTotal > 0.0)
             }
-            .padding(.vertical)
-            .disabled(progressTotal > 0.0)
             
-            ProgressView(value: 20, total: 100)
+            ProgressView(value: progressValue, total: progressTotal)
                 .padding(.horizontal, 20)
                 .opacity(progressTotal)
             Text(status).foregroundColor(.secondary)
@@ -51,7 +68,7 @@ struct SyncViewUpload: View {
     }
     
     
-    func upload(){
+    func backupToCloud(){
         Task {
             do {
                 progressTotal = 100.0
@@ -78,16 +95,17 @@ struct SyncViewUpload: View {
                 }
                 
                 status = "\(fileInfo) | Uploading to Google Drive..."
-                progressValue = 90.0
-                try await uploader.uploadFile(
+                progressValue = 75.0
+                let uploader = GoogleDriveRepository(user: authViewModel.user!)
+                try await uploader.save(
                     fileName: "\(appController.accountId).bin",
                     fileContent: compressedData,
-                    mimeType: "application/octet-stream",
-                    user: authViewModel.user!
+                    mimeType: "application/octet-stream"
                 )
                 
                 status = "\(fileInfo) | Saved as \(appController.accountId).bin"
                 progressValue = 100.0
+                viewConfig.cancelButtonTitle = "← Back"
             }
             catch {
                 self.status = "ERROR 222：\(error.localizedDescription)"                
@@ -101,7 +119,7 @@ struct SyncViewUpload: View {
 
 
 #Preview {
-    SyncViewUpload(
+    SyncViewAuthed(
         authViewModel: AuthViewModel(userDisplayName: "Hoge Taro"),
         displayName: "山田 太郎",
         status: "本日は晴天なり",
@@ -110,4 +128,5 @@ struct SyncViewUpload: View {
     .frame(width: 500, height: 300)
     .modelContainer(makeSampleModelContainer()!)
     .environmentObject(makeSampleAppController())
+    .environmentObject(ViewConfig())
 }

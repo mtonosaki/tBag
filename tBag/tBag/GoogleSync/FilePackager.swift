@@ -27,7 +27,6 @@ struct FilePackager {
         
         callBack(.zipCompressStart, nil)
         let compressedData = try (jsonData as NSData).compressed(using: .zlib) as Data
-
         callBack(.zipCompressEnd, "\(compressedData.count)")
 
         return compressedData

@@ -2,13 +2,15 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>AuthenticationDomain</key>
+	<string>g.tomarika.com</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>com.tomarika.tBag</string>
+			<string>$(AUTHENTICATION_HOSTED_DOMAIN)</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>com.googleusercontent.apps.1068950824236-e1gcqevshf3t2n4e64hv3a6sg2hlrduh</string>
@@ -16,7 +18,7 @@
 		</dict>
 	</array>
 	<key>GIDClientID</key>
-	<string>1068950824236-e1gcqevshf3t2n4e64hv3a6sg2hlrduh.apps.googleusercontent.com</string>
+	<string>$(GID_CLIENT_ID)</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>

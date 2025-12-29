@@ -13,6 +13,7 @@ struct SyncView: View {
     @Binding var page: PageType
     @ObservedObject var authViewModel: AuthViewModel
     @EnvironmentObject var appController: AppController
+    @StateObject private var viewConfig = ViewConfig()
     @Environment(\.modelContext) private var modelContext
     @Query private var items: [Item]
 
@@ -20,7 +21,7 @@ struct SyncView: View {
         NavigationStack {
             ZStack {
                 if let displayName = authViewModel.userDisplayName {
-                    SyncViewUpload(authViewModel: authViewModel, displayName: displayName)
+                    SyncViewAuthed(authViewModel: authViewModel, displayName: displayName)
                     
                 } else {
                     SyncViewLogin(authViewModel: authViewModel)
@@ -33,13 +34,17 @@ struct SyncView: View {
                         authViewModel.signOut()
                         page = .password
                     } label: {
-                        Text("← Cancel")
+                        Text(viewConfig.cancelButtonTitle)
                     }
-                    .buttonStyle(.borderless)
+                    .padding(.horizontal, 6)
                 }
             }
-        }
+        }.environmentObject(viewConfig)
     }
+}
+
+class ViewConfig: ObservableObject {
+    @Published var cancelButtonTitle: String = "← Cancel"
 }
 
 #Preview {

@@ -9,13 +9,17 @@ import SwiftUI
 import GoogleSignIn
 import GoogleAPIClientForREST_Drive
 
-class GoogleDriveUploader {
+class GoogleDriveRepository: StorageRepository {
+    var user: GIDGoogleUser
+    
+    init(user: GIDGoogleUser) {
+        self.user = user
+    }
 
-    func uploadFile(
+    func save(
         fileName: String,
         fileContent: Data,
         mimeType: String,
-        user: GIDGoogleUser,
     ) async throws -> Void {
         let url = URL(string: "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart")!
         

@@ -9,7 +9,7 @@ import Foundation
 import SwiftData
 
 @Model
-final class Item: Encodable {
+final class Item: Encodable, Hashable {
     var id: String = UUID().uuidString
     var ownerId: String = "no-id"
     var type: String = ItemType.PlaneText.rawValue
@@ -18,14 +18,12 @@ final class Item: Encodable {
     var caption: String = ""
     var attributes: Dictionary<String, String> = [:]
     
-    init(cloneFrom: Item){
-        self.id = cloneFrom.id
-        self.ownerId = cloneFrom.ownerId
-        self.type = cloneFrom.type
-        self.timestamp = cloneFrom.timestamp
-        self.sortKey = cloneFrom.sortKey
-        self.caption = cloneFrom.caption
-        self.attributes = cloneFrom.attributes
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+    
+    static func == (lhs: Item, rhs: Item) -> Bool {
+        return lhs.id == rhs.id
     }
     
     enum CodingKeys: String, CodingKey {
