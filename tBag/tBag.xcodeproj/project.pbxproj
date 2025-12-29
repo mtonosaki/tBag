@@ -38,6 +38,20 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		023789B22F03491C00A0EB48 /* Exceptions for "tBag" folder in "tBagTests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Secrets.xcconfig,
+			);
+			target = 0239EB5B2E65B90500760095 /* tBagTests */;
+		};
+		023789B32F03491C00A0EB48 /* Exceptions for "tBag" folder in "tBagUITests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Secrets.xcconfig,
+			);
+			target = 0239EB652E65B90500760095 /* tBagUITests */;
+		};
 		0239EB6E2E65B90500760095 /* Exceptions for "tBag" folder in "tBag" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -52,6 +66,8 @@
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				0239EB6E2E65B90500760095 /* Exceptions for "tBag" folder in "tBag" target */,
+				023789B22F03491C00A0EB48 /* Exceptions for "tBag" folder in "tBagTests" target */,
+				023789B32F03491C00A0EB48 /* Exceptions for "tBag" folder in "tBagUITests" target */,
 			);
 			path = tBag;
 			sourceTree = "<group>";
