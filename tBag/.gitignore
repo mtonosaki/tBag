@@ -1,1 +1,4 @@
 GoogleService-Info.plist
+Secrets.xcconfig
+tBag/Secrets.xcconfig
+*.xcconfig
