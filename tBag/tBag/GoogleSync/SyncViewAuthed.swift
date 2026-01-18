@@ -78,20 +78,18 @@ struct SyncViewAuthed: View {
     func backupToCloud() async throws {
         progressTotal = 100.0
         progressValue = 0.0
+        let stepProgresses = [
+            FilePackager.Steps.jsonStart: 2.0,
+            FilePackager.Steps.zipStart: 5.0,
+            FilePackager.Steps.success: 10.0
+        ]
         let pack = FilePackager(items: self.items)
         let compressedData = try pack.start { step, remarks in
             if let remarks = remarks {
                 status = remarks
             }
-            switch step {
-            case .jsonStart:
-                progressValue = 2.0
-            case .zipStart:
-                progressValue = 5.0
-            case .success:
-                progressValue = 10.0
-            case .error:
-                break
+            if let stepProgress = stepProgresses[step] {
+                progressValue = stepProgress
             }
         }
         

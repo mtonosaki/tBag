@@ -56,10 +56,15 @@ struct PasswordListSideView: View {
     }
     
     private func addItem() {
-        let newItem = ItemBuilder.createNewPasswordItem(ownerAccountId: appController.accountId)
-        withAnimation {
-            modelContext.insert(newItem)
-            selectedItemId = newItem.id
+        do {
+            let rsa = try appController.myRsa
+            let newItem = ItemBuilder.createNewPasswordItem(ownerAccountId: appController.accountId, myRsa: rsa)
+            withAnimation {
+                modelContext.insert(newItem)
+                selectedItemId = newItem.id
+            }
+        } catch {
+            print("Failed to add item: \(error)")
         }
     }
 }

@@ -9,6 +9,7 @@ import SwiftUI
 import Tono
 
 struct PasswordEditorView: View {
+    @EnvironmentObject var appController: AppController
     @Environment(\.modelContext) private var modelContext
     @Environment(\.displayToast) var toast
     
@@ -62,7 +63,7 @@ struct PasswordEditorView: View {
 #endif
                         .disableAutocorrection(true)
                 } copyText: {
-                    item.attributes["accountId"]
+                    item.get(key: "accountId", myRsa: try? appController.myRsa, defaultString: "" )
                 }
                 FormCard("Password", systemImage: "lock.circle") {
                     HStack {
@@ -77,10 +78,7 @@ struct PasswordEditorView: View {
                                 .font(.custom("Courier New", size: 23))
                                 .bold()
                         } else {
-                            SecureField("password", text: Binding(
-                                get: { item.attributes["password"] ?? "" },
-                                set: { item.attributes["password"] = $0 }
-                            ))
+                            SecureField("password", text: stringBinding("password"))
 #if os(iOS)
                                 .textInputAutocapitalization(.never)
                                 .keyboardType(.default)
@@ -100,7 +98,7 @@ struct PasswordEditorView: View {
 #endif
                     }
                 } copyText: {
-                    item.attributes["password"]
+                    item.get(key: "password", myRsa: try? appController.myRsa, defaultString: "" )
                 }
                 FormCard("email", systemImage: "mail") {
                     TextField("hoge @ example.com", text: stringBinding("email"))
@@ -111,7 +109,7 @@ struct PasswordEditorView: View {
                         .textContentType(.emailAddress)
                         .disableAutocorrection(true)
                 } copyText: {
-                    item.attributes["email"]
+                    item.get(key: "email", myRsa: try? appController.myRsa, defaultString: "" )
                 }
                 FormCard("Tags", systemImage: "tag") {
                     FlowLayout(spacing: 24) {
@@ -168,15 +166,35 @@ struct PasswordEditorView: View {
     
     func stringBinding(_ key: String) -> Binding<String> {
         return Binding(
-            get: { item.attributes[key] ?? "" },
-            set: { item.attributes[key] = $0 }
+            get: {
+                item.get(key: key, myRsa: try? appController.myRsa, defaultString: "")
+            },
+            set: {
+                try? item.set(key: key, planeText: $0, recipientPublicKey: try appController.myPublicKey)
+            }
         )
     }
 
     func tagBinding(_ key: String) -> Binding<Bool> {
         return Binding(
-            get: { item.containsTag(key) },
-            set: { $0 ? item.addTag(key) : item.removeTag(key) }
+            get: {
+                guard let myRsa = try? appController.myRsa else {
+                    return false
+                }
+                return item.containsTag(key, myRsa: myRsa)
+            },
+            set: {
+                do {
+                    let myRsa = try appController.myRsa
+                    if $0 {
+                        item.addTag(key, myRsa: myRsa)
+                    } else {
+                        item.removeTag(key, myRsa: myRsa)
+                    }
+                } catch {
+                    toast?("Cannot access the tag \(key)")
+                }
+            }
         )
     }
 }

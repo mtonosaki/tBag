@@ -6,8 +6,10 @@
 //
 
 import SwiftUI
+import Tono
 
 struct PasswordListRecord: View {
+    @EnvironmentObject var appController: AppController
     let item: Item
     
     init(_ item: Item) {
@@ -39,7 +41,7 @@ struct PasswordListRecord: View {
                     Text(item.caption)
                         .font(.headline)
                     HStack {
-                        Text(item.attributes["accountId"] ?? "")
+                        Text(item.get(key: "accountId", myRsa: try? appController.myRsa , defaultString: ""))
                             .opacity(0.5)
                             .font(.subheadline)
                     }

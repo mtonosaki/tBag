@@ -7,16 +7,21 @@
 
 import Foundation
 import SwiftData
+import Tono
 
 @Model
 final class Item: Encodable, Hashable {
+    typealias AttributeKey = String
+    typealias AttributeEncryptString = String
+    typealias PlaneString = String
+    
     var id: String = UUID().uuidString
     var ownerId: String = "no-id"
     var type: String = ItemType.planeText.rawValue
     var timestamp: Date = Date()
     var sortKey: String = ""
     var caption: String = ""
-    var attributes: [String: String] = [:]
+    private var attributes: [AttributeKey: SealedEnvelopeBase64String] = [:]
     
     func hash(into hasher: inout Hasher) {
         hasher.combine(id)
@@ -74,26 +79,49 @@ final class Item: Encodable, Hashable {
         return caption.isEmpty
     }
     
-    func containsTag(_ tag: String) -> Bool {
-        guard let tagsString = attributes["tags"] else { return false }
+    func set(key: AttributeKey, planeText: PlaneString, recipientPublicKey: Base64String) throws {
+        let sealedEnvelop = try DigitalEnvelope.seal(plainText: planeText, recipientPublicKeyBase64: recipientPublicKey)
+        attributes[key] = sealedEnvelop
+    }
+    
+    func get(key: AttributeKey, myRsa: Rsa) throws -> PlaneString {
+        let planeText = try DigitalEnvelope.open(sealedString: attributes[key]!, myRsa: myRsa)
+        return planeText
+    }
+    
+    func get(key: AttributeKey, myRsa: Rsa?, defaultString: PlaneString) -> PlaneString {
+        guard let myRsa = myRsa else {
+            return defaultString
+        }
+        guard let sealedString = attributes[key] else {
+            return defaultString
+        }
+        guard let planeText = try? DigitalEnvelope.open(sealedString: sealedString, myRsa: myRsa) else {
+            return defaultString
+        }
+        return planeText
+    }
+    
+    func containsTag(_ tag: String, myRsa: Rsa) -> Bool {
+        let tagsString = get(key: "tags", myRsa: myRsa, defaultString: "")
         let tags = tagsString.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces)}
         return tags.contains(tag)
     }
     
-    func addTag(_ tag: String) {
-        let tagsString = attributes["tags"] ?? ""
+    func addTag(_ tag: String, myRsa: Rsa) {
+        let tagsString = get(key: "tags", myRsa: myRsa, defaultString: "")
         let tags = tagsString.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces)}.filter { $0 != tag }
         let newTags = (tags + [tag]).sorted()
         let newTagsString = newTags.joined(separator: ",")
-        attributes["tags"] = newTagsString
+        try? set(key: "tags", planeText: newTagsString, recipientPublicKey: myRsa.getMyPublicKey())
     }
     
-    func removeTag(_ tag: String) {
-        let tagsString = attributes["tags"] ?? ""
+    func removeTag(_ tag: String, myRsa: Rsa) {
+        let tagsString = get(key: "tags", myRsa: myRsa, defaultString: "")
         let tags = tagsString.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces)}.filter { $0 != tag }
         let newTags = tags.sorted()
         let newTagsString = newTags.joined(separator: ",")
-        attributes["tags"] = newTagsString
+        try? set(key: "tags", planeText: newTagsString, recipientPublicKey: myRsa.getMyPublicKey())
     }
 }
 
@@ -104,10 +132,10 @@ public enum ItemType: String {
 }
 
 struct ItemBuilder {
-    static func createNewPasswordItem(ownerAccountId: String) -> Item {
+    static func createNewPasswordItem(ownerAccountId: String, myRsa: Rsa) -> Item {
         let newItem = Item(ownerId: ownerAccountId, type: .password)
-        newItem.addTag("#home")
-        newItem.addTag("#office")
+        newItem.addTag("#home", myRsa: myRsa)
+        newItem.addTag("#office", myRsa: myRsa)
         return newItem
     }
 }
