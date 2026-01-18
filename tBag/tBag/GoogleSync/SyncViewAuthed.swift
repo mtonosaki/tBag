@@ -11,6 +11,8 @@ import Tono
 
 struct SyncViewAuthed: View {
     @ObservedObject var authViewModel: AuthViewModel
+    @Environment(\.modelContext) private var context
+
     var displayName: String
     
     @EnvironmentObject var appController: AppController
@@ -55,7 +57,14 @@ struct SyncViewAuthed: View {
                 .disabled(progressTotal > 0.0)
                 
                 Button {
-                    
+                    Task {
+                        do {
+                            try await restoreFromCloud()
+                        } catch {
+                            toast?("Upload error \(error)")
+                        }
+                    }
+
                 } label: {
                     VStack(spacing: 0) {
                         Label("RESTORE", systemImage: "icloud.and.arrow.down")
@@ -79,12 +88,12 @@ struct SyncViewAuthed: View {
         progressTotal = 100.0
         progressValue = 0.0
         let stepProgresses = [
-            FilePackager.Steps.jsonStart: 2.0,
-            FilePackager.Steps.zipStart: 5.0,
-            FilePackager.Steps.success: 10.0
+            FilePackager.PackSteps.jsonStart: 2.0,
+            FilePackager.PackSteps.zipStart: 5.0,
+            FilePackager.PackSteps.success: 10.0
         ]
-        let pack = FilePackager(items: self.items)
-        let compressedData = try pack.start { step, remarks in
+        let filePackager = FilePackager(items: self.items)
+        let compressedData = try filePackager.pack { step, remarks in
             if let remarks = remarks {
                 status = remarks
             }
@@ -95,9 +104,9 @@ struct SyncViewAuthed: View {
         
         status = "Uploading to Google Drive..."
         progressValue = 75.0
-        let uploader = GoogleDriveRepository(user: authViewModel.user!)
-        try await uploader.save(
-            fileName: "\(appController.accountId).bin",
+        let cloudDriveRepository = GoogleDriveRepository(user: authViewModel.user!)
+        try await cloudDriveRepository.save(
+            fileName: makeFileName(),
             fileContent: compressedData,
             mimeType: "application/octet-stream"
         )
@@ -105,6 +114,49 @@ struct SyncViewAuthed: View {
         status = "Saved as \(appController.accountId).bin"
         progressValue = 100.0
         viewConfig.cancelButtonTitle = "← Back"
+    }
+    
+    func restoreFromCloud() async throws {
+        progressTotal = 100.0
+        progressValue = 0.0
+        let stepProgresses = [
+            GoogleDriveRepository.Steps.foundFolder: 7.0,
+            GoogleDriveRepository.Steps.foundDriveFileList: 12.0,
+            GoogleDriveRepository.Steps.downloaded: 75.0,
+            FilePackager.PackSteps.success: 98.0
+        ] as [AnyHashable: Double]
+
+        status = "Downloading from Google Drive..."
+        let cloudDriveRepository = GoogleDriveRepository(user: authViewModel.user!)
+        let data = try await cloudDriveRepository.load(fileName: makeFileName()) { step, remarks in
+            if let remarks = remarks {
+                status = remarks
+            }
+            if let stepProgress = stepProgresses[step] {
+                progressValue = stepProgress
+            }
+        }
+        
+        let filePackager = FilePackager(items: self.items)
+        let loadedItems = try filePackager.unpack(data: data) { step, remarks in
+            if let remarks = remarks {
+                status = remarks
+            }
+            if let stepProgress = stepProgresses[step] {
+                progressValue = stepProgress
+            }
+        }
+        
+        try? context.delete(model: Item.self)
+        loadedItems.forEach {
+            context.insert($0)
+        }
+        progressValue = 100.0
+        status = "Restored \(loadedItems.count) items from Google Drive successfully."
+    }
+    
+    func makeFileName() -> String {
+        return "\(appController.accountId).bin"
     }
 }
 

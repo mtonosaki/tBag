@@ -10,7 +10,7 @@ import SwiftData
 import Tono
 
 @Model
-final class Item: Encodable, Hashable {
+final class Item: Codable, Hashable {
     typealias AttributeKey = String
     typealias AttributeEncryptString = String
     typealias PlaneString = String
@@ -23,8 +23,9 @@ final class Item: Encodable, Hashable {
     var caption: String = ""
     
     private var attributes: [AttributeKey: SealedEnvelopeBase64String] = [:]
-    private var attributePlaneStringCache: [AttributeKey: String] = [:]
-    private var attributeSealedBase64Cache: [AttributeKey: SealedEnvelopeBase64String] = [:]
+    
+    @Transient private var attributePlaneStringCache: [AttributeKey: String] = [:]
+    @Transient private var attributeSealedBase64Cache: [AttributeKey: SealedEnvelopeBase64String] = [:]
     
     func hash(into hasher: inout Hasher) {
         hasher.combine(id)
@@ -43,6 +44,22 @@ final class Item: Encodable, Hashable {
         case caption
         case attributes
     }
+    
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        self.id = try container.decode(String.self, forKey: .id)
+        self.ownerId = try container.decode(String.self, forKey: .ownerId)
+        self.type = try container.decode(String.self, forKey: .type)
+        self.timestamp = try container.decode(Date.self, forKey: .timestamp)
+        self.sortValue = try container.decode(String.self, forKey: .sortValue)
+        self.caption = try container.decode(String.self, forKey: .caption)
+        self.attributes = try container.decode([AttributeKey: SealedEnvelopeBase64String].self, forKey: .attributes)
+        
+        self.attributePlaneStringCache = [:]
+        self.attributeSealedBase64Cache = [:]
+    }
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(id, forKey: .id)
@@ -52,8 +69,9 @@ final class Item: Encodable, Hashable {
         try container.encode(sortValue, forKey: .sortValue)
         try container.encode(caption, forKey: .caption)
         try container.encode(attributes, forKey: .attributes)
-        attributePlaneStringCache.removeAll()
-        attributeSealedBase64Cache.removeAll()
+
+        self.attributePlaneStringCache = [:]
+        self.attributeSealedBase64Cache = [:]
     }
 
     init(ownerId: String, type: ItemType, timestamp: Date, sortValue: String, caption: String, attrubutes: [String: String]) {

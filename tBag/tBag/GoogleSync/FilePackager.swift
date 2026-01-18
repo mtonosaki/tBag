@@ -11,18 +11,42 @@ import Tono
 struct FilePackager {
     let items: [Item]
     
-    enum Steps {
+    enum PackSteps {
         case jsonStart
         case zipStart
+        case unzipStart
         case success
         case error
     }
     enum Exception: Error {
         case parseJsonData
         case compressionFailed
+        case decompressionFailed
+    }
+
+    func unpack(data: Data, callBack: (_ step: PackSteps, _ remarks: String?) -> Void) throws -> [Item] {
+        callBack(.unzipStart, nil)
+        guard let jsonData = try? (data as NSData).decompressed(using: .zlib) as Data else {
+            callBack(.error, "Decompression failed")
+            throw Exception.decompressionFailed
+        }
+        
+        callBack(.jsonStart, nil)
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        
+        do {
+            let loadedItems = try decoder.decode([Item].self, from: jsonData)
+            callBack(.success, "\(loadedItems.count) items loaded")
+            return loadedItems
+            
+        } catch {
+            callBack(.error, "Parsing json failed: \(error.localizedDescription)")
+            throw Exception.parseJsonData
+        }
     }
     
-    func start(callBack: (_ step: Steps, _ remarks: String?) -> Void) throws -> Data {
+    func pack(callBack: (_ step: PackSteps, _ remarks: String?) -> Void) throws -> Data {
         // JSON DATA PACKING
         callBack(.jsonStart, nil)
         let encoder = JSONEncoder()
@@ -58,6 +82,8 @@ extension FilePackager.Exception: LocalizedError {
             return "Error when parsing json data"
         case .compressionFailed:
             return "Error when compressing data"
+        case .decompressionFailed:
+            return "Error when decompressing data"
         }
     }
 }
