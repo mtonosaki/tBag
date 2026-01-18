@@ -5,7 +5,6 @@
 //  Created by Manabu Tonosaki on 2025-12-30.
 //
 
-
 import SwiftUI
 
 protocol StorageRepository {

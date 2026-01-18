@@ -35,7 +35,7 @@ struct ContentView: View {
                 isAccountRequired = true
             }
         }
-        .sheet(isPresented: $isAccountRequired){
+        .sheet(isPresented: $isAccountRequired) {
             AccountView()
                 .presentationDetents([.height(240)])
         }

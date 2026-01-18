@@ -5,7 +5,6 @@
 //  Created by Manabu Tonosaki on 2025/07/21.
 //
 
-
 import SwiftUI
 
 struct FormCard<Content: View>: View {
@@ -16,7 +15,7 @@ struct FormCard<Content: View>: View {
     let content: Content
     var copyText: () -> String? = { nil }
     
-    init(_ text: String, systemImage: String, copyText: @escaping () -> String?, @ViewBuilder content: () -> Content) {
+    init(_ text: String, systemImage: String, @ViewBuilder content: () -> Content, copyText: @escaping () -> String?) {
         self.text = text
         self.systemImage = systemImage
         self.content = content()
@@ -31,7 +30,7 @@ struct FormCard<Content: View>: View {
     
     var body: some View {
         HStack {
-            VStack(alignment: .leading){
+            VStack(alignment: .leading) {
                 HStack {
                     Label(text, systemImage: systemImage)
                         .font(.caption)
@@ -71,7 +70,10 @@ struct FormCard<Content: View>: View {
 
 #Preview {
     @Previewable @State var text: String = "test text"
-    FormCard("HOGE", systemImage: "info.circle", copyText: { return text }){
+    FormCard("HOGE", systemImage: "info.circle") {
         TextField("input here", text: $text)
-    }.padding()
+    } copyText: {
+        return text
+    }
+        .padding()
 }

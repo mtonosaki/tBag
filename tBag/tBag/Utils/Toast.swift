@@ -10,7 +10,7 @@ import SwiftUI
 typealias DisplayToastAction = @MainActor (String) -> Void
 
 struct DisplayToastkey: EnvironmentKey {
-    static var defaultValue: DisplayToastAction? = nil
+    static var defaultValue: DisplayToastAction?
 }
 
 extension EnvironmentValues {
@@ -158,7 +158,6 @@ struct ToastDesign: View {
         .padding(.horizontal, 4)
     }
 }
-
 
 #Preview {
     ToastDesign(toastMessage: "Hello SwiftUI Toast !")

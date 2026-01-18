@@ -7,14 +7,15 @@
 
 import SwiftUI
 
-struct AboutVew: View {
+struct AboutView: View {
     var body: some View {
         VStack(spacing: 0) {
             Image("Banner")
                 .resizable()
                 .scaledToFit()
-
-            Text("Version \(Info.version)   Build \(Info.build)")
+            
+            let versionBuildText = "Version " + String(describing: Info.version) + "   Build " + String(describing: Info.build)
+            Text(verbatim: versionBuildText)
                 .font(.caption)
                 .padding()
         }
@@ -22,7 +23,7 @@ struct AboutVew: View {
 }
 
 #Preview {
-    AboutVew()
+    AboutView()
         #if os(macOS)
             .frame(width: 640, height: 320)
         #endif

@@ -12,11 +12,11 @@ import SwiftData
 final class Item: Encodable, Hashable {
     var id: String = UUID().uuidString
     var ownerId: String = "no-id"
-    var type: String = ItemType.PlaneText.rawValue
+    var type: String = ItemType.planeText.rawValue
     var timestamp: Date = Date()
     var sortKey: String = ""
     var caption: String = ""
-    var attributes: Dictionary<String, String> = [:]
+    var attributes: [String: String] = [:]
     
     func hash(into hasher: inout Hasher) {
         hasher.combine(id)
@@ -46,8 +46,7 @@ final class Item: Encodable, Hashable {
         try container.encode(attributes, forKey: .attributes)
     }
 
-    
-    init(ownerId: String, type: ItemType, timestamp: Date, sortKey: String, caption: String, attrubutes: Dictionary<String,String>){
+    init(ownerId: String, type: ItemType, timestamp: Date, sortKey: String, caption: String, attrubutes: [String: String]) {
         self.ownerId = ownerId
         self.type = type.rawValue
         self.timestamp = timestamp
@@ -56,16 +55,16 @@ final class Item: Encodable, Hashable {
         self.attributes = attrubutes
     }
     
-    init(ownerId: String, type: ItemType){
+    init(ownerId: String, type: ItemType) {
         self.ownerId = ownerId
         self.type = type.rawValue
         self.timestamp = Date()
     }
     
-    init(ownerId: String){
+    init(ownerId: String) {
         self.id = ownerId
         self.ownerId = ownerId
-        self.type = ItemType.System.rawValue
+        self.type = ItemType.system.rawValue
         self.timestamp = Date()
         self.sortKey = "[user parameter]"
         self.caption = "[user parameter]"
@@ -77,13 +76,13 @@ final class Item: Encodable, Hashable {
     
     func containsTag(_ tag: String) -> Bool {
         guard let tagsString = attributes["tags"] else { return false }
-        let tags = tagsString.split(separator: ",").map{ $0.trimmingCharacters(in: .whitespaces)}
+        let tags = tagsString.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces)}
         return tags.contains(tag)
     }
     
     func addTag(_ tag: String) {
         let tagsString = attributes["tags"] ?? ""
-        let tags = tagsString.split(separator: ",").map{ $0.trimmingCharacters(in: .whitespaces)}.filter{ $0 != tag }
+        let tags = tagsString.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces)}.filter { $0 != tag }
         let newTags = (tags + [tag]).sorted()
         let newTagsString = newTags.joined(separator: ",")
         attributes["tags"] = newTagsString
@@ -91,7 +90,7 @@ final class Item: Encodable, Hashable {
     
     func removeTag(_ tag: String) {
         let tagsString = attributes["tags"] ?? ""
-        let tags = tagsString.split(separator: ",").map{ $0.trimmingCharacters(in: .whitespaces)}.filter{ $0 != tag }
+        let tags = tagsString.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces)}.filter { $0 != tag }
         let newTags = tags.sorted()
         let newTagsString = newTags.joined(separator: ",")
         attributes["tags"] = newTagsString
@@ -99,14 +98,14 @@ final class Item: Encodable, Hashable {
 }
 
 public enum ItemType: String {
-    case PlaneText = "text"
-    case Password = "pw"
-    case System = "sys"
+    case planeText = "text"
+    case password = "pw"
+    case system = "sys"
 }
 
 struct ItemBuilder {
     static func createNewPasswordItem(ownerAccountId: String) -> Item {
-        let newItem = Item(ownerId: ownerAccountId, type: .Password)
+        let newItem = Item(ownerId: ownerAccountId, type: .password)
         newItem.addTag("#home")
         newItem.addTag("#office")
         return newItem

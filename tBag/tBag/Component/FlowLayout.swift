@@ -41,16 +41,16 @@ struct FlowLayout: Layout {
         }
     }
     
+    struct Row {
+        var range: Range<Int>
+        var xOffsets: [Double]
+        var frame: CGRect
+    }
+
     struct FlowResult {
         var bounds = CGSize.zero
         var rows = [Row]()
-        
-        struct Row {
-            var range: Range<Int>
-            var xOffsets: [Double]
-            var frame: CGRect
-        }
-        
+                
         init(in maxPossibleWidth: Double, subviews: Subviews, alignment: Alignment, spacing: CGFloat?) {
             var itemsInRow = 0
             var remainingWidth = maxPossibleWidth.isFinite ? maxPossibleWidth : .greatestFiniteMagnitude

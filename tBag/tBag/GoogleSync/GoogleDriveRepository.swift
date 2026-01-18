@@ -20,7 +20,7 @@ class GoogleDriveRepository: StorageRepository {
         fileName: String,
         fileContent: Data,
         mimeType: String,
-    ) async throws -> Void {
+    ) async throws {
         let url = URL(string: "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart")!
         
         var request = URLRequest(url: url)
@@ -37,20 +37,20 @@ class GoogleDriveRepository: StorageRepository {
         guard let metadataData = try? JSONSerialization.data(withJSONObject: metadata, options: .prettyPrinted) else {
             throw DriveError.jsonSerializationFailed
         }
-        body.append("--\(boundary)\r\n".data(using: .utf8)!)
-        body.append("Content-Type: application/json; charset=UTF-8\r\n\r\n".data(using: .utf8)!)
+        body.append(Data("--\(boundary)\r\n".utf8))
+        body.append(Data("Content-Type: application/json; charset=UTF-8\r\n\r\n".utf8))
         body.append(metadataData)
-        body.append("\r\n".data(using: .utf8)!)
+        body.append(Data("\r\n".utf8))
         
         // Part No.2 -- content body
-        body.append("--\(boundary)\r\n".data(using: .utf8)!)
-        body.append("Content-Type: \(mimeType)\r\n\r\n".data(using: .utf8)!)
+        body.append(Data("--\(boundary)\r\n".utf8))
+        body.append(Data("Content-Type: \(mimeType)\r\n\r\n".utf8))
         body.append(fileContent)
-        body.append("\r\n".data(using: .utf8)!)
+        body.append(Data("\r\n".utf8))
         
         // Part No.3 -- Terminater
-        body.append("--\(boundary)--\r\n".data(using: .utf8)!)
-        
+        body.append(Data("--\(boundary)--\r\n".utf8))
+
         request.httpBody = body
         let (_, response) = try await URLSession.shared.data(for: request)
         
@@ -140,4 +140,3 @@ struct DriveFile: Codable {
 struct FileListResponse: Codable {
     let files: [DriveFile]
 }
-

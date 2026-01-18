@@ -11,19 +11,19 @@ import Tono
 struct AccountView: View {
     @AppStorage("isResetLocalDataAtNextLaunch") private var isResetLocalDataAtNextLaunch = false
     @AppStorage("latestAccountId") private var latestAccountId = ""
-    
+
     @EnvironmentObject var appController: AppController
     @Environment(\.dismiss) var dismiss
     @Environment(\.displayToast) var toast
     @Environment(\.modelContext) private var context
-        
+
     @State private var accountIdEdit: String = ""
     @State private var isGenerated: Bool = false
     @State private var isAutoRestoring = true
     
     var body: some View {
-        ZStack{
-            VStack{
+        ZStack {
+            VStack {
                 Form {
                     Section(header: Text("Account ID")) {
                         TextField("Account ID", text: $accountIdEdit, prompt: Text("uuid"), axis: .vertical)

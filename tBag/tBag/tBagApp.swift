@@ -13,7 +13,7 @@ import GoogleSignIn
 struct tBagApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
-            Item.self,
+            Item.self
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
@@ -63,7 +63,7 @@ struct tBagApp: App {
         "About tBag",
         id: "about",
         content: {
-            AboutVew()
+            AboutView()
                 .toolbar(removing: .title)
                 .toolbarBackground(.hidden, for: .windowToolbar)
                 .containerBackground(.thickMaterial, for: .window)

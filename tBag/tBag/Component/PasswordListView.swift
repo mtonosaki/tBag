@@ -37,7 +37,7 @@ struct PasswordListView: View {
             
         } detail: {
             if let selectedId = selectedItemId {
-                if let selectedItem = items.first(where: { $0.id == selectedId }){
+                if let selectedItem = items.first(where: { $0.id == selectedId }) {
                     PasswordEditorView(selectedItem)
                 } else {
                     Text("Select an item")
@@ -59,7 +59,7 @@ struct ScrollLetter: View {
         Text(firstLetter)
             .font(.custom("Courier New", size: 12))
             .padding(.horizontal, 6)
-            .padding(.vertical,4)
+            .padding(.vertical, 4)
             .contentShape(Rectangle())
             .foregroundColor(isHover ?  Color.accentText :  Color.accentColor)
             .background(isHover ? Color.accentColor :  Color.clear)

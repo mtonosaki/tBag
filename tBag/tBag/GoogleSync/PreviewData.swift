@@ -23,8 +23,7 @@ func makeSampleAppController() -> AppController {
         modelContainer.mainContext.insert(Item.makePasswordDummy("fuga"))
         modelContainer.mainContext.insert(Item.makePasswordDummy("piyo"))
         return modelContainer
-    }
-    catch {
+    } catch {
         print("ERROR-PREVIEW")
     }
     return nil
@@ -35,7 +34,7 @@ extension Item {
         let item = Item(ownerId: "hoge-owner")
         item.caption = caption
         item.sortKey = caption
-        item.type = ItemType.Password.rawValue
+        item.type = ItemType.password.rawValue
         return item
     }
 }

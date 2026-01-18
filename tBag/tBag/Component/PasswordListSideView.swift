@@ -18,8 +18,8 @@ struct PasswordListSideView: View {
     var body: some View {
         ScrollViewReader { proxy in
             List(selection: $selectedItemId) {
-                ForEach(groupedItems.keys.sorted(), id: \.self){ firstLetter in
-                    Section(header: Text(firstLetter)){
+                ForEach(groupedItems.keys.sorted(), id: \.self) { firstLetter in
+                    Section(header: Text(firstLetter)) {
                         ForEach((groupedItems[firstLetter]?.sorted(by: {$0.caption < $1.caption}) ?? [])) { item in
                             PasswordListRecord(item).tag(item.id)
                         }
@@ -43,8 +43,8 @@ struct PasswordListSideView: View {
                 }
             }
             .overlay(alignment: .trailing) {
-                VStack(spacing: 0){
-                    ForEach(sectionHeaders, id: \.self){ firstLetter in
+                VStack(spacing: 0) {
+                    ForEach(sectionHeaders, id: \.self) { firstLetter in
                         ScrollLetter(firstLetter: firstLetter, proxy: proxy)
                     }
                 }

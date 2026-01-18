@@ -1,7 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "1024.png",
+      "filename" : "1024 1.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
@@ -13,7 +13,7 @@
           "value" : "dark"
         }
       ],
-      "filename" : "1024D 1.png",
+      "filename" : "1024D.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
@@ -85,7 +85,7 @@
       "size" : "512x512"
     },
     {
-      "filename" : "1024S.png",
+      "filename" : "1024.png",
       "idiom" : "mac",
       "scale" : "2x",
       "size" : "512x512"

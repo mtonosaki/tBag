@@ -56,5 +56,3 @@ class ViewConfig: ObservableObject {
     .modelContainer(makeSampleModelContainer()!)
     .environmentObject(makeSampleAppController())
 }
-
-

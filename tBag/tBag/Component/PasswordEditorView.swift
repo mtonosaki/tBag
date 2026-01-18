@@ -35,7 +35,7 @@ struct PasswordEditorView: View {
                 .buttonStyle(.plain)
 #endif
                 
-                FormCard("Rubi", systemImage: "character.textbox.ja"){
+                FormCard("Rubi", systemImage: "character.textbox.ja") {
                     TextField("あいうえお", text: $item.sortKey)
 #if os(iOS)
                         .textInputAutocapitalization(.never)
@@ -53,19 +53,21 @@ struct PasswordEditorView: View {
                         .textContentType(.name)
                         .disableAutocorrection(true)
                 }
-                FormCard("AccountID", systemImage: "person.circle", copyText: { item.attributes["accountId"] }){
-                    TextField("hoge123", text: StringBinding("accountId"))
+                FormCard("AccountID", systemImage: "person.circle") {
+                    TextField("hoge123", text: stringBinding("accountId"))
 #if os(iOS)
                         .textInputAutocapitalization(.never)
                         .keyboardType(.default)
                         .textContentType(.username)
 #endif
                         .disableAutocorrection(true)
+                } copyText: {
+                    item.attributes["accountId"]
                 }
-                FormCard("Password", systemImage: "lock.circle", copyText: { item.attributes["password"] }){
+                FormCard("Password", systemImage: "lock.circle") {
                     HStack {
                         if isOpenPassword {
-                            TextField("password", text: StringBinding("password"))
+                            TextField("password", text: stringBinding("password"))
 #if os(iOS)
                                 .textInputAutocapitalization(.never)
                                 .keyboardType(.default)
@@ -87,7 +89,7 @@ struct PasswordEditorView: View {
                                 .textContentType(.password)
                                 .disableAutocorrection(true)
                         }
-                        Button{
+                        Button {
                             isOpenPassword = !isOpenPassword
                         } label: {
                             Label("", systemImage: "eyes")
@@ -97,31 +99,35 @@ struct PasswordEditorView: View {
                         .buttonStyle(.plain)
 #endif
                     }
+                } copyText: {
+                    item.attributes["password"]
                 }
-                FormCard("email", systemImage: "mail", copyText: { item.attributes["email"] }){
-                    TextField("hoge @ example.com", text: StringBinding("email"))
+                FormCard("email", systemImage: "mail") {
+                    TextField("hoge @ example.com", text: stringBinding("email"))
 #if os(iOS)
                         .textInputAutocapitalization(.never)
                         .keyboardType(.default)
 #endif
                         .textContentType(.emailAddress)
                         .disableAutocorrection(true)
+                } copyText: {
+                    item.attributes["email"]
                 }
-                FormCard("Tags", systemImage: "tag"){
+                FormCard("Tags", systemImage: "tag") {
                     FlowLayout(spacing: 24) {
-                        Toggle(isOn: TagBinding("#home")){
+                        Toggle(isOn: tagBinding("#home")) {
                             Image(systemName: "house")
                         }
-                        Toggle(isOn: TagBinding("#office")){
+                        Toggle(isOn: tagBinding("#office")) {
                             Image(systemName: "building.2")
                         }
-                        Toggle(isOn: TagBinding("#deleted")){
+                        Toggle(isOn: tagBinding("#deleted")) {
                             Image(systemName: "trash")
                         }
                     }.frame(maxWidth: .infinity, alignment: .leading)
                 }
-                FormCard("Remarks", systemImage: "doc.plaintext"){
-                    TextEditor(text: StringBinding("remarks"))
+                FormCard("Remarks", systemImage: "doc.plaintext") {
+                    TextEditor(text: stringBinding("remarks"))
 #if os(iOS)
                         .textInputAutocapitalization(.never)
                         .keyboardType(.default)
@@ -139,7 +145,7 @@ struct PasswordEditorView: View {
             .padding(.leading)
             .padding(.trailing)
             
-            Button(item.id){
+            Button(item.id) {
 #if os(iOS)
                 UIPasteboard.general.string = item.id
 #elseif os(macOS)
@@ -160,14 +166,14 @@ struct PasswordEditorView: View {
         .background(Color.bgColorPassword)
     }
     
-    func StringBinding(_ key: String) -> Binding<String> {
+    func stringBinding(_ key: String) -> Binding<String> {
         return Binding(
             get: { item.attributes[key] ?? "" },
             set: { item.attributes[key] = $0 }
         )
     }
 
-    func TagBinding(_ key: String) -> Binding<Bool> {
+    func tagBinding(_ key: String) -> Binding<Bool> {
         return Binding(
             get: { item.containsTag(key) },
             set: { $0 ? item.addTag(key) : item.removeTag(key) }
@@ -175,12 +181,10 @@ struct PasswordEditorView: View {
     }
 }
 
-
-
 #Preview {
     PasswordEditorView(Item(
         ownerId: UUID().uuidString,
-        type: .Password,
+        type: .password,
         timestamp: Date(),
         sortKey: "ほげたろう",
         caption: "ホゲ太郎",

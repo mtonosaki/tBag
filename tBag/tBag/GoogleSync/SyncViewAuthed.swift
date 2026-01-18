@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import Tono
 
 struct SyncViewAuthed: View {
     @ObservedObject var authViewModel: AuthViewModel
@@ -14,6 +15,7 @@ struct SyncViewAuthed: View {
     
     @EnvironmentObject var appController: AppController
     @EnvironmentObject var viewConfig: ViewConfig
+    @Environment(\.displayToast) var toast
     @State var status: String = ""
     @State var progressTotal: Double = 0.0
     @State var progressValue: Double = 0.0
@@ -35,9 +37,15 @@ struct SyncViewAuthed: View {
             
             HStack(spacing: 24) {
                 Button {
-                    backupToCloud()
+                    Task {
+                        do {
+                            try await backupToCloud()
+                        } catch {
+                            toast?("Upload error \(error)")
+                        }
+                    }
                 } label: {
-                    VStack(spacing: 0){
+                    VStack(spacing: 0) {
                         Label("BACKUP", systemImage: "icloud.and.arrow.up")
                         Text("to Google Drive")
                     }.padding()
@@ -49,7 +57,7 @@ struct SyncViewAuthed: View {
                 Button {
                     
                 } label: {
-                    VStack(spacing: 0){
+                    VStack(spacing: 0) {
                         Label("RESTORE", systemImage: "icloud.and.arrow.down")
                         Text("local data will be removed")
                     }.padding()
@@ -67,56 +75,40 @@ struct SyncViewAuthed: View {
         }
     }
     
-    
-    func backupToCloud(){
-        Task {
-            do {
-                progressTotal = 100.0
-                progressValue = 0.0
-                var originalSize = 0.0
-                var fileInfo: String = ""
-                let pack = FilePackager(items: self.items)
-                let compressedData = try pack.start(){ step, remarks in
-                    switch step {
-                    case .jsonEnd:
-                        progressValue = 5.0
-                        originalSize = Double(remarks!)!
-                        status = "Json data: \(remarks!) bytes"
-                        break
-                    case .zipCompressEnd:
-                        let compressedSize = Double(remarks!)!
-                        fileInfo = "Zip data: \(remarks!) bytes as \(String(format: "%.0f", compressedSize / originalSize * 100))%"
-                        status = fileInfo
-                        progressValue = 10.0
-                        break
-                    default:
-                        break
-                    }
-                }
-                
-                status = "\(fileInfo) | Uploading to Google Drive..."
-                progressValue = 75.0
-                let uploader = GoogleDriveRepository(user: authViewModel.user!)
-                try await uploader.save(
-                    fileName: "\(appController.accountId).bin",
-                    fileContent: compressedData,
-                    mimeType: "application/octet-stream"
-                )
-                
-                status = "\(fileInfo) | Saved as \(appController.accountId).bin"
-                progressValue = 100.0
-                viewConfig.cancelButtonTitle = "← Back"
+    func backupToCloud() async throws {
+        progressTotal = 100.0
+        progressValue = 0.0
+        let pack = FilePackager(items: self.items)
+        let compressedData = try pack.start { step, remarks in
+            if let remarks = remarks {
+                status = remarks
             }
-            catch {
-                self.status = "ERROR 222：\(error.localizedDescription)"                
-                return
+            switch step {
+            case .jsonStart:
+                progressValue = 2.0
+            case .zipStart:
+                progressValue = 5.0
+            case .success:
+                progressValue = 10.0
+            case .error:
+                break
             }
         }
+        
+        status = "Uploading to Google Drive..."
+        progressValue = 75.0
+        let uploader = GoogleDriveRepository(user: authViewModel.user!)
+        try await uploader.save(
+            fileName: "\(appController.accountId).bin",
+            fileContent: compressedData,
+            mimeType: "application/octet-stream"
+        )
+        
+        status = "Saved as \(appController.accountId).bin"
+        progressValue = 100.0
+        viewConfig.cancelButtonTitle = "← Back"
     }
 }
-
-
-
 
 #Preview {
     SyncViewAuthed(

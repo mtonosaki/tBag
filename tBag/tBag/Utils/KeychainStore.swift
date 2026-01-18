@@ -26,19 +26,19 @@ class KeychainStore {
             kSecValueData: data,
             kSecClass: kSecClassGenericPassword,
             kSecAttrService: key,
-            kSecAttrAccount: self.accountName,
+            kSecAttrAccount: self.accountName
         ] as CFDictionary
         
         let matchingStatus = SecItemCopyMatching(query, nil)
         switch matchingStatus {
-            case errSecItemNotFound:
-                let status = SecItemAdd(query, nil)
-                return status == noErr
-            case errSecSuccess:
-                SecItemUpdate(query, [kSecValueData as String: data] as CFDictionary)
-                return true
-            default:
-                return false
+        case errSecItemNotFound:
+            let status = SecItemAdd(query, nil)
+            return status == noErr
+        case errSecSuccess:
+            SecItemUpdate(query, [kSecValueData as String: data] as CFDictionary)
+            return true
+        default:
+            return false
         }
     }
     
@@ -64,7 +64,7 @@ class KeychainStore {
         let query = [
             kSecAttrService: key,
             kSecAttrAccount: self.accountName,
-            kSecClass: kSecClassGenericPassword,
+            kSecClass: kSecClassGenericPassword
         ] as CFDictionary
         
         let status = SecItemDelete(query)

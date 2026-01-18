@@ -1,0 +1,9 @@
+disabled_rules:
+  - trailing_whitespace
+  - line_length
+type_name:
+  excluded:
+    - tBagApp
+
+included:
+  - tBag

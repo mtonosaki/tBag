@@ -84,4 +84,3 @@ class AuthViewModel: ObservableObject {
         self.errorMessage = nil
     }
 }
-

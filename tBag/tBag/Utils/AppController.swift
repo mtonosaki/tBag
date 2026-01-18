@@ -5,7 +5,6 @@
 //  Created by Manabu Tonosaki on 2025/07/20.
 //
 
-
 import SwiftUI
 import SwiftData
 
@@ -16,7 +15,9 @@ class AppController: ObservableObject {
     static let sample = AppController(accountId: "ffffffff-1111-2222-3333-444455556666")
     static let sampleNoAccount = AppController()
     
-    init(){}
+    init() {
+        
+    }
     
     init(accountId: String) {
         self.accountId = accountId
