@@ -13,6 +13,10 @@ class AppController: ObservableObject {
     @Published var accountId: String = ""
     @Published var path = NavigationPath()
     
+    private var cacheRsa: Rsa?
+    private var cacheAccountId: String?
+    private var cachePublicKey: Base64String?
+    
     enum Error: Swift.Error {
         case blankAccountID
     }
@@ -33,13 +37,26 @@ class AppController: ObservableObject {
             if accountId.isEmpty {
                 throw Error.blankAccountID
             }
-            return Rsa(nameMain: "com.tomarika.tBag", nameSub: accountId)
+            if let cacheRsa = cacheRsa {
+                if cacheAccountId == accountId {
+                    return cacheRsa
+                }
+            }
+            cacheRsa = Rsa(nameMain: "com.tomarika.tBag", nameSub: accountId)
+            cacheAccountId = accountId
+            return cacheRsa!
         }
     }
     
     var myPublicKey: Base64String {
         get throws {
-            return try myRsa.getMyPublicKey()
+            if let cachePublicKey = cachePublicKey {
+                if cacheAccountId == accountId {
+                    return cachePublicKey
+                }
+            }
+            cachePublicKey = try myRsa.getMyPublicKey()
+            return cachePublicKey!
         }
     }
 }
