@@ -19,9 +19,12 @@ final class Item: Encodable, Hashable {
     var ownerId: String = "no-id"
     var type: String = ItemType.planeText.rawValue
     var timestamp: Date = Date()
-    var sortKey: String = ""
+    var sortValue: String = ""
     var caption: String = ""
+    
     private var attributes: [AttributeKey: SealedEnvelopeBase64String] = [:]
+    private var attributePlaneStringCache: [AttributeKey: String] = [:]
+    private var attributeSealedBase64Cache: [AttributeKey: SealedEnvelopeBase64String] = [:]
     
     func hash(into hasher: inout Hasher) {
         hasher.combine(id)
@@ -46,24 +49,31 @@ final class Item: Encodable, Hashable {
         try container.encode(ownerId, forKey: .ownerId)
         try container.encode(type, forKey: .type)
         try container.encode(timestamp, forKey: .timestamp)
-        try container.encode(sortKey, forKey: .sortKey)
+        try container.encode(sortValue, forKey: .sortKey)
         try container.encode(caption, forKey: .caption)
         try container.encode(attributes, forKey: .attributes)
+        attributePlaneStringCache.removeAll()
+        attributeSealedBase64Cache.removeAll()
+        print("///// Item encoded \(id)")
     }
 
     init(ownerId: String, type: ItemType, timestamp: Date, sortKey: String, caption: String, attrubutes: [String: String]) {
         self.ownerId = ownerId
         self.type = type.rawValue
         self.timestamp = timestamp
-        self.sortKey = sortKey
+        self.sortValue = sortKey
         self.caption = caption
         self.attributes = attrubutes
+        attributePlaneStringCache.removeAll()
+        attributeSealedBase64Cache.removeAll()
     }
     
     init(ownerId: String, type: ItemType) {
         self.ownerId = ownerId
         self.type = type.rawValue
         self.timestamp = Date()
+        attributePlaneStringCache.removeAll()
+        attributeSealedBase64Cache.removeAll()
     }
     
     init(ownerId: String) {
@@ -71,8 +81,10 @@ final class Item: Encodable, Hashable {
         self.ownerId = ownerId
         self.type = ItemType.system.rawValue
         self.timestamp = Date()
-        self.sortKey = "[user parameter]"
+        self.sortValue = "[user parameter]"
         self.caption = "[user parameter]"
+        attributePlaneStringCache.removeAll()
+        attributeSealedBase64Cache.removeAll()
     }
     
     func isEmpty() -> Bool {
@@ -82,14 +94,26 @@ final class Item: Encodable, Hashable {
     func set(key: AttributeKey, planeText: PlaneString, recipientPublicKey: Base64String) throws {
         let sealedEnvelop = try DigitalEnvelope.seal(plainText: planeText, recipientPublicKeyBase64: recipientPublicKey)
         attributes[key] = sealedEnvelop
+        attributeSealedBase64Cache[key] = sealedEnvelop
+        attributePlaneStringCache[key] = planeText
     }
     
     func get(key: AttributeKey, myRsa: Rsa) throws -> PlaneString {
+        if let cachedPlaneText = attributePlaneStringCache[key] {
+            if attributePlaneStringCache[key] == attributes[key] {
+                return cachedPlaneText
+            }
+        }
         let planeText = try DigitalEnvelope.open(sealedString: attributes[key]!, myRsa: myRsa)
+        attributePlaneStringCache[key] = planeText
+        attributeSealedBase64Cache[key] = attributes[key] ?? ""
         return planeText
     }
     
     func get(key: AttributeKey, myRsa: Rsa?, defaultString: PlaneString) -> PlaneString {
+        if let cachedPlaneText = attributePlaneStringCache[key] {
+            return cachedPlaneText
+        }
         guard let myRsa = myRsa else {
             return defaultString
         }
@@ -99,6 +123,8 @@ final class Item: Encodable, Hashable {
         guard let planeText = try? DigitalEnvelope.open(sealedString: sealedString, myRsa: myRsa) else {
             return defaultString
         }
+        attributePlaneStringCache[key] = planeText
+        attributeSealedBase64Cache[key] = sealedString
         return planeText
     }
     

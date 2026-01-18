@@ -33,7 +33,7 @@ extension Item {
     static func makePasswordDummy(_ caption: String) -> Item {
         let item = Item(ownerId: "hoge-owner")
         item.caption = caption
-        item.sortKey = caption
+        item.sortValue = caption
         item.type = ItemType.password.rawValue
         return item
     }

@@ -41,7 +41,7 @@ struct PasswordListRecord: View {
                     Text(item.caption)
                         .font(.headline)
                     HStack {
-                        Text(item.get(key: "accountId", myRsa: try? appController.myRsa , defaultString: ""))
+                        Text(item.get(key: "accountId", myRsa: try? appController.myRsa, defaultString: ""))
                             .opacity(0.5)
                             .font(.subheadline)
                     }

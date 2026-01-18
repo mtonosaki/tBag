@@ -34,7 +34,7 @@ struct FilePackager {
         }
         
 #if DEBUG
-        if let jsonString = String(data: jsonData as Data, encoding: .utf8)  {
+        if let jsonString = String(data: jsonData as Data, encoding: .utf8) {
             print(jsonString)
         }
 #endif

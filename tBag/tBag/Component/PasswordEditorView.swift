@@ -16,7 +16,7 @@ struct PasswordEditorView: View {
     @Bindable var item: Item
     
     @State private var isOpenPassword: Bool = false
-        
+    
     init(_ item: Item) {
         self.item = item
     }
@@ -37,7 +37,7 @@ struct PasswordEditorView: View {
 #endif
                 
                 FormCard("Rubi", systemImage: "character.textbox.ja") {
-                    TextField("あいうえお", text: $item.sortKey)
+                    TextField("あいうえお", text: $item.sortValue)
 #if os(iOS)
                         .textInputAutocapitalization(.never)
                         .keyboardType(.default)
@@ -167,7 +167,8 @@ struct PasswordEditorView: View {
     func stringBinding(_ key: String) -> Binding<String> {
         return Binding(
             get: {
-                item.get(key: key, myRsa: try? appController.myRsa, defaultString: "")
+                let value = item.get(key: key, myRsa: try? appController.myRsa, defaultString: "")
+                return value
             },
             set: {
                 try? item.set(key: key, planeText: $0, recipientPublicKey: try appController.myPublicKey)
