@@ -39,7 +39,7 @@ final class Item: Encodable, Hashable {
         case ownerId
         case type
         case timestamp
-        case sortKey
+        case sortValue
         case caption
         case attributes
     }
@@ -49,19 +49,18 @@ final class Item: Encodable, Hashable {
         try container.encode(ownerId, forKey: .ownerId)
         try container.encode(type, forKey: .type)
         try container.encode(timestamp, forKey: .timestamp)
-        try container.encode(sortValue, forKey: .sortKey)
+        try container.encode(sortValue, forKey: .sortValue)
         try container.encode(caption, forKey: .caption)
         try container.encode(attributes, forKey: .attributes)
         attributePlaneStringCache.removeAll()
         attributeSealedBase64Cache.removeAll()
-        print("///// Item encoded \(id)")
     }
 
-    init(ownerId: String, type: ItemType, timestamp: Date, sortKey: String, caption: String, attrubutes: [String: String]) {
+    init(ownerId: String, type: ItemType, timestamp: Date, sortValue: String, caption: String, attrubutes: [String: String]) {
         self.ownerId = ownerId
         self.type = type.rawValue
         self.timestamp = timestamp
-        self.sortValue = sortKey
+        self.sortValue = sortValue
         self.caption = caption
         self.attributes = attrubutes
         attributePlaneStringCache.removeAll()

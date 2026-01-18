@@ -55,8 +55,8 @@ struct PasswordListRecord: View {
 #Preview {
     let ownerId = UUID().uuidString
     let items: [Item] = [
-        Item(ownerId: ownerId, type: .password, timestamp: Date(), sortKey: "", caption: "", attrubutes: [:]),
-        Item(ownerId: ownerId, type: .password, timestamp: Date(), sortKey: "hoge", caption: "HOGE", attrubutes: [
+        Item(ownerId: ownerId, type: .password, timestamp: Date(), sortValue: "", caption: "", attrubutes: [:]),
+        Item(ownerId: ownerId, type: .password, timestamp: Date(), sortValue: "hoge", caption: "HOGE", attrubutes: [
             "accountId": "hoge@example.com"
         ])
     ]

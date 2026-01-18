@@ -205,7 +205,7 @@ struct PasswordEditorView: View {
         ownerId: UUID().uuidString,
         type: .password,
         timestamp: Date(),
-        sortKey: "ほげたろう",
+        sortValue: "ほげたろう",
         caption: "ホゲ太郎",
         attrubutes: [:]
     ))
