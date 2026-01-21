@@ -38,7 +38,7 @@ struct PasswordListView: View {
         } detail: {
             if let selectedId = selectedItemId {
                 if let selectedItem = items.first(where: { $0.id == selectedId }) {
-                    PasswordEditorView(selectedItem)
+                    PasswordEditView(selectedItem)
                         .id(selectedItem.id)
                 } else {
                     Text("Select an item")

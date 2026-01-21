@@ -98,7 +98,7 @@ struct AccountView: View {
         .background(Color(NSColor.lightGray))
 #endif
         .onAppear {
-            
+            // Delete all item event
             if isResetLocalDataAtNextLaunch {
                 _ = KeychainStore.shared.delete(key: "accountId")
                 try? context.delete(model: Item.self)
@@ -109,7 +109,7 @@ struct AccountView: View {
                 return
             }
             appController.accountId = savedId
-            latestAccountId = savedId
+            latestAccountId = appController.accountId
             dismiss()
         }
     }

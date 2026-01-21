@@ -64,7 +64,7 @@ struct PasswordListRecord: View {
     List {
         ForEach(items) { item in
             NavigationLink {
-                PasswordEditorView(item)
+                PasswordEditView(item)
             } label: {
                 PasswordListRecord(item)
             }

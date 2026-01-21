@@ -8,7 +8,7 @@
 import SwiftUI
 import Tono
 
-struct PasswordEditorView: View {
+struct PasswordEditView: View {
     @EnvironmentObject var appController: AppController
     @Environment(\.modelContext) private var modelContext
     @Environment(\.displayToast) var toast
@@ -168,6 +168,7 @@ struct PasswordEditorView: View {
         return Binding(
             get: {
                 let value = item.get(key: key, myRsa: try? appController.myRsa, defaultString: "")
+                print("--- stringBinding:GET[\(key)] = \(value)")
                 return value
             },
             set: {
@@ -201,7 +202,7 @@ struct PasswordEditorView: View {
 }
 
 #Preview {
-    PasswordEditorView(Item(
+    PasswordEditView(Item(
         ownerId: UUID().uuidString,
         type: .password,
         timestamp: Date(),

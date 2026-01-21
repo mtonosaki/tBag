@@ -25,7 +25,11 @@ class AppController: ObservableObject {
     static let sampleNoAccount = AppController()
     
     init() {
-        
+        guard let savedId = KeychainStore.shared.get("accountId") else {
+            print("ERROR!!: キーチェインから accountIdが取得できなかった")
+            return
+        }
+        self.accountId = savedId
     }
     
     init(accountId: String) {

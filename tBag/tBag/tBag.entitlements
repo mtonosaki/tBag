@@ -14,5 +14,9 @@
 	<array>
 		<string>CloudKit</string>
 	</array>
+	<key>keychain-access-groups</key>
+	<array>
+		<string>$(AppIdentifierPrefix)com.tomarika.tBag.shared</string>
+	</array>
 </dict>
 </plist>
