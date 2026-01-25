@@ -58,7 +58,11 @@ struct ScrollLetter: View {
     
     var body: some View {
         Text(firstLetter)
-            .font(.custom("Courier New", size: 12))
+#if os(iOS)
+            .font(.custom("Menlo", size: 18))
+#else
+            .font(.custom("Menlo", size: 12))
+#endif
             .padding(.horizontal, 6)
             .padding(.vertical, 4)
             .contentShape(Rectangle())

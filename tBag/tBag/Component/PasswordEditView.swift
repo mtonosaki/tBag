@@ -113,13 +113,13 @@ struct PasswordEditView: View {
                 }
                 FormCard("Tags", systemImage: "tag") {
                     FlowLayout(spacing: 24) {
-                        Toggle(isOn: tagBinding("#home")) {
+                        Toggle(isOn: tagBinding(PasswordFilter.home.rawValue)) {
                             Image(systemName: "house")
                         }
-                        Toggle(isOn: tagBinding("#office")) {
-                            Image(systemName: "building.2")
+                        Toggle(isOn: tagBinding(PasswordFilter.office.rawValue)) {
+                            Image(systemName: "network")
                         }
-                        Toggle(isOn: tagBinding("#deleted")) {
+                        Toggle(isOn: tagBinding(PasswordFilter.deleted.rawValue)) {
                             Image(systemName: "trash")
                         }
                     }.frame(maxWidth: .infinity, alignment: .leading)

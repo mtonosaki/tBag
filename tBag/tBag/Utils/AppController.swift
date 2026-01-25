@@ -21,12 +21,12 @@ class AppController: ObservableObject {
         case blankAccountID
     }
     
-    static let sample = AppController(accountId: "ffffffff-1111-2222-3333-444455556666")
     static let sampleNoAccount = AppController()
+    static private let errorRsa = RsaLocalKeyChain(nameMain: "com.tomarika.tBag", nameSub: "error")
     
     init() {
         guard let savedId = KeychainStore.shared.get("accountId") else {
-            print("ERROR!!: キーチェインから accountIdが取得できなかった")
+            print("ERROR!!: Could not get accountId from KeyChain store")
             return
         }
         self.accountId = savedId
@@ -34,6 +34,15 @@ class AppController: ObservableObject {
     
     init(accountId: String) {
         self.accountId = accountId
+    }
+    
+    var myRsaNoThrow: Rsa {
+        do {
+            return try myRsa
+        } catch {
+            print("Fatal error in myRsaNoThrow")
+            return AppController.errorRsa
+        }
     }
     
     var myRsa: Rsa {

@@ -175,6 +175,24 @@ public enum ItemType: String {
     case system = "sys"
 }
 
+public enum PasswordFilter: String {
+    case home = "#home"
+    case office = "#office"
+    case deleted = "#deleted"
+    
+    static func isHome(_ item: Item, rsa: Rsa) -> Bool {
+        item.containsTag(PasswordFilter.home.rawValue, myRsa: rsa)
+    }
+    
+    static func isOffice(_ item: Item, rsa: Rsa) -> Bool {
+        item.containsTag(PasswordFilter.office.rawValue, myRsa: rsa)
+    }
+    
+    static func isDeleted(_ item: Item, rsa: Rsa) -> Bool {
+        item.containsTag(PasswordFilter.deleted.rawValue, myRsa: rsa)
+    }
+}
+
 struct ItemBuilder {
     static func createNewPasswordItem(ownerAccountId: String, myRsa: Rsa) -> Item {
         let newItem = Item(ownerId: ownerAccountId, type: .password)

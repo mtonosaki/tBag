@@ -15,12 +15,26 @@ struct PasswordListSideView: View {
     var groupedItems: [String: [Item]]
     var sectionHeaders: [String]
     
+    @State private var isHome = true
+    @State private var isOffice = true
+    @State private var isDeleted = false
+    
     var body: some View {
+        let rsa = appController.myRsaNoThrow
         ScrollViewReader { proxy in
             List(selection: $selectedItemId) {
                 ForEach(groupedItems.keys.sorted(), id: \.self) { firstLetter in
                     Section(header: Text(firstLetter)) {
-                        let sectionItems = groupedItems[firstLetter]?.sorted(by: {$0.caption < $1.caption}) ?? []
+                        let sectionItems = groupedItems[firstLetter]?
+                            .filter({
+                                [!self.isHome, !self.isOffice, !self.isDeleted, !PasswordFilter.isHome($0, rsa: rsa), !PasswordFilter.isOffice($0, rsa: rsa), !PasswordFilter.isDeleted($0, rsa: rsa)].allSatisfy({$0})
+                                || [self.isHome, self.isOffice, self.isDeleted].allSatisfy({$0})
+                                || self.isHome && PasswordFilter.isHome($0, rsa: rsa)
+                                || self.isOffice && PasswordFilter.isOffice($0, rsa: rsa)
+                                || self.isDeleted && PasswordFilter.isDeleted($0, rsa: rsa)
+                            })
+                            .sorted(by: {$0.caption < $1.caption})
+                        ?? []
                         ForEach(sectionItems) { item in
                             PasswordListRecord(item).tag(item.id)
                         }
@@ -31,6 +45,19 @@ struct PasswordListSideView: View {
                 }
             }
             .toolbar {
+                ToolbarItem {
+                    HStack {
+                        Toggle(isOn: $isHome) {
+                            Image(systemName: isHome ? "house" : "house.slash")
+                        }
+                        Toggle(isOn: $isOffice) {
+                            Image(systemName: isOffice ? "network" : "network.slash")
+                        }
+                        Toggle(isOn: $isDeleted) {
+                            Image(systemName: isDeleted ? "trash" : "trash.slash")
+                        }
+                    }
+                }
                 ToolbarItem {
                     Button {
                         addItem()
