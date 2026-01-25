@@ -16,4 +16,8 @@ struct Info {
     static var build: Any {
         Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") ?? "?"
     }
+    
+    static var teamId: String {
+        return Bundle.main.object(forInfoDictionaryKey: "TEAM_ID") as? String ?? "(not found TEAM_ID in Info.plist)"
+    }
  }

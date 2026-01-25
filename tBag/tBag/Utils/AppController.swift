@@ -46,7 +46,9 @@ class AppController: ObservableObject {
                     return cacheRsa
                 }
             }
-            cacheRsa = Rsa(nameMain: "com.tomarika.tBag", nameSub: accountId)
+            let accessGroupName = "\(Info.teamId).com.tomarika.tBag.shared"
+            print("Shared KeyChain Access Group : \(accessGroupName)")
+            cacheRsa = RsaSharedKeyChain(nameMain: "com.tomarika.tBag", nameSub: accountId, accessGroup: accessGroupName)
             cacheAccountId = accountId
             return cacheRsa!
         }

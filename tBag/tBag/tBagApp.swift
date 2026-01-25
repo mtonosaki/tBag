@@ -11,19 +11,6 @@ import GoogleSignIn
 
 @main
 struct tBagApp: App {
-    var sharedModelContainer: ModelContainer = {
-        let schema = Schema([
-            Item.self
-        ])
-        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
-
-        do {
-            return try ModelContainer(for: schema, configurations: [modelConfiguration])
-        } catch {
-            fatalError("Could not create ModelContainer: \(error)")
-        }
-    }()
-
     @StateObject private var appController = AppController()
     @State private var toastHandler: ToastHandler = .init()
     @Environment(\.openWindow) private var openWindow
@@ -75,4 +62,17 @@ struct tBagApp: App {
     .restorationBehavior(.disabled)
 #endif
     }
+
+    var sharedModelContainer: ModelContainer = {
+        let schema = Schema([
+            Item.self
+        ])
+        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false, cloudKitDatabase: .private("iCloud.com.tomarika.tBag.privatedb"))
+        
+        do {
+            return try ModelContainer(for: schema, configurations: [modelConfiguration])
+        } catch {
+            fatalError("Could not create ModelContainer: \(error)")
+        }
+    }()
 }

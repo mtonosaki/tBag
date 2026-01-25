@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>TEAM_ID</key>
+	<string>$(TEAM_ID)</string>
+	<key>CFBundleIdentifier</key>
+	<string></string>
 	<key>AuthenticationDomain</key>
 	<string>g.tomarika.com</string>
 	<key>CFBundleURLTypes</key>
