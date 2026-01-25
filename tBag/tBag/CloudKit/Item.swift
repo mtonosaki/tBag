@@ -22,20 +22,17 @@ final class Item: Codable, Hashable {
     var sortValue: String = ""
     var caption: String = ""
     
-    private var attributes: [AttributeKey: SealedEnvelopeBase64String] = [:]
-    
-    @Transient private var attributePlaneStringCache: [AttributeKey: String] = [:]
-    @Transient private var attributeSealedBase64Cache: [AttributeKey: SealedEnvelopeBase64String] = [:]
-    
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
+    public enum GeneralAttributeKeys: String {
+        case tags
     }
-    
-    static func == (lhs: Item, rhs: Item) -> Bool {
-        return lhs.id == rhs.id
+
+    public enum ItemType: String {
+        case planeText = "text"
+        case password = "pw"
+        case system = "sys"
     }
-    
-    enum CodingKeys: String, CodingKey {
+
+    private enum CodingKeys: String, CodingKey {
         case id
         case ownerId
         case type
@@ -43,6 +40,21 @@ final class Item: Codable, Hashable {
         case sortValue
         case caption
         case attributes
+    }
+    
+
+    
+    private var attributes: [AttributeKey: SealedEnvelopeBase64String] = [:]
+    
+    @Transient private var attributePlaneStringCache: [AttributeKey: String] = [:]
+    @Transient private var attributeSealedBase64Cache: [AttributeKey: SealedEnvelopeBase64String] = [:]
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+    
+    public static func == (lhs: Item, rhs: Item) -> Bool {
+        return lhs.id == rhs.id
     }
     
     required init(from decoder: Decoder) throws {
@@ -109,7 +121,7 @@ final class Item: Codable, Hashable {
     }
     
     func set(key: AttributeKey, planeText: PlaneString, recipientPublicKey: Base64String, owner: String) throws {
-        let salt = "\(owner)/\(Info.masterSalt)"
+        let salt = "\(owner)/\(Info.encryptSalt)"
         let sealedEnvelop = try DigitalEnvelope.seal(plainText: planeText, recipientPublicKeyBase64: recipientPublicKey, salt: salt)
         attributes[key] = sealedEnvelop
         attributeSealedBase64Cache[key] = sealedEnvelop
@@ -147,57 +159,24 @@ final class Item: Codable, Hashable {
     }
     
     func containsTag(_ tag: String, myRsa: Rsa) -> Bool {
-        let tagsString = get(key: "tags", myRsa: myRsa, defaultString: "")
+        let tagsString = get(key: GeneralAttributeKeys.tags.rawValue, myRsa: myRsa, defaultString: "")
         let tags = tagsString.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces)}
         return tags.contains(tag)
     }
     
     func addTag(_ tag: String, myRsa: Rsa, owner: String) {
-        let tagsString = get(key: "tags", myRsa: myRsa, defaultString: "")
+        let tagsString = get(key: GeneralAttributeKeys.tags.rawValue, myRsa: myRsa, defaultString: "")
         let tags = tagsString.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces)}.filter { $0 != tag }
         let newTags = (tags + [tag]).sorted()
         let newTagsString = newTags.joined(separator: ",")
-        try? set(key: "tags", planeText: newTagsString, recipientPublicKey: myRsa.getMyPublicKey(), owner: owner)
+        try? set(key: GeneralAttributeKeys.tags.rawValue, planeText: newTagsString, recipientPublicKey: myRsa.getMyPublicKey(), owner: owner)
     }
     
     func removeTag(_ tag: String, myRsa: Rsa, owner: String) {
-        let tagsString = get(key: "tags", myRsa: myRsa, defaultString: "")
+        let tagsString = get(key: GeneralAttributeKeys.tags.rawValue, myRsa: myRsa, defaultString: "")
         let tags = tagsString.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces)}.filter { $0 != tag }
         let newTags = tags.sorted()
         let newTagsString = newTags.joined(separator: ",")
-        try? set(key: "tags", planeText: newTagsString, recipientPublicKey: myRsa.getMyPublicKey(), owner: owner)
-    }
-}
-
-public enum ItemType: String {
-    case planeText = "text"
-    case password = "pw"
-    case system = "sys"
-}
-
-public enum PasswordFilter: String {
-    case home = "#home"
-    case office = "#office"
-    case deleted = "#deleted"
-    
-    static func isHome(_ item: Item, rsa: Rsa) -> Bool {
-        item.containsTag(PasswordFilter.home.rawValue, myRsa: rsa)
-    }
-    
-    static func isOffice(_ item: Item, rsa: Rsa) -> Bool {
-        item.containsTag(PasswordFilter.office.rawValue, myRsa: rsa)
-    }
-    
-    static func isDeleted(_ item: Item, rsa: Rsa) -> Bool {
-        item.containsTag(PasswordFilter.deleted.rawValue, myRsa: rsa)
-    }
-}
-
-struct ItemBuilder {
-    static func createNewPasswordItem(ownerAccountId: String, myRsa: Rsa) -> Item {
-        let newItem = Item(ownerId: ownerAccountId, type: .password)
-        newItem.addTag("#home", myRsa: myRsa, owner: "HOGE-USER-ID")
-        newItem.addTag("#office", myRsa: myRsa, owner: "HOGE-USER-ID")
-        return newItem
+        try? set(key: GeneralAttributeKeys.tags.rawValue, planeText: newTagsString, recipientPublicKey: myRsa.getMyPublicKey(), owner: owner)
     }
 }

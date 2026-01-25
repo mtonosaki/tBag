@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Tono
 
 struct PasswordListSideView: View {
     @Binding var page: PageType
@@ -18,21 +19,15 @@ struct PasswordListSideView: View {
     @State private var isHome = true
     @State private var isOffice = true
     @State private var isDeleted = false
+    @State private var searchText: String = ""
     
     var body: some View {
-        let rsa = appController.myRsaNoThrow
         ScrollViewReader { proxy in
             List(selection: $selectedItemId) {
                 ForEach(groupedItems.keys.sorted(), id: \.self) { firstLetter in
                     Section(header: Text(firstLetter)) {
                         let sectionItems = groupedItems[firstLetter]?
-                            .filter({
-                                [!self.isHome, !self.isOffice, !self.isDeleted, !PasswordFilter.isHome($0, rsa: rsa), !PasswordFilter.isOffice($0, rsa: rsa), !PasswordFilter.isDeleted($0, rsa: rsa)].allSatisfy({$0})
-                                || [self.isHome, self.isOffice, self.isDeleted].allSatisfy({$0})
-                                || self.isHome && PasswordFilter.isHome($0, rsa: rsa)
-                                || self.isOffice && PasswordFilter.isOffice($0, rsa: rsa)
-                                || self.isDeleted && PasswordFilter.isDeleted($0, rsa: rsa)
-                            })
+                            .filter(isShowItem)
                             .sorted(by: {$0.caption < $1.caption})
                         ?? []
                         ForEach(sectionItems) { item in
@@ -44,8 +39,9 @@ struct PasswordListSideView: View {
                     }
                 }
             }
+            .searchable(text: $searchText, placement: .automatic, prompt: "keyword")
             .toolbar {
-                ToolbarItem {
+                ToolbarItem(placement: .navigation) {
                     HStack {
                         Toggle(isOn: $isHome) {
                             Image(systemName: isHome ? "house" : "house.slash")
@@ -58,18 +54,23 @@ struct PasswordListSideView: View {
                         }
                     }
                 }
-                ToolbarItem {
-                    Button {
-                        addItem()
-                    }  label: {
-                        Label("Add Item", systemImage: "plus")
-                    }
-                }
-                ToolbarItem {
-                    Button {
-                        page = .sync
-                    } label: {
-                        Label("Sync", systemImage: "arrow.trianglehead.2.clockwise.rotate.90")
+#if os(iOS)
+                let placement = ToolbarItemPlacement.automatic
+#else
+                let placement = ToolbarItemPlacement.navigation
+#endif
+                ToolbarItem(placement: placement) {
+                    HStack {
+                        Button {
+                            addItem()
+                        }  label: {
+                            Label("Add Item", systemImage: "plus")
+                        }
+                        Button {
+                            page = .sync
+                        } label: {
+                            Label("Sync", systemImage: "arrow.trianglehead.2.clockwise.rotate.90")
+                        }
                     }
                 }
             }
@@ -84,6 +85,23 @@ struct PasswordListSideView: View {
 #endif
             }
         }
+    }
+    
+    func isShowItem(_ item: Item) -> Bool {
+        let rsa = appController.myRsaNoThrow
+        let isShow = [self.isHome, self.isOffice, self.isDeleted].allSatisfy({$0})
+            || [!self.isHome, !self.isOffice, !self.isDeleted, !item.isHome(rsa: rsa), !item.isOffice(rsa: rsa), !item.isDeleted(rsa: rsa)].allSatisfy({$0})
+            || self.isHome && item.isHome(rsa: rsa)
+            || self.isOffice && item.isOffice(rsa: rsa)
+            || self.isDeleted && item.isDeleted(rsa: rsa)
+        if !isShow { return false }
+        
+        if searchText.isEmpty { return isShow }
+
+        let searchTargets = [item.caption, item.sortValue]
+        let keyword = Japanese.def.getKeyJp(searchText)
+        let isHit = searchTargets.map { Japanese.def.getKeyJp($0).contains(keyword) }.contains(true)
+        return isHit
     }
     
     private func addItem() {

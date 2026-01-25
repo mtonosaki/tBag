@@ -55,7 +55,7 @@ struct PasswordEditView: View {
                         .disableAutocorrection(true)
                 }
                 FormCard("AccountID", systemImage: "person.circle") {
-                    TextField("hoge123", text: stringBinding("accountId"))
+                    TextField("hoge123", text: stringBinding(Item.PasswordAttributeKeys.accountId.rawValue))
 #if os(iOS)
                         .textInputAutocapitalization(.never)
                         .keyboardType(.default)
@@ -68,7 +68,7 @@ struct PasswordEditView: View {
                 FormCard("Password", systemImage: "lock.circle") {
                     HStack {
                         if isOpenPassword {
-                            TextField("password", text: stringBinding("password"))
+                            TextField("password", text: stringBinding(Item.PasswordAttributeKeys.password.rawValue))
 #if os(iOS)
                                 .textInputAutocapitalization(.never)
                                 .keyboardType(.default)
@@ -78,7 +78,7 @@ struct PasswordEditView: View {
                                 .font(.custom("Courier New", size: 23))
                                 .bold()
                         } else {
-                            SecureField("password", text: stringBinding("password"))
+                            SecureField("password", text: stringBinding(Item.PasswordAttributeKeys.password.rawValue))
 #if os(iOS)
                                 .textInputAutocapitalization(.never)
                                 .keyboardType(.default)
@@ -101,7 +101,7 @@ struct PasswordEditView: View {
                     item.get(key: "password", myRsa: try? appController.myRsa, defaultString: "" )
                 }
                 FormCard("email", systemImage: "mail") {
-                    TextField("hoge @ example.com", text: stringBinding("email"))
+                    TextField("hoge @ example.com", text: stringBinding(Item.PasswordAttributeKeys.email.rawValue))
 #if os(iOS)
                         .textInputAutocapitalization(.never)
                         .keyboardType(.default)
@@ -113,13 +113,13 @@ struct PasswordEditView: View {
                 }
                 FormCard("Tags", systemImage: "tag") {
                     FlowLayout(spacing: 24) {
-                        Toggle(isOn: tagBinding(PasswordFilter.home.rawValue)) {
+                        Toggle(isOn: tagBinding(Item.PasswordFilter.home.rawValue)) {
                             Image(systemName: "house")
                         }
-                        Toggle(isOn: tagBinding(PasswordFilter.office.rawValue)) {
+                        Toggle(isOn: tagBinding(Item.PasswordFilter.office.rawValue)) {
                             Image(systemName: "network")
                         }
-                        Toggle(isOn: tagBinding(PasswordFilter.deleted.rawValue)) {
+                        Toggle(isOn: tagBinding(Item.PasswordFilter.deleted.rawValue)) {
                             Image(systemName: "trash")
                         }
                     }.frame(maxWidth: .infinity, alignment: .leading)

@@ -21,7 +21,7 @@ struct Info {
         return Bundle.main.object(forInfoDictionaryKey: "TEAM_ID") as? String ?? "(not found TEAM_ID in Info.plist)"
     }
 
-    static var masterSalt: String {
-        return Bundle.main.object(forInfoDictionaryKey: "MASTER_SALT") as? String ?? "(not found MASTER_SALT in Info.plist)"
+    static var encryptSalt: String {
+        return Bundle.main.object(forInfoDictionaryKey: "ENCRYPT_SALT") as? String ?? "(not found ENCRYPT_SALT in Info.plist)"
     }
  }
