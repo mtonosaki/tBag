@@ -168,11 +168,11 @@ struct PasswordEditView: View {
         return Binding(
             get: {
                 let value = item.get(key: key, myRsa: try? appController.myRsa, defaultString: "")
-                print("--- stringBinding:GET[\(key)] = \(value)")
                 return value
             },
             set: {
-                try? item.set(key: key, planeText: $0, recipientPublicKey: try appController.myPublicKey)
+                try? item
+                    .set(key: key, planeText: $0, recipientPublicKey: try appController.myPublicKey, owner: appController.accountId)
             }
         )
     }
@@ -189,9 +189,9 @@ struct PasswordEditView: View {
                 do {
                     let myRsa = try appController.myRsa
                     if $0 {
-                        item.addTag(key, myRsa: myRsa)
+                        item.addTag(key, myRsa: myRsa, owner: appController.accountId)
                     } else {
-                        item.removeTag(key, myRsa: myRsa)
+                        item.removeTag(key, myRsa: myRsa, owner: appController.accountId)
                     }
                 } catch {
                     toast?("Cannot access the tag \(key)")

@@ -108,8 +108,9 @@ final class Item: Codable, Hashable {
         return caption.isEmpty
     }
     
-    func set(key: AttributeKey, planeText: PlaneString, recipientPublicKey: Base64String) throws {
-        let sealedEnvelop = try DigitalEnvelope.seal(plainText: planeText, recipientPublicKeyBase64: recipientPublicKey)
+    func set(key: AttributeKey, planeText: PlaneString, recipientPublicKey: Base64String, owner: String) throws {
+        let salt = "\(owner)/\(Info.masterSalt)"
+        let sealedEnvelop = try DigitalEnvelope.seal(plainText: planeText, recipientPublicKeyBase64: recipientPublicKey, salt: salt)
         attributes[key] = sealedEnvelop
         attributeSealedBase64Cache[key] = sealedEnvelop
         attributePlaneStringCache[key] = planeText
@@ -151,20 +152,20 @@ final class Item: Codable, Hashable {
         return tags.contains(tag)
     }
     
-    func addTag(_ tag: String, myRsa: Rsa) {
+    func addTag(_ tag: String, myRsa: Rsa, owner: String) {
         let tagsString = get(key: "tags", myRsa: myRsa, defaultString: "")
         let tags = tagsString.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces)}.filter { $0 != tag }
         let newTags = (tags + [tag]).sorted()
         let newTagsString = newTags.joined(separator: ",")
-        try? set(key: "tags", planeText: newTagsString, recipientPublicKey: myRsa.getMyPublicKey())
+        try? set(key: "tags", planeText: newTagsString, recipientPublicKey: myRsa.getMyPublicKey(), owner: owner)
     }
     
-    func removeTag(_ tag: String, myRsa: Rsa) {
+    func removeTag(_ tag: String, myRsa: Rsa, owner: String) {
         let tagsString = get(key: "tags", myRsa: myRsa, defaultString: "")
         let tags = tagsString.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces)}.filter { $0 != tag }
         let newTags = tags.sorted()
         let newTagsString = newTags.joined(separator: ",")
-        try? set(key: "tags", planeText: newTagsString, recipientPublicKey: myRsa.getMyPublicKey())
+        try? set(key: "tags", planeText: newTagsString, recipientPublicKey: myRsa.getMyPublicKey(), owner: owner)
     }
 }
 
@@ -177,8 +178,8 @@ public enum ItemType: String {
 struct ItemBuilder {
     static func createNewPasswordItem(ownerAccountId: String, myRsa: Rsa) -> Item {
         let newItem = Item(ownerId: ownerAccountId, type: .password)
-        newItem.addTag("#home", myRsa: myRsa)
-        newItem.addTag("#office", myRsa: myRsa)
+        newItem.addTag("#home", myRsa: myRsa, owner: "HOGE-USER-ID")
+        newItem.addTag("#office", myRsa: myRsa, owner: "HOGE-USER-ID")
         return newItem
     }
 }

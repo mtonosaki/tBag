@@ -20,8 +20,12 @@ struct PasswordListSideView: View {
             List(selection: $selectedItemId) {
                 ForEach(groupedItems.keys.sorted(), id: \.self) { firstLetter in
                     Section(header: Text(firstLetter)) {
-                        ForEach((groupedItems[firstLetter]?.sorted(by: {$0.caption < $1.caption}) ?? [])) { item in
+                        let sectionItems = groupedItems[firstLetter]?.sorted(by: {$0.caption < $1.caption}) ?? []
+                        ForEach(sectionItems) { item in
                             PasswordListRecord(item).tag(item.id)
+                        }
+                        .onDelete { indexSet in
+                            deleteItems(offsets: indexSet, sectionItems: sectionItems)
                         }
                     }
                 }
@@ -65,6 +69,18 @@ struct PasswordListSideView: View {
             }
         } catch {
             print("Failed to add item: \(error)")
+        }
+    }
+    
+    private func deleteItems(offsets: IndexSet, sectionItems: [Item]) {
+        withAnimation {
+            for index in offsets {
+                let itemToDelete = sectionItems[index]
+                if selectedItemId == itemToDelete.id {
+                    selectedItemId = nil
+                }
+                modelContext.delete(itemToDelete)
+            }
         }
     }
 }
