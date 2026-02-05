@@ -195,7 +195,9 @@ struct PasswordEditView: View {
         .navigationTitle(item.isEmpty() ? "New Item" : item.caption)
         .background(Color.bgColorPassword)
     }
-    
+}
+
+extension PasswordEditView {
     func stringBinding(_ key: String) -> Binding<String> {
         return Binding(
             get: {
@@ -208,7 +210,7 @@ struct PasswordEditView: View {
             }
         )
     }
-
+    
     func tagBinding(_ key: String) -> Binding<Bool> {
         return Binding(
             get: {
@@ -231,9 +233,9 @@ struct PasswordEditView: View {
             }
         )
     }
-    
+
     @MainActor
-    private func saveIconToLocal(from photoItem: PhotosPickerItem?) async {
+    func saveIconToLocal(from photoItem: PhotosPickerItem?) async {
         guard let photoItem else { return }
         
         do {
@@ -249,7 +251,7 @@ struct PasswordEditView: View {
             }
 #endif
             guard let originalImage else { return }
-
+            
             let image = ImageUtil.resizeImage(originalImage, maxPixel: 96)
             guard let resizedImage = image?.image else { return }
             guard let resizedImageData = image?.data else { return }
@@ -262,16 +264,15 @@ struct PasswordEditView: View {
             } else {
                 normalizedImage = originalImage
             }
-
+            
             let imageHash = ImageHash.computeHashCode(normalizedImage)
             let fileName = "\(imageHash).png"
-
+            
 #if os(iOS)
-            print("--- iOS  : saving : icon filename = \(fileName)")
+            print("--- iOS 　: saving : icon filename = \(fileName)")
 #else
             print("--- macOS: saving : icon filename = \(fileName)")
 #endif
-
             
             ImageStore.save(data: resizedImageData, fileName: fileName)
             try item.set(key: "iconFileName", planeText: fileName, recipientPublicKey: appController.myPublicKey, owner: appController.accountId)

@@ -10,6 +10,8 @@ import Tono
 
 struct PasswordListRecord: View {
     @EnvironmentObject var appController: AppController
+    @State private var icon: Image = Image(.no)
+    
     let item: Item
     
     init(_ item: Item) {
@@ -33,10 +35,10 @@ struct PasswordListRecord: View {
             }
         } else {
             HStack {
-                Image("NoImage")
+                icon
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 48, height: 48)
+                    .frame(width: 36, height: 36)
                 VStack(alignment: .leading) {
                     Text(item.caption)
                         .font(.headline)
@@ -47,6 +49,13 @@ struct PasswordListRecord: View {
                     }
                 }
                 Spacer()
+            }
+            .onAppear {
+                guard let imageFileName = try? item.get(key: "iconFileName", myRsa: appController.myRsa) else { return }
+                let image = ImageStore.load(fileName: imageFileName)
+                if let image = image {
+                    self.icon = image
+                }
             }
         }
     }
