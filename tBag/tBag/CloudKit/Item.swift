@@ -42,8 +42,6 @@ final class Item: Codable, Hashable {
         case attributes
     }
     
-
-    
     private var attributes: [AttributeKey: SealedEnvelopeBase64String] = [:]
     
     @Transient private var attributePlaneStringCache: [AttributeKey: String] = [:]
