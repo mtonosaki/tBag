@@ -21,6 +21,7 @@ final class Item: Codable, Hashable {
     var timestamp: Date = Date()
     var sortValue: String = ""
     var caption: String = ""
+    var iconFileName: String?
     
     public enum GeneralAttributeKeys: String {
         case tags
@@ -39,6 +40,7 @@ final class Item: Codable, Hashable {
         case timestamp
         case sortValue
         case caption
+        case iconFileName
         case attributes
     }
     
@@ -64,6 +66,7 @@ final class Item: Codable, Hashable {
         self.timestamp = try container.decode(Date.self, forKey: .timestamp)
         self.sortValue = try container.decode(String.self, forKey: .sortValue)
         self.caption = try container.decode(String.self, forKey: .caption)
+        self.iconFileName = try container.decode(String.self, forKey: .iconFileName)
         self.attributes = try container.decode([AttributeKey: SealedEnvelopeBase64String].self, forKey: .attributes)
         
         self.attributePlaneStringCache = [:]
@@ -78,6 +81,7 @@ final class Item: Codable, Hashable {
         try container.encode(timestamp, forKey: .timestamp)
         try container.encode(sortValue, forKey: .sortValue)
         try container.encode(caption, forKey: .caption)
+        try container.encode(iconFileName, forKey: .iconFileName)
         try container.encode(attributes, forKey: .attributes)
 
         self.attributePlaneStringCache = [:]
@@ -132,7 +136,8 @@ final class Item: Codable, Hashable {
                 return cachedPlaneText
             }
         }
-        let planeText = try DigitalEnvelope.open(sealedString: attributes[key]!, myRsa: myRsa)
+        guard let encryptedString = attributes[key] else { return "" }
+        let planeText = try DigitalEnvelope.open(sealedString: encryptedString, myRsa: myRsa)
         attributePlaneStringCache[key] = planeText
         attributeSealedBase64Cache[key] = attributes[key] ?? ""
         return planeText

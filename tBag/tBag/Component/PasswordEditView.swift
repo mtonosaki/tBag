@@ -18,9 +18,6 @@ struct PasswordEditView: View {
     @Bindable var item: Item
     
     @State private var isOpenPassword: Bool = false
-    @State private var selectedPhotoPickerItem: PhotosPickerItem?
-    @State private var icon: Image?
-    @State private var imageForHash: Image?
     
     init(_ item: Item) {
         self.item = item
@@ -29,45 +26,9 @@ struct PasswordEditView: View {
     var body: some View {
         ScrollView(.vertical) {
             VStack {
-                if let imageForHash {
-                    imageForHash
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 56, height: 56)
-                }
-                
-                PhotosPicker(selection: $selectedPhotoPickerItem, matching: .images) {
-                    Group {
-                        if let icon {
-                            icon
-                                .resizable()
-                        } else {
-                            Image("NoImage")
-                                .resizable()
-                        }
-                    }
-                    .scaledToFit()
-                    .frame(width: 56, height: 56)
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
-                }
-                .buttonStyle(.plain)
-                .padding(4)
-                .onChange(of: selectedPhotoPickerItem) { _, newItem in
-                    Task {
-                        await saveIconToLocal(from: newItem)
-                    }
-                }
-                .onAppear {
-                    guard let imageFileName = try? item.get(key: "iconFileName", myRsa: appController.myRsa) else { return }
-#if os(iOS)
-                    print("--- iOS : loading : icon filename = \(imageFileName)")
-#else
-                    print("--- macOS: loading : icon filename = \(imageFileName)")
-#endif
-                    let image = ImageStore.load(fileName: imageFileName)
-                    self.icon = image
-                }
-                
+                IconEditView(item)
+                    .padding(4)
+
                 FormCard("Rubi", systemImage: "character.textbox.ja") {
                     TextField("あいうえお", text: $item.sortValue)
 #if os(iOS)
@@ -195,9 +156,7 @@ struct PasswordEditView: View {
         .navigationTitle(item.isEmpty() ? "New Item" : item.caption)
         .background(Color.bgColorPassword)
     }
-}
 
-extension PasswordEditView {
     func stringBinding(_ key: String) -> Binding<String> {
         return Binding(
             get: {
@@ -232,53 +191,6 @@ extension PasswordEditView {
                 }
             }
         )
-    }
-
-    @MainActor
-    func saveIconToLocal(from photoItem: PhotosPickerItem?) async {
-        guard let photoItem else { return }
-        
-        do {
-            guard let originalImageData = try await photoItem.loadTransferable(type: Data.self)  else { return }
-            var originalImage: Image?
-#if os(macOS)
-            if let nsImage = NSImage(data: originalImageData) {
-                originalImage = Image(nsImage: nsImage)
-            }
-#else
-            if let uiImage = UIImage(data: originalImageData) {
-                originalImage = Image(uiImage: uiImage)
-            }
-#endif
-            guard let originalImage else { return }
-            
-            let image = ImageUtil.resizeImage(originalImage, maxPixel: 96)
-            guard let resizedImage = image?.image else { return }
-            guard let resizedImageData = image?.data else { return }
-            self.icon = resizedImage
-            
-            let normalizedImage: Image
-            if let source = CGImageSourceCreateWithData(originalImageData as CFData, nil),
-               let cgImage = CGImageSourceCreateImageAtIndex(source, 0, nil) {
-                normalizedImage = Image(decorative: cgImage, scale: 1.0)
-            } else {
-                normalizedImage = originalImage
-            }
-            
-            let imageHash = ImageHash.computeHashCode(normalizedImage)
-            let fileName = "\(imageHash).png"
-            
-#if os(iOS)
-            print("--- iOS 　: saving : icon filename = \(fileName)")
-#else
-            print("--- macOS: saving : icon filename = \(fileName)")
-#endif
-            
-            ImageStore.save(data: resizedImageData, fileName: fileName)
-            try item.set(key: "iconFileName", planeText: fileName, recipientPublicKey: appController.myPublicKey, owner: appController.accountId)
-        } catch {
-            toast?("Failed to set image: \(error.localizedDescription)")
-        }
     }
 }
 
