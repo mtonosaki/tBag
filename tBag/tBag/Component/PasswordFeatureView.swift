@@ -8,7 +8,7 @@
 import SwiftUI
 import SwiftData
 
-struct PasswordListView: View {
+struct PasswordFeatureView: View {
     @Binding var page: PageType
     @Query(filter: #Predicate<Item>{ $0.type == "pw"}) private var items: [Item]
     @State private var selectedItemId: String?
@@ -85,6 +85,6 @@ struct ScrollLetter: View {
 
 #Preview {
     @Previewable @State var page: PageType = .password
-    PasswordListView(page: $page)
+    PasswordFeatureView(page: $page)
         .modelContainer(for: Item.self, inMemory: true)
 }

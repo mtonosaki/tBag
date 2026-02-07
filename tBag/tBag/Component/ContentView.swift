@@ -23,7 +23,7 @@ struct ContentView: View {
         VStack {
             switch page {
             case .password:
-                PasswordListView(page: $page)
+                PasswordFeatureView(page: $page)
             case .sync:
                 SyncView(page: $page, authViewModel: authViewModel)
             }

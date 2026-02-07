@@ -13,6 +13,7 @@ struct PasswordListSideView: View {
     @Binding var selectedItemId: String?
     @EnvironmentObject var appController: AppController
     @Environment(\.modelContext) private var modelContext
+    
     var groupedItems: [String: [Item]]
     var sectionHeaders: [String]
     
@@ -20,7 +21,10 @@ struct PasswordListSideView: View {
     @State private var isOffice = true
     @State private var isDeleted = false
     @State private var searchText: String = ""
-    
+
+    @State private var showDeleteAlert = false
+    @State private var itemsPendingDeletion: Set<String> = []
+
     var body: some View {
         ScrollViewReader { proxy in
             List(selection: $selectedItemId) {
@@ -32,9 +36,16 @@ struct PasswordListSideView: View {
                         ?? []
                         ForEach(sectionItems) { item in
                             PasswordListRecord(item).tag(item.id)
+                                .contextMenu {
+                                    Button(role: .destructive) {
+                                        requestDelete(ids: [item.id])
+                                    } label: {
+                                        Label("Delete", systemImage: "trash")
+                                    }
+                                }
                         }
                         .onDelete { indexSet in
-                            deleteItems(offsets: indexSet, sectionItems: sectionItems)
+                            requestDelete(offsets: indexSet, sectionItems: sectionItems)
                         }
                     }
                 }
@@ -84,6 +95,16 @@ struct PasswordListSideView: View {
                 .padding(.trailing, 8)
 #endif
             }
+            .alert("Delete Item?", isPresented: $showDeleteAlert) {
+                Button("Cancel", role: .cancel) {
+                    itemsPendingDeletion = []
+                }
+                Button("Delete", role: .destructive) {
+                    performDelete()
+                }
+            } message: {
+                Text("This action cannot be undone.")
+            }
         }
     }
     
@@ -117,15 +138,31 @@ struct PasswordListSideView: View {
         }
     }
     
-    private func deleteItems(offsets: IndexSet, sectionItems: [Item]) {
+    private func requestDelete(ids: Set<String>) {
+        guard !ids.isEmpty else { return }
+        itemsPendingDeletion = ids
+        showDeleteAlert = true
+    }
+    
+    private func requestDelete(offsets: IndexSet, sectionItems: [Item]) {
+        var deleteItems = Set<String>()
+        for index in offsets {
+            let itemToDelete = sectionItems[index]
+            deleteItems.insert(itemToDelete.id)
+        }
+        itemsPendingDeletion = deleteItems
+        showDeleteAlert = true
+    }
+    
+    private func performDelete() {
         withAnimation {
-            for index in offsets {
-                let itemToDelete = sectionItems[index]
-                if selectedItemId == itemToDelete.id {
-                    selectedItemId = nil
-                }
-                modelContext.delete(itemToDelete)
+            let itemMap = Dictionary(uniqueKeysWithValues: groupedItems.flatMap { $0.value }.map { ($0.id, $0) })
+            for itemId in itemsPendingDeletion {
+                let item = itemMap[itemId]!
+                modelContext.delete(item)
             }
+            selectedItemId = nil
+            itemsPendingDeletion = []
         }
     }
 }
