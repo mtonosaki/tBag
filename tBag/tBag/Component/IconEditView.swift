@@ -38,7 +38,7 @@ struct IconEditView: View {
         }
         .onAppear {
             guard let iconFileName = item.iconFileName else { return }
-            if let image = ImageStore.load(fileName: iconFileName) {
+            if let image = LocalImageStore.loadImage(folder: .icons, fileName: iconFileName) {
                 self.icon = image
             }
         }
@@ -84,7 +84,7 @@ struct IconEditView: View {
             print("--- macOS: saving : icon filename = \(fileName)")
 #endif
             
-            ImageStore.save(data: resizedImageData, fileName: fileName)
+            LocalImageStore.save(data: resizedImageData, folder: .icons, fileName: fileName)
             item.iconFileName = fileName
         } catch {
             toast?("Failed to set image: \(error.localizedDescription)")

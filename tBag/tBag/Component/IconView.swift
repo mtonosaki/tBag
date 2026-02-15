@@ -20,12 +20,12 @@ struct IconView: View {
             .scaledToFit()
             .onChange(of: item.iconFileName) { _, newValue in
                 guard let iconFileName = newValue else { return }
-                guard let image = ImageStore.load(fileName: iconFileName) else { return }
+                guard let image = LocalImageStore.loadImage(folder: .icons, fileName: iconFileName) else { return }
 
                 self.icon = image
             }
             .onAppear {
-                if let iconFileName = item.iconFileName, let image = ImageStore.load(fileName: iconFileName) {
+                if let iconFileName = item.iconFileName, let image = LocalImageStore.loadImage(folder: .icons, fileName: iconFileName) {
                     self.icon = image
                 }
     }}
