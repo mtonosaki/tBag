@@ -31,13 +31,23 @@ struct SyncView: View {
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button {
-                        authViewModel.signOut()
                         page = .password
                     } label: {
                         Text(viewConfig.cancelButtonTitle)
+                            .labelStyle(.automatic)
                     }
                     .padding(.horizontal, 6)
                 }
+                ToolbarItem(placement: .cancellationAction) {
+                    Button {
+                        authViewModel.signOut()
+                        page = .password
+                    } label: {
+                        Label("Signout", systemImage: "rectangle.portrait.and.arrow.right")
+                            .labelStyle(.automatic)
+                    }
+                    .padding(.horizontal, 6)
+                }.hidden(!authViewModel.isSigningIn)
             }
         }.environmentObject(viewConfig)
     }

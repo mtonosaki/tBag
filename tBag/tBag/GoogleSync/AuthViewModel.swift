@@ -22,7 +22,12 @@ class AuthViewModel: ObservableObject {
     @Published var errorMessage: String?
     @Published var user: GIDGoogleUser?
 
-    init() { }
+    init() {
+        configureSignIn()
+        Task {
+            await restoreSignIn()
+        }
+    }
     
     convenience init(userDisplayName: String?, errorMessage: String? = nil, user: GIDGoogleUser? = nil) {
         self.init()
@@ -30,10 +35,24 @@ class AuthViewModel: ObservableObject {
         self.errorMessage = errorMessage
         self.user = user
     }
+    
+    var isSigningIn: Bool {
+        return userDisplayName != nil
+    }
+
+    func restoreSignIn() async {
+        do {
+            let user = try await GIDSignIn.sharedInstance.restorePreviousSignIn()
+            self.user = user
+            self.userDisplayName = user.profile?.name
+            self.errorMessage = nil
+            print("Restored sign-in as \(userDisplayName ?? "Unknown")")
+        } catch {
+            print("Failed to restore sign-in: \(error.localizedDescription)")
+        }
+    }
 
     func signIn() async {
-        configureSignIn()
-        
 #if os(iOS)
         guard let windowScene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene,
               let presentingWindow = windowScene.windows.first(where: { $0.isKeyWindow })?.rootViewController else {
@@ -64,7 +83,7 @@ class AuthViewModel: ObservableObject {
             self.errorMessage = "Fatal Error: GIDClientID not found in Info.plist"
             return
         }
-        guard let hostedDomain = Bundle.main.object(forInfoDictionaryKey: "AuthenticationDomain") as? String, !clientID.isEmpty else {
+        guard let hostedDomain = Bundle.main.object(forInfoDictionaryKey: "AuthenticationDomain") as? String, !hostedDomain.isEmpty else {
             self.errorMessage = "Fatal Error: AuthenticationDomain not found in Info.plist"
             return
         }
