@@ -38,16 +38,18 @@ struct SyncView: View {
                     }
                     .padding(.horizontal, 6)
                 }
-                ToolbarItem(placement: .cancellationAction) {
-                    Button {
-                        authViewModel.signOut()
-                        page = .password
-                    } label: {
-                        Label("Signout", systemImage: "rectangle.portrait.and.arrow.right")
-                            .labelStyle(.automatic)
+                if authViewModel.isSigningIn {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button {
+                            authViewModel.signOut()
+                            page = .password
+                        } label: {
+                            Image(systemName: "rectangle.portrait.and.arrow.right")
+                                .foregroundColor(.gray)
+                        }
+                        .padding(.horizontal, 6)
                     }
-                    .padding(.horizontal, 6)
-                }.hidden(!authViewModel.isSigningIn)
+                }
             }
         }.environmentObject(viewConfig)
     }

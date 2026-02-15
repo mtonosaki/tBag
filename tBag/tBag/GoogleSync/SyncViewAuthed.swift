@@ -24,63 +24,128 @@ struct SyncViewAuthed: View {
     @Query private var items: [Item]
     
     var body: some View {
-        VStack {
-            Text("Name: \(displayName)").font(.title2)
+        ScrollView {
+            VStack {
+                Text(displayName).font(.title2)
 #if os(iOS)
-            Text("UserID")
-            Text(appController.accountId).padding(.bottom, 8)
+                Text("UserID").font(.caption2)
+                Text(appController.accountId).padding(.bottom, 8)
 #elseif os(macOS)
-            HStack(spacing: 0) {
-                Text("UserID: ").font(.caption).foregroundColor(.gray)
-                Text(appController.accountId).font(.caption)
-            }.padding(.bottom, 8)
+                HStack(spacing: 0) {
+                    Text("UserID: ").font(.caption).foregroundColor(.gray)
+                    Text(appController.accountId).font(.caption)
+                }.padding(.bottom, 8)
 #endif
-            Text("\(items.count) records")
-            
-            HStack(spacing: 24) {
-                Button {
-                    Task {
-                        do {
-                            try await backupToCloud()
-                        } catch {
-                            toast?("Upload error \(error)")
+                GroupBox {
+                    Text("\(items.count) records")
+                    
+                    HStack(spacing: 24) {
+                        Button {
+                            Task {
+                                do {
+                                    try await backupToCloud()
+                                } catch {
+                                    toast?("Password backup error \(error)")
+                                }
+                            }
+                        } label: {
+                            Label("SAVE", systemImage: "icloud.and.arrow.up")
+                                .padding()
                         }
+                        .buttonStyle(.glassProminent)
+                        .clipShape(Capsule())
+                        .padding(.vertical)
+                        .disabled(progressTotal > 0.0)
+                        
+                        Button {
+                            Task {
+                                do {
+                                    try await restoreFromCloud()
+                                } catch {
+                                    toast?("Password resotre error \(error)")
+                                }
+                            }
+                            
+                        } label: {
+                            Label("LOAD", systemImage: "icloud.and.arrow.down")
+                                .padding()
+                        }
+                        .buttonStyle(.glassProminent)
+                        .clipShape(Capsule())
+                        .padding(.vertical)
+                        .disabled(progressTotal > 0.0)
                     }
+                    .frame(maxWidth: .infinity)
+                    
+                    Text("tBag will backup and restore your passwords to/from your Google Drive.  To load from Google Drive, the all local data will be changed to the cloud version.  Undo is not available.").font(.footnote)
                 } label: {
-                    VStack(spacing: 0) {
-                        Label("BACKUP", systemImage: "icloud.and.arrow.up")
-                        Text("to Google Drive")
-                    }.padding()
+                    Label("Password", systemImage: "text.pad.header").font(.headline).padding(.top)
                 }
-                .buttonStyle(.glassProminent)
-                .padding(.vertical)
-                .disabled(progressTotal > 0.0)
+#if os(macOS)
+                .frame(maxWidth: 400, maxHeight: .infinity)
+#endif
+                .padding()
                 
-                Button {
-                    Task {
-                        do {
-                            try await restoreFromCloud()
-                        } catch {
-                            toast?("Upload error \(error)")
+                GroupBox {
+                    HStack(spacing: 24) {
+                        Button {
+                            Task {
+                                do {
+                                    try await backupToCloud()
+                                } catch {
+                                    toast?("Icon Upload error \(error)")
+                                }
+                            }
+                        } label: {
+                            Label("SAVE", systemImage: "icloud.and.arrow.up")
+                                .padding()
                         }
+                        .buttonStyle(.glassProminent)
+                        .clipShape(Capsule())
+                        .padding(.vertical)
+                        .disabled(progressTotal > 0.0)
+                        
+                        Button {
+                            Task {
+                                do {
+                                    try await restoreFromCloud()
+                                } catch {
+                                    toast?("Icon load error \(error)")
+                                }
+                            }
+                            
+                        } label: {
+                            Label("LOAD", systemImage: "icloud.and.arrow.down")
+                                .padding()
+                        }
+                        .buttonStyle(.glassProminent)
+                        .clipShape(Capsule())
+                        .padding(.vertical)
+                        .disabled(progressTotal > 0.0)
                     }
-
+                    .frame(maxWidth: .infinity)
+                    
+                    Text("tBag will save and load icons to/from your Google Drive. To load icons, the cloud version will add to the local icon collection").font(.footnote)
                 } label: {
-                    VStack(spacing: 0) {
-                        Label("RESTORE", systemImage: "icloud.and.arrow.down")
-                        Text("local data will be removed")
-                    }.padding()
+                    Label("Icons", systemImage: "photo.circle").font(.headline).padding(.top)
                 }
-                .buttonStyle(.glassProminent)
-                .padding(.vertical)
-                .disabled(progressTotal > 0.0)
+#if os(macOS)
+                .frame(maxWidth: 400, maxHeight: .infinity)
+#endif
+                .padding()
+                
+                ProgressView(value: progressValue, total: progressTotal)
+                    .padding(.horizontal, 20)
+                    .opacity(progressTotal)
+                
+                Text(status).foregroundColor(.secondary)
+                    .padding(.bottom, 8)
             }
-            
-            ProgressView(value: progressValue, total: progressTotal)
-                .padding(.horizontal, 20)
-                .opacity(progressTotal)
-            Text(status).foregroundColor(.secondary)
-                .padding(.bottom, 8)
+        }
+        .groupBoxStyle(GlassGroupBoxStyle())
+        .background {
+            GeometricBackground(pattern: .scatteredTriangles)
+                .ignoresSafeArea()
         }
     }
     
@@ -160,6 +225,88 @@ struct SyncViewAuthed: View {
     }
 }
 
+struct GeometricBackground: View {
+    enum Pattern {
+        case rasterLines
+        case scatteredTriangles
+    }
+    
+    var pattern: Pattern = .rasterLines
+    
+    var body: some View {
+        Canvas { context, size in
+            switch pattern {
+            case .rasterLines:
+                context.opacity = 0.1
+                drawRasterLines(context: context, size: size)
+            case .scatteredTriangles:
+                drawTriangles(context: context, size: size)
+            }
+        }
+        .edgesIgnoringSafeArea(.all)
+    }
+    
+    private func drawRasterLines(context: GraphicsContext, size: CGSize) {
+        let step: CGFloat = 8
+        let width = size.width
+        let height = size.height
+        var path = Path()
+        
+        for xpos in stride(from: -height, to: width + height, by: step) {
+            path.move(to: CGPoint(x: xpos, y: 0))
+            path.addLine(to: CGPoint(x: xpos + height, y: height))
+        }
+        
+        context.stroke(path, with: .color(.gray), lineWidth: 1)
+    }
+    
+    private func drawTriangles(context: GraphicsContext, size: CGSize) {
+        let symbolsCount = 1200
+        let symbolSizeBase: CGFloat = 8.0
+        var rng = SystemRandomNumberGenerator()
+        
+        for _ in 0..<symbolsCount {
+            let xpos = CGFloat.random(in: 0...size.width, using: &rng)
+            let ypos = CGFloat.random(in: 0...size.height, using: &rng)
+            let angle = Angle.degrees(Double.random(in: 0..<360, using: &rng))
+            let symbolSize: CGFloat = Double.random(in: 0.5...1.0, using: &rng) * symbolSizeBase
+            let randomOpacity = Double.random(in: 0.05...0.15, using: &rng)
+            let hue = Double.random(in: 0...1, using: &rng)
+            let randomColor = Color(hue: hue, saturation: 0.9, brightness: 0.9)
+
+            context.drawLayer { subContext in
+                subContext.opacity = randomOpacity
+                subContext.translateBy(x: xpos, y: ypos)
+                subContext.rotate(by: angle)
+                var path = Path()
+                path.move(to: CGPoint(x: 0, y: -symbolSize))
+                path.addLine(to: CGPoint(x: -symbolSize/1.25, y: symbolSize/2))
+                path.addLine(to: CGPoint(x: symbolSize/1.25, y: symbolSize/2))
+                path.closeSubpath()
+                subContext.stroke(path, with: .color(randomColor), lineWidth: 1.0)
+            }
+        }
+    }
+}
+
+struct GlassGroupBoxStyle: GroupBoxStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        VStack(alignment: .leading) {
+            configuration.label
+                .padding(.bottom, 4)
+            
+            configuration.content
+        }
+        .padding()
+        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
+        .shadow(color: .black.opacity(0.2), radius: 8)
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(Color.primary.opacity(0.1), lineWidth: 1)
+        )
+    }
+}
+
 #Preview {
     SyncViewAuthed(
         authViewModel: AuthViewModel(userDisplayName: "Hoge Taro"),
@@ -167,7 +314,7 @@ struct SyncViewAuthed: View {
         status: "本日は晴天なり",
         progressTotal: 100.0,
     )
-    .frame(width: 500, height: 300)
+    .frame(width: 900, height: 300)
     .modelContainer(makeSampleModelContainer()!)
     .environmentObject(makeSampleAppController())
     .environmentObject(ViewConfig())
