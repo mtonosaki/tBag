@@ -16,7 +16,7 @@ struct LocalImageStore {
         FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
     }
     
-    static func searchFileNames(folder: Folders) -> [String] {
+    static func searchFileNames(folder: Folders) -> [(String, Date)] {
         let targetDirectory = documentsDirectory.appendingPathComponent(folder.rawValue)
         if !FileManager.default.fileExists(atPath: targetDirectory.path) {
             return []
@@ -34,7 +34,10 @@ struct LocalImageStore {
                 
                 return timeStampLeft > timeStampRight
             }
-            return sortedURLs.map { $0.lastPathComponent }
+            return sortedURLs.map {
+                let timeStamp = (try? $0.resourceValues(forKeys: [.contentModificationDateKey]))?.contentModificationDate ?? Date.distantPast
+                return ($0.lastPathComponent, timeStamp)
+            }
         } catch {
             return []
         }
@@ -48,6 +51,14 @@ struct LocalImageStore {
         
         let url = targetDirectory.appendingPathComponent(fileName)
         try? data.write(to: url)
+    }
+    
+    static func isExisting(folder: Folders, fileName: String) -> Bool {
+        let url = documentsDirectory
+            .appendingPathComponent(folder.rawValue)
+            .appendingPathComponent(fileName)
+        
+        return FileManager.default.fileExists(atPath: url.path)
     }
     
     static func loadData(folder: Folders, fileName: String) -> Data? {

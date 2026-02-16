@@ -24,204 +24,203 @@ struct SyncViewAuthed: View {
     @Query private var items: [Item]
     
     var body: some View {
-        ScrollView {
-            VStack {
-                Text(displayName).font(.title2)
+        ScrollViewReader { proxy in
+            ScrollView {
+                VStack {
+                    Text(displayName).font(.title2)
 #if os(iOS)
-                Text("UserID").font(.caption2)
-                Text(appController.accountId).padding(.bottom, 8)
+                    Text("UserID").font(.caption2)
+                    Text(appController.accountId).padding(.bottom, 8)
 #elseif os(macOS)
-                HStack(spacing: 0) {
-                    Text("UserID: ").font(.caption).foregroundColor(.gray)
-                    Text(appController.accountId).font(.caption)
-                }.padding(.bottom, 8)
+                    HStack(spacing: 0) {
+                        Text("UserID: ").font(.caption).foregroundColor(.gray)
+                        Text(appController.accountId).font(.caption)
+                    }.padding(.bottom, 8)
 #endif
-                GroupBox {
-                    Text("\(items.count) records")
-                    
-                    HStack(spacing: 24) {
-                        Button {
-                            Task {
-                                do {
-                                    try await backupToCloud()
-                                } catch {
-                                    toast?("Password backup error \(error)")
-                                }
-                            }
-                        } label: {
-                            Label("SAVE", systemImage: "icloud.and.arrow.up")
-                                .padding()
-                        }
-                        .buttonStyle(.glassProminent)
-                        .clipShape(Capsule())
-                        .padding(.vertical)
-                        .disabled(progressTotal > 0.0)
+                    GroupBox {
+                        Text("\(items.count) records")
                         
-                        Button {
-                            Task {
-                                do {
-                                    try await restoreFromCloud()
-                                } catch {
-                                    toast?("Password resotre error \(error)")
+                        HStack(spacing: 24) {
+                            Button {
+                                withAnimation {
+                                    proxy.scrollTo(Ids.progressBar, anchor: .bottom)
                                 }
+                                Task {
+                                    do {
+                                        try await backupItemsToCloud()
+                                    } catch {
+                                        toast?("Password backup error \(error)")
+                                    }
+                                }
+                            } label: {
+                                Label("SAVE", systemImage: "icloud.and.arrow.up")
+                                    .padding()
                             }
+                            .buttonStyle(.glassProminent)
+                            .clipShape(Capsule())
+                            .padding(.vertical)
+                            .disabled(progressTotal > 0.0)
                             
-                        } label: {
-                            Label("LOAD", systemImage: "icloud.and.arrow.down")
-                                .padding()
-                        }
-                        .buttonStyle(.glassProminent)
-                        .clipShape(Capsule())
-                        .padding(.vertical)
-                        .disabled(progressTotal > 0.0)
-                    }
-                    .frame(maxWidth: .infinity)
-                    
-                    Text("tBag will backup and restore your passwords to/from your Google Drive.  To load from Google Drive, the all local data will be changed to the cloud version.  Undo is not available.").font(.footnote)
-                } label: {
-                    Label("Password", systemImage: "text.pad.header").font(.headline).padding(.top)
-                }
-#if os(macOS)
-                .frame(maxWidth: 400, maxHeight: .infinity)
-#endif
-                .padding()
-                
-                GroupBox {
-                    HStack(spacing: 24) {
-                        Button {
-                            Task {
-                                do {
-                                    try await backupToCloud()
-                                } catch {
-                                    toast?("Icon Upload error \(error)")
+                            Button {
+                                withAnimation {
+                                    proxy.scrollTo(Ids.progressBar, anchor: .bottom)
                                 }
+                                Task {
+                                    do {
+                                        try await restoreItemsFromCloud()
+                                    } catch {
+                                        toast?("Password resotre error \(error)")
+                                    }
+                                }
+                                
+                            } label: {
+                                Label("LOAD", systemImage: "icloud.and.arrow.down")
+                                    .padding()
                             }
-                        } label: {
-                            Label("SAVE", systemImage: "icloud.and.arrow.up")
-                                .padding()
+                            .buttonStyle(.glassProminent)
+                            .clipShape(Capsule())
+                            .padding(.vertical)
+                            .disabled(progressTotal > 0.0)
                         }
-                        .buttonStyle(.glassProminent)
-                        .clipShape(Capsule())
-                        .padding(.vertical)
-                        .disabled(progressTotal > 0.0)
+                        .frame(maxWidth: .infinity)
                         
-                        Button {
-                            Task {
-                                do {
-                                    try await restoreFromCloud()
-                                } catch {
-                                    toast?("Icon load error \(error)")
-                                }
-                            }
-                            
-                        } label: {
-                            Label("LOAD", systemImage: "icloud.and.arrow.down")
-                                .padding()
-                        }
-                        .buttonStyle(.glassProminent)
-                        .clipShape(Capsule())
-                        .padding(.vertical)
-                        .disabled(progressTotal > 0.0)
+                        Text("tBag will backup and restore your passwords to/from your Google Drive.  To load from Google Drive, the all local data will be changed to the cloud version.  Undo is not available.").font(.footnote)
+                    } label: {
+                        Label("Password", systemImage: "text.pad.header").font(.headline).padding(.top)
                     }
-                    .frame(maxWidth: .infinity)
-                    
-                    Text("tBag will save and load icons to/from your Google Drive. To load icons, the cloud version will add to the local icon collection").font(.footnote)
-                } label: {
-                    Label("Icons", systemImage: "photo.circle").font(.headline).padding(.top)
-                }
+                    .padding()
 #if os(macOS)
-                .frame(maxWidth: 400, maxHeight: .infinity)
+                    .frame(maxWidth: 400, maxHeight: .infinity)
 #endif
-                .padding()
-                
-                ProgressView(value: progressValue, total: progressTotal)
-                    .padding(.horizontal, 20)
-                    .opacity(progressTotal)
-                
-                Text(status).foregroundColor(.secondary)
-                    .padding(.bottom, 8)
+                    
+                    GroupBox {
+                        HStack(spacing: 24) {
+                            Button {
+                                withAnimation {
+                                    proxy.scrollTo(Ids.progressBar, anchor: .bottom)
+                                }
+                                Task {
+                                    do {
+                                        try await saveIconsToCloud()
+                                    } catch {
+                                        toast?("Icon Upload error \(error)")
+                                    }
+                                }
+                            } label: {
+                                Label("SAVE", systemImage: "icloud.and.arrow.up")
+                                    .padding()
+                            }
+                            .buttonStyle(.glassProminent)
+                            .clipShape(Capsule())
+                            .padding(.vertical)
+                            .disabled(progressTotal > 0.0)
+                            
+                            Button {
+                                withAnimation {
+                                    proxy.scrollTo(Ids.progressBar, anchor: .bottom)
+                                }
+                                Task {
+                                    do {
+                                        try await loadIconsFromCloud()
+                                    } catch {
+                                        toast?("Icon load error \(error)")
+                                    }
+                                }
+                                
+                            } label: {
+                                Label("LOAD", systemImage: "icloud.and.arrow.down")
+                                    .padding()
+                            }
+                            .buttonStyle(.glassProminent)
+                            .clipShape(Capsule())
+                            .padding(.vertical)
+                            .disabled(progressTotal > 0.0)
+                        }
+                        .frame(maxWidth: .infinity)
+                        
+                        Text("tBag will save and load icons to/from your Google Drive. To load icons, the cloud version will add to the local icon collection").font(.footnote)
+                    } label: {
+                        Label("Icons", systemImage: "photo.circle").font(.headline).padding(.top)
+                    }
+#if os(macOS)
+                    .frame(maxWidth: 400, maxHeight: .infinity)
+#endif
+                    .padding()
+                    
+                    ProgressView(value: progressValue, total: progressTotal)
+                        .padding(.horizontal, 20)
+                        .opacity(progressTotal)
+                    
+                    Text(status).foregroundColor(.secondary)
+                        .padding(.bottom, 8)
+                        .id(Ids.progressBar)
+                }
             }
-        }
-        .groupBoxStyle(GlassGroupBoxStyle())
-        .background {
-            BackgroundScatteredTrianglesSpin()
-                .ignoresSafeArea()
+            .groupBoxStyle(GlassGroupBoxStyle())
+            .background {
+                BackgroundScatteredTrianglesSpin()
+                    .ignoresSafeArea()
+            }
         }
     }
-    
-    func backupToCloud() async throws {
+
+    enum Ids: Hashable {
+        case progressBar
+    }
+
+    func backupItemsToCloud() async throws {
+        guard let user = authViewModel.user else { return }
         progressTotal = 100.0
         progressValue = 0.0
-        let stepProgresses = [
-            FilePackager.PackSteps.jsonStart: 2.0,
-            FilePackager.PackSteps.zipStart: 5.0,
-            FilePackager.PackSteps.success: 10.0
-        ]
-        let filePackager = FilePackager(items: self.items)
-        let compressedData = try filePackager.pack { step, remarks in
-            if let remarks = remarks {
-                status = remarks
-            }
-            if let stepProgress = stepProgresses[step] {
-                progressValue = stepProgress
-            }
+        
+        let syncService = SyncItemService(user: user)
+        try await syncService.backup(items: self.items, accountId: appController.accountId) { progress, status in
+            self.progressValue = progress
+            if let status = status { self.status = status }
         }
-        
-        status = "Uploading to Google Drive..."
-        progressValue = 75.0
-        let cloudDriveRepository = GoogleDriveRepository(user: authViewModel.user!)
-        try await cloudDriveRepository.save(
-            fileName: makeFileName(),
-            fileContent: compressedData,
-            mimeType: "application/octet-stream"
-        )
-        
-        status = "Saved as \(appController.accountId).bin"
-        progressValue = 100.0
         viewConfig.cancelButtonTitle = "← Back"
     }
     
-    func restoreFromCloud() async throws {
+    func restoreItemsFromCloud() async throws {
+        guard let user = authViewModel.user else { return }
         progressTotal = 100.0
         progressValue = 0.0
-        let stepProgresses = [
-            GoogleDriveRepository.Steps.foundFolder: 7.0,
-            GoogleDriveRepository.Steps.foundDriveFileList: 12.0,
-            GoogleDriveRepository.Steps.downloaded: 75.0,
-            FilePackager.PackSteps.success: 98.0
-        ] as [AnyHashable: Double]
 
-        status = "Downloading from Google Drive..."
-        let cloudDriveRepository = GoogleDriveRepository(user: authViewModel.user!)
-        let data = try await cloudDriveRepository.load(fileName: makeFileName()) { step, remarks in
-            if let remarks = remarks {
-                status = remarks
-            }
-            if let stepProgress = stepProgresses[step] {
-                progressValue = stepProgress
-            }
-        }
-        
-        let filePackager = FilePackager(items: self.items)
-        let loadedItems = try filePackager.unpack(data: data) { step, remarks in
-            if let remarks = remarks {
-                status = remarks
-            }
-            if let stepProgress = stepProgresses[step] {
-                progressValue = stepProgress
-            }
+        let syncService = SyncItemService(user: user)
+        let loadedItems = try await syncService.restore(accountId: appController.accountId) { progress, status in
+            self.progressValue = progress
+            if let status = status { self.status = status }
         }
         
         try? context.delete(model: Item.self)
         loadedItems.forEach {
             context.insert($0)
         }
-        progressValue = 100.0
-        status = "Restored \(loadedItems.count) items from Google Drive successfully."
     }
     
-    func makeFileName() -> String {
-        return "\(appController.accountId).bin"
+    func saveIconsToCloud() async throws {
+        guard let user = authViewModel.user else { return }
+        progressTotal = 100.0
+        progressValue = 0.0
+        
+        let syncService = SyncIconService(user: user)
+        try await syncService.save { progress, status in
+            self.progressValue = progress
+            if let status = status { self.status = status }
+        }
+        viewConfig.cancelButtonTitle = "← Back"
+    }
+
+    func loadIconsFromCloud() async throws {
+        guard let user = authViewModel.user else { return }
+        progressTotal = 100.0
+        progressValue = 0.0
+        
+        let syncService = SyncIconService(user: user)
+        try await syncService.load(accountId: appController.accountId) { progress, status in
+            self.progressValue = progress
+            if let status = status { self.status = status }
+        }
     }
 }
 

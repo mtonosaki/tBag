@@ -11,6 +11,7 @@ import Tono
 import ImageIO
 
 struct IconEditView: View {
+    let maxIconSize: CGFloat = 160
     @Bindable var item: Item
     @Environment(\.displayToast) var toast
     
@@ -61,7 +62,7 @@ struct IconEditView: View {
 #endif
             guard let originalImage else { return }
             
-            let image = ImageUtil.resizeImage(originalImage, maxPixel: 96)
+            let image = ImageUtil.resizeImage(originalImage, maxPixel: maxIconSize)
             guard let resizedImage = image?.image else { return }
             guard let resizedImageData = image?.data else { return }
             self.icon = resizedImage
@@ -82,7 +83,6 @@ struct IconEditView: View {
 #else
             print("--- macOS: saving : icon filename = \(fileName)")
 #endif
-            
             LocalImageStore.save(data: resizedImageData, folder: .icons, fileName: fileName)
             item.iconFileName = fileName
         } catch {

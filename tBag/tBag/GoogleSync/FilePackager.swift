@@ -9,8 +9,6 @@ import Foundation
 import Tono
 
 struct FilePackager {
-    let items: [Item]
-    
     enum PackSteps {
         case jsonStart
         case zipStart
@@ -46,7 +44,7 @@ struct FilePackager {
         }
     }
     
-    func pack(callBack: (_ step: PackSteps, _ remarks: String?) -> Void) throws -> Data {
+    func pack(items: [Item], callBack: (_ step: PackSteps, _ remarks: String?) -> Void) throws -> Data {
         // JSON DATA PACKING
         callBack(.jsonStart, nil)
         let encoder = JSONEncoder()
