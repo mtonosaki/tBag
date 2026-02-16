@@ -12,7 +12,6 @@ import ImageIO
 
 struct IconEditView: View {
     @Bindable var item: Item
-
     @Environment(\.displayToast) var toast
     
     @State private var selectedPhotoPickerItem: PhotosPickerItem?

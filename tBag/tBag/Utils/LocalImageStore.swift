@@ -56,8 +56,10 @@ struct LocalImageStore {
             return nil
         }
         
-        let url = documentsDirectory.appendingPathComponent(fileName)
-        guard let data = try? Data(contentsOf: url) else { return nil }
+        let url = targetDirectory.appendingPathComponent(fileName)
+        guard let data = try? Data(contentsOf: url) else {
+            return nil
+        }
         
         return data
     }

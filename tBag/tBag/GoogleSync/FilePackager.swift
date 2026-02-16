@@ -57,12 +57,6 @@ struct FilePackager {
             throw Exception.parseJsonData
         }
         
-#if DEBUG
-        if let jsonString = String(data: jsonData as Data, encoding: .utf8) {
-            print(jsonString)
-        }
-#endif
-        
         // ZIP COMPRESS
         callBack(.zipStart, nil)
         guard let compressedData = try? (jsonData as NSData).compressed(using: .zlib) as Data else {

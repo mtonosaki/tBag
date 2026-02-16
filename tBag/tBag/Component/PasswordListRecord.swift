@@ -63,7 +63,6 @@ struct PasswordListRecord: View {
     let fakeConfig = ViewConfig()
 
     List {
-
         ForEach(items) { item in
             NavigationLink {
                 PasswordEditView(item)
