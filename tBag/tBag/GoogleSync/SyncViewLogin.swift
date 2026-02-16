@@ -8,6 +8,7 @@
 import SwiftUI
 import SwiftData
 import GoogleSignInSwift
+import Tono
 
 struct SyncViewLogin: View {
     @ObservedObject var authViewModel: AuthViewModel
@@ -29,6 +30,11 @@ struct SyncViewLogin: View {
                     .foregroundColor(.red)
                     .padding()
             }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background {
+            BackgroundScatteredTriangles()
+                .ignoresSafeArea()
         }
     }
 }

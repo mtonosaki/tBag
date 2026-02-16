@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 import Tono
 
 struct PasswordListSideView: View {
@@ -13,10 +14,8 @@ struct PasswordListSideView: View {
     @Binding var selectedItemId: String?
     @EnvironmentObject var appController: AppController
     @Environment(\.modelContext) private var modelContext
-    
-    var groupedItems: [String: [Item]]
-    var sectionHeaders: [String]
-    
+    @Query(filter: #Predicate<Item>{ $0.type == "pw"}) private var items: [Item]
+
     @State private var isHome = true
     @State private var isOffice = true
     @State private var isDeleted = false
@@ -106,6 +105,26 @@ struct PasswordListSideView: View {
                 Text("This action cannot be undone.")
             }
         }
+    }
+    
+    private var groupedItems: [String: [Item]] {
+        var grouped: [String: [Item]] = [:]
+        let filteredItems = items.filter(isShowItem)
+        
+        for item in filteredItems {
+            if let firstCharacter = item.caption.first {
+                let key = String(firstCharacter).uppercased()
+                grouped[key, default: []].append(item)
+            } else {
+                let key = "!"
+                grouped[key, default: []].append(item)
+            }
+        }
+        return grouped
+    }
+    
+    private var sectionHeaders: [String] {
+        groupedItems.keys.sorted()
     }
     
     func isShowItem(_ item: Item) -> Bool {

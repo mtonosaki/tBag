@@ -25,7 +25,7 @@
       "location" : "https://github.com/google/google-api-objectivec-client-for-rest.git",
       "state" : {
         "branch" : "main",
-        "revision" : "afcedef26a6571b136a6548eab5be0416abc48e3"
+        "revision" : "499087368ae106b7e00cd8cbb82fdd78257dfbc7"
       }
     },
     {
@@ -79,7 +79,7 @@
       "location" : "https://github.com/mtonosaki/TonoSwift",
       "state" : {
         "branch" : "main",
-        "revision" : "f87e9965c1bbcaef7b9b7993f224445bacd4e03d"
+        "revision" : "ae372fdf24316e07d9952c8c6cfd831a1611c0bc"
       }
     }
   ],

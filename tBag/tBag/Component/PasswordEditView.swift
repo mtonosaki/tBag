@@ -14,9 +14,7 @@ struct PasswordEditView: View {
     @EnvironmentObject var appController: AppController
     @Environment(\.modelContext) private var modelContext
     @Environment(\.displayToast) var toast
-    
     @Bindable var item: Item
-    
     @State private var isOpenPassword: Bool = false
     
     init(_ item: Item) {
@@ -154,7 +152,7 @@ struct PasswordEditView: View {
             .padding(.bottom)
         }
         .navigationTitle(item.isEmpty() ? "New Item" : item.caption)
-        .background(Color.bgColorPassword)
+        .background(BackgroundRasterLines())
     }
 
     func stringBinding(_ key: String) -> Binding<String> {
@@ -195,12 +193,17 @@ struct PasswordEditView: View {
 }
 
 #Preview {
-    PasswordEditView(Item(
+    let sampleItem = Item(
         ownerId: UUID().uuidString,
         type: .password,
         timestamp: Date(),
         sortValue: "ほげたろう",
         caption: "ホゲ太郎",
         attrubutes: [:]
-    ))
+    )
+    let fakeAppController = AppController()
+    let fakeConfig = ViewConfig()
+    PasswordEditView(sampleItem)
+        .environmentObject(fakeAppController)
+        .environmentObject(fakeConfig)
 }

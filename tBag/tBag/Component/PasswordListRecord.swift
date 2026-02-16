@@ -59,13 +59,20 @@ struct PasswordListRecord: View {
             "accountId": "hoge@example.com"
         ])
     ]
-    
+    let fakeAppController = AppController()
+    let fakeConfig = ViewConfig()
+
     List {
+
         ForEach(items) { item in
             NavigationLink {
                 PasswordEditView(item)
+                    .environmentObject(fakeAppController)
+                    .environmentObject(fakeConfig)
             } label: {
                 PasswordListRecord(item)
+                    .environmentObject(fakeAppController)
+                    .environmentObject(fakeConfig)
             }
         }
     }

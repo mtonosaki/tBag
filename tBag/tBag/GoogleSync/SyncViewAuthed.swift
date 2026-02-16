@@ -144,7 +144,7 @@ struct SyncViewAuthed: View {
         }
         .groupBoxStyle(GlassGroupBoxStyle())
         .background {
-            GeometricBackground(pattern: .scatteredTriangles)
+            BackgroundScatteredTrianglesSpin()
                 .ignoresSafeArea()
         }
     }
@@ -222,88 +222,6 @@ struct SyncViewAuthed: View {
     
     func makeFileName() -> String {
         return "\(appController.accountId).bin"
-    }
-}
-
-struct GeometricBackground: View {
-    enum Pattern {
-        case rasterLines
-        case scatteredTriangles
-    }
-    
-    var pattern: Pattern = .rasterLines
-    
-    var body: some View {
-        Canvas { context, size in
-            switch pattern {
-            case .rasterLines:
-                context.opacity = 0.1
-                drawRasterLines(context: context, size: size)
-            case .scatteredTriangles:
-                drawTriangles(context: context, size: size)
-            }
-        }
-        .edgesIgnoringSafeArea(.all)
-    }
-    
-    private func drawRasterLines(context: GraphicsContext, size: CGSize) {
-        let step: CGFloat = 8
-        let width = size.width
-        let height = size.height
-        var path = Path()
-        
-        for xpos in stride(from: -height, to: width + height, by: step) {
-            path.move(to: CGPoint(x: xpos, y: 0))
-            path.addLine(to: CGPoint(x: xpos + height, y: height))
-        }
-        
-        context.stroke(path, with: .color(.gray), lineWidth: 1)
-    }
-    
-    private func drawTriangles(context: GraphicsContext, size: CGSize) {
-        let symbolsCount = 1200
-        let symbolSizeBase: CGFloat = 8.0
-        var rng = SystemRandomNumberGenerator()
-        
-        for _ in 0..<symbolsCount {
-            let xpos = CGFloat.random(in: 0...size.width, using: &rng)
-            let ypos = CGFloat.random(in: 0...size.height, using: &rng)
-            let angle = Angle.degrees(Double.random(in: 0..<360, using: &rng))
-            let symbolSize: CGFloat = Double.random(in: 0.5...1.0, using: &rng) * symbolSizeBase
-            let randomOpacity = Double.random(in: 0.05...0.15, using: &rng)
-            let hue = Double.random(in: 0...1, using: &rng)
-            let randomColor = Color(hue: hue, saturation: 0.9, brightness: 0.9)
-
-            context.drawLayer { subContext in
-                subContext.opacity = randomOpacity
-                subContext.translateBy(x: xpos, y: ypos)
-                subContext.rotate(by: angle)
-                var path = Path()
-                path.move(to: CGPoint(x: 0, y: -symbolSize))
-                path.addLine(to: CGPoint(x: -symbolSize/1.25, y: symbolSize/2))
-                path.addLine(to: CGPoint(x: symbolSize/1.25, y: symbolSize/2))
-                path.closeSubpath()
-                subContext.stroke(path, with: .color(randomColor), lineWidth: 1.0)
-            }
-        }
-    }
-}
-
-struct GlassGroupBoxStyle: GroupBoxStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        VStack(alignment: .leading) {
-            configuration.label
-                .padding(.bottom, 4)
-            
-            configuration.content
-        }
-        .padding()
-        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
-        .shadow(color: .black.opacity(0.2), radius: 8)
-        .overlay(
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(Color.primary.opacity(0.1), lineWidth: 1)
-        )
     }
 }
 
