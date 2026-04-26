@@ -39,6 +39,29 @@ struct FilePackager {
             return loadedItems
             
         } catch {
+            print("JSON Decoding Error: \(error)")
+            if let decodingError = error as? DecodingError {
+                switch decodingError {
+                case .dataCorrupted(let context):
+                    print("Data corrupted: \(context)")
+                case .keyNotFound(let key, let context):
+                    print("Key '\(key)' not found: \(context.debugDescription)")
+                    print("codingPath: \(context.codingPath)")
+                case .typeMismatch(let type, let context):
+                    print("Type '\(type)' mismatch: \(context.debugDescription)")
+                    print("codingPath: \(context.codingPath)")
+                case .valueNotFound(let type, let context):
+                    print("Value '\(type)' not found: \(context.debugDescription)")
+                    print("codingPath: \(context.codingPath)")
+                @unknown default:
+                    print("Unknown decoding error")
+                }
+            }
+            
+            if let jsonString = String(data: jsonData, encoding: .utf8) {
+                print("Raw JSON snippet: \(jsonString.prefix(1000))...")
+            }
+            
             callBack(.error, "Parsing json failed: \(error.localizedDescription)")
             throw Exception.parseJsonData
         }

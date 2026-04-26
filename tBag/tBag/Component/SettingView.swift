@@ -1,6 +1,6 @@
 //
 //  SettingView.swift
-//  Arenavi
+//  tBag
 //
 //  Created by Manabu Tonosaki on 2025/05/05.
 //
@@ -40,7 +40,7 @@
                     Label("General", systemImage: "gear")
                 }
                 .tag(1)
-                .navigationTitle("Arenavi")
+                .navigationTitle("tBag")
                 .navigationSubtitle("General")
                 .padding(16)
 
@@ -78,7 +78,7 @@
                     Label("Advanced", systemImage: "star")
                 }
                 .tag(2)
-                .navigationTitle("Arenavi")
+                .navigationTitle("tBag")
                 .navigationSubtitle("Advanced")
                 .padding()
             }

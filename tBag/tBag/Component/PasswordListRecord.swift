@@ -40,7 +40,7 @@ struct PasswordListRecord: View {
                     Text(item.caption)
                         .font(.headline)
                     HStack {
-                        Text(item.get(key: "accountId", myRsa: try? appController.myRsa, defaultString: ""))
+                        Text(getAccountId())
                             .opacity(0.5)
                             .font(.subheadline)
                     }
@@ -49,13 +49,21 @@ struct PasswordListRecord: View {
             }
         }
     }
+
+    private func getAccountId() -> String {
+        guard let myRsa = try? appController.myRsa,
+              let sealedString = item.attributes["accountId"] else {
+            return ""
+        }
+        return (try? CryptoService.shared.open(sealedString: sealedString, myRsa: myRsa)) ?? ""
+    }
 }
 
 #Preview {
     let ownerId = UUID().uuidString
     let items: [Item] = [
-        Item(ownerId: ownerId, type: .password, timestamp: Date(), sortValue: "", caption: "", attrubutes: [:]),
-        Item(ownerId: ownerId, type: .password, timestamp: Date(), sortValue: "hoge", caption: "HOGE", attrubutes: [
+        Item(ownerId: ownerId, type: .password, timestamp: Date(), sortValue: "", caption: "", attributes: [:]),
+        Item(ownerId: ownerId, type: .password, timestamp: Date(), sortValue: "hoge", caption: "HOGE", attributes: [
             "accountId": "hoge@example.com"
         ])
     ]

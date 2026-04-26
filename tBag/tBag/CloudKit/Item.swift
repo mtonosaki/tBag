@@ -27,6 +27,18 @@ final class Item: Codable, Hashable {
         case tags
     }
 
+    public enum PasswordAttributeKeys: String {
+        case accountId
+        case password
+        case email
+    }
+    
+    public enum PasswordFilter: String {
+        case home = "#home"
+        case office = "#office"
+        case deleted = "#deleted"
+    }
+
     public enum ItemType: String {
         case planeText = "text"
         case password = "pw"
@@ -43,11 +55,8 @@ final class Item: Codable, Hashable {
         case iconFileName
         case attributes
     }
-    
-    private var attributes: [AttributeKey: SealedEnvelopeBase64String] = [:]
-    
-    @Transient private var attributePlaneStringCache: [AttributeKey: String] = [:]
-    @Transient private var attributeSealedBase64Cache: [AttributeKey: SealedEnvelopeBase64String] = [:]
+
+    var attributes: [AttributeKey: AttributeEncryptString] = [:]
     
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
@@ -66,11 +75,8 @@ final class Item: Codable, Hashable {
         self.timestamp = try container.decode(Date.self, forKey: .timestamp)
         self.sortValue = try container.decode(String.self, forKey: .sortValue)
         self.caption = try container.decode(String.self, forKey: .caption)
-        self.iconFileName = try container.decode(String.self, forKey: .iconFileName)
+        self.iconFileName = try container.decodeIfPresent(String.self, forKey: .iconFileName)
         self.attributes = try container.decode([AttributeKey: SealedEnvelopeBase64String].self, forKey: .attributes)
-        
-        self.attributePlaneStringCache = [:]
-        self.attributeSealedBase64Cache = [:]
     }
     
     public func encode(to encoder: Encoder) throws {
@@ -81,30 +87,23 @@ final class Item: Codable, Hashable {
         try container.encode(timestamp, forKey: .timestamp)
         try container.encode(sortValue, forKey: .sortValue)
         try container.encode(caption, forKey: .caption)
-        try container.encode(iconFileName, forKey: .iconFileName)
+        try container.encodeIfPresent(iconFileName, forKey: .iconFileName)
         try container.encode(attributes, forKey: .attributes)
-
-        self.attributePlaneStringCache = [:]
-        self.attributeSealedBase64Cache = [:]
     }
 
-    init(ownerId: String, type: ItemType, timestamp: Date, sortValue: String, caption: String, attrubutes: [String: String]) {
+    init(ownerId: String, type: ItemType, timestamp: Date, sortValue: String, caption: String, attributes: [String: String]) {
         self.ownerId = ownerId
         self.type = type.rawValue
         self.timestamp = timestamp
         self.sortValue = sortValue
         self.caption = caption
-        self.attributes = attrubutes
-        attributePlaneStringCache.removeAll()
-        attributeSealedBase64Cache.removeAll()
+        self.attributes = attributes
     }
     
     init(ownerId: String, type: ItemType) {
         self.ownerId = ownerId
         self.type = type.rawValue
         self.timestamp = Date()
-        attributePlaneStringCache.removeAll()
-        attributeSealedBase64Cache.removeAll()
     }
     
     init(ownerId: String) {
@@ -114,72 +113,9 @@ final class Item: Codable, Hashable {
         self.timestamp = Date()
         self.sortValue = "[user parameter]"
         self.caption = "[user parameter]"
-        attributePlaneStringCache.removeAll()
-        attributeSealedBase64Cache.removeAll()
     }
     
     func isEmpty() -> Bool {
         return caption.isEmpty
-    }
-    
-    func set(key: AttributeKey, planeText: PlaneString, recipientPublicKey: Base64String, owner: String) throws {
-        let salt = "\(owner)/\(Info.encryptSalt)"
-        let sealedEnvelop = try DigitalEnvelope.seal(plainText: planeText, recipientPublicKeyBase64: recipientPublicKey, salt: salt)
-        attributes[key] = sealedEnvelop
-        attributeSealedBase64Cache[key] = sealedEnvelop
-        attributePlaneStringCache[key] = planeText
-    }
-    
-    func get(key: AttributeKey, myRsa: Rsa) throws -> PlaneString {
-        if let cachedPlaneText = attributePlaneStringCache[key] {
-            if attributePlaneStringCache[key] == attributes[key] {
-                return cachedPlaneText
-            }
-        }
-        guard let encryptedString = attributes[key] else { return "" }
-        let planeText = try DigitalEnvelope.open(sealedString: encryptedString, myRsa: myRsa)
-        attributePlaneStringCache[key] = planeText
-        attributeSealedBase64Cache[key] = attributes[key] ?? ""
-        return planeText
-    }
-    
-    func get(key: AttributeKey, myRsa: Rsa?, defaultString: PlaneString) -> PlaneString {
-        if let cachedPlaneText = attributePlaneStringCache[key] {
-            return cachedPlaneText
-        }
-        guard let myRsa = myRsa else {
-            return defaultString
-        }
-        guard let sealedString = attributes[key] else {
-            return defaultString
-        }
-        guard let planeText = try? DigitalEnvelope.open(sealedString: sealedString, myRsa: myRsa) else {
-            return defaultString
-        }
-        attributePlaneStringCache[key] = planeText
-        attributeSealedBase64Cache[key] = sealedString
-        return planeText
-    }
-    
-    func containsTag(_ tag: String, myRsa: Rsa) -> Bool {
-        let tagsString = get(key: GeneralAttributeKeys.tags.rawValue, myRsa: myRsa, defaultString: "")
-        let tags = tagsString.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces)}
-        return tags.contains(tag)
-    }
-    
-    func addTag(_ tag: String, myRsa: Rsa, owner: String) {
-        let tagsString = get(key: GeneralAttributeKeys.tags.rawValue, myRsa: myRsa, defaultString: "")
-        let tags = tagsString.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces)}.filter { $0 != tag }
-        let newTags = (tags + [tag]).sorted()
-        let newTagsString = newTags.joined(separator: ",")
-        try? set(key: GeneralAttributeKeys.tags.rawValue, planeText: newTagsString, recipientPublicKey: myRsa.getMyPublicKey(), owner: owner)
-    }
-    
-    func removeTag(_ tag: String, myRsa: Rsa, owner: String) {
-        let tagsString = get(key: GeneralAttributeKeys.tags.rawValue, myRsa: myRsa, defaultString: "")
-        let tags = tagsString.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces)}.filter { $0 != tag }
-        let newTags = tags.sorted()
-        let newTagsString = newTags.joined(separator: ",")
-        try? set(key: GeneralAttributeKeys.tags.rawValue, planeText: newTagsString, recipientPublicKey: myRsa.getMyPublicKey(), owner: owner)
     }
 }

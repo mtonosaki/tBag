@@ -21,7 +21,12 @@ struct SyncView: View {
         NavigationStack {
             ZStack {
                 if let displayName = authViewModel.userDisplayName {
-                    SyncViewAuthed(authViewModel: authViewModel, displayName: displayName)
+                    SyncViewAuthed(
+                        authViewModel: authViewModel,
+                        appController: appController,
+                        viewConfig: viewConfig,
+                        displayName: displayName
+                    )
                     
                 } else {
                     SyncViewLogin(authViewModel: authViewModel)

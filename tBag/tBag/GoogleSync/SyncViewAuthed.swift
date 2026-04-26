@@ -10,18 +10,23 @@ import SwiftData
 import Tono
 
 struct SyncViewAuthed: View {
-    @ObservedObject var authViewModel: AuthViewModel
+    @Query private var items: [Item]
     @Environment(\.modelContext) private var context
-
+    @Environment(\.displayToast) var toast
+    @Environment(\.syncServiceFactory) var syncServiceFactory
+    
+    @State private var viewModel: SyncViewModel
     var displayName: String
     
-    @EnvironmentObject var appController: AppController
-    @EnvironmentObject var viewConfig: ViewConfig
-    @Environment(\.displayToast) var toast
-    @State var status: String = ""
-    @State var progressTotal: Double = 0.0
-    @State var progressValue: Double = 0.0
-    @Query private var items: [Item]
+    init(authViewModel: AuthViewModel, appController: AppController, viewConfig: ViewConfig, displayName: String, syncServiceFactory: SyncServiceFactoryProtocol = SyncServiceFactory.shared) {
+        self.displayName = displayName
+        self._viewModel = State(wrappedValue: SyncViewModel(
+            authViewModel: authViewModel,
+            appController: appController,
+            viewConfig: viewConfig,
+            serviceFactory: syncServiceFactory
+        ))
+    }
     
     var body: some View {
         ScrollViewReader { proxy in
@@ -30,11 +35,11 @@ struct SyncViewAuthed: View {
                     Text(displayName).font(.title2)
 #if os(iOS)
                     Text("UserID").font(.caption2)
-                    Text(appController.accountId).padding(.bottom, 8)
+                    Text(viewModel.appAccountId).padding(.bottom, 8)
 #elseif os(macOS)
                     HStack(spacing: 0) {
                         Text("UserID: ").font(.caption).foregroundColor(.gray)
-                        Text(appController.accountId).font(.caption)
+                        Text(viewModel.appAccountId).font(.caption)
                     }.padding(.bottom, 8)
 #endif
                     GroupBox {
@@ -46,11 +51,7 @@ struct SyncViewAuthed: View {
                                     proxy.scrollTo(Ids.progressBar, anchor: .bottom)
                                 }
                                 Task {
-                                    do {
-                                        try await backupItemsToCloud()
-                                    } catch {
-                                        toast?("Password backup error \(error)")
-                                    }
+                                    await viewModel.backupItems(items: items, toast: toast)
                                 }
                             } label: {
                                 Label("SAVE", systemImage: "icloud.and.arrow.up")
@@ -59,18 +60,14 @@ struct SyncViewAuthed: View {
                             .buttonStyle(.glassProminent)
                             .clipShape(Capsule())
                             .padding(.vertical)
-                            .disabled(progressTotal > 0.0)
+                            .disabled(viewModel.isProcessing)
                             
                             Button {
                                 withAnimation {
                                     proxy.scrollTo(Ids.progressBar, anchor: .bottom)
                                 }
                                 Task {
-                                    do {
-                                        try await restoreItemsFromCloud()
-                                    } catch {
-                                        toast?("Password resotre error \(error)")
-                                    }
+                                    await viewModel.restoreItems(context: context, toast: toast)
                                 }
                                 
                             } label: {
@@ -80,7 +77,7 @@ struct SyncViewAuthed: View {
                             .buttonStyle(.glassProminent)
                             .clipShape(Capsule())
                             .padding(.vertical)
-                            .disabled(progressTotal > 0.0)
+                            .disabled(viewModel.isProcessing)
                         }
                         .frame(maxWidth: .infinity)
                         
@@ -100,11 +97,7 @@ struct SyncViewAuthed: View {
                                     proxy.scrollTo(Ids.progressBar, anchor: .bottom)
                                 }
                                 Task {
-                                    do {
-                                        try await saveIconsToCloud()
-                                    } catch {
-                                        toast?("Icon Upload error \(error)")
-                                    }
+                                    await viewModel.saveIcons(toast: toast)
                                 }
                             } label: {
                                 Label("SAVE", systemImage: "icloud.and.arrow.up")
@@ -113,18 +106,14 @@ struct SyncViewAuthed: View {
                             .buttonStyle(.glassProminent)
                             .clipShape(Capsule())
                             .padding(.vertical)
-                            .disabled(progressTotal > 0.0)
+                            .disabled(viewModel.isProcessing)
                             
                             Button {
                                 withAnimation {
                                     proxy.scrollTo(Ids.progressBar, anchor: .bottom)
                                 }
                                 Task {
-                                    do {
-                                        try await loadIconsFromCloud()
-                                    } catch {
-                                        toast?("Icon load error \(error)")
-                                    }
+                                    await viewModel.loadIcons(toast: toast)
                                 }
                                 
                             } label: {
@@ -134,7 +123,7 @@ struct SyncViewAuthed: View {
                             .buttonStyle(.glassProminent)
                             .clipShape(Capsule())
                             .padding(.vertical)
-                            .disabled(progressTotal > 0.0)
+                            .disabled(viewModel.isProcessing)
                         }
                         .frame(maxWidth: .infinity)
                         
@@ -147,11 +136,11 @@ struct SyncViewAuthed: View {
 #endif
                     .padding()
                     
-                    ProgressView(value: progressValue, total: progressTotal)
+                    ProgressView(value: viewModel.progressValue, total: viewModel.progressTotal)
                         .padding(.horizontal, 20)
-                        .opacity(progressTotal)
+                        .opacity(viewModel.progressTotal > 0 ? 1 : 0)
                     
-                    Text(status).foregroundColor(.secondary)
+                    Text(viewModel.status).foregroundColor(.secondary)
                         .padding(.bottom, 8)
                         .id(Ids.progressBar)
                 }
@@ -167,74 +156,21 @@ struct SyncViewAuthed: View {
     enum Ids: Hashable {
         case progressBar
     }
-
-    func backupItemsToCloud() async throws {
-        guard let user = authViewModel.user else { return }
-        progressTotal = 100.0
-        progressValue = 0.0
-        
-        let syncService = SyncItemService(user: user)
-        try await syncService.backup(items: self.items, accountId: appController.accountId) { progress, status in
-            self.progressValue = progress
-            if let status = status { self.status = status }
-        }
-        viewConfig.cancelButtonTitle = "← Back"
-    }
-    
-    func restoreItemsFromCloud() async throws {
-        guard let user = authViewModel.user else { return }
-        progressTotal = 100.0
-        progressValue = 0.0
-
-        let syncService = SyncItemService(user: user)
-        let loadedItems = try await syncService.restore(accountId: appController.accountId) { progress, status in
-            self.progressValue = progress
-            if let status = status { self.status = status }
-        }
-        
-        try? context.delete(model: Item.self)
-        loadedItems.forEach {
-            context.insert($0)
-        }
-        viewConfig.cancelButtonTitle = "← Back"
-    }
-    
-    func saveIconsToCloud() async throws {
-        guard let user = authViewModel.user else { return }
-        progressTotal = 100.0
-        progressValue = 0.0
-        
-        let syncService = SyncIconService(user: user)
-        try await syncService.save { progress, status in
-            self.progressValue = progress
-            if let status = status { self.status = status }
-        }
-        viewConfig.cancelButtonTitle = "← Back"
-    }
-
-    func loadIconsFromCloud() async throws {
-        guard let user = authViewModel.user else { return }
-        progressTotal = 100.0
-        progressValue = 0.0
-        
-        let syncService = SyncIconService(user: user)
-        try await syncService.load(accountId: appController.accountId) { progress, status in
-            self.progressValue = progress
-            if let status = status { self.status = status }
-        }
-        viewConfig.cancelButtonTitle = "← Back"
-    }
 }
 
 #Preview {
+    let authVM = AuthViewModel(userDisplayName: "Hoge Taro")
+    let appCtrl = makeSampleAppController()
+    let viewConf = ViewConfig()
+    
     SyncViewAuthed(
-        authViewModel: AuthViewModel(userDisplayName: "Hoge Taro"),
-        displayName: "山田 太郎",
-        status: "本日は晴天なり",
-        progressTotal: 100.0,
+        authViewModel: authVM,
+        appController: appCtrl,
+        viewConfig: viewConf,
+        displayName: "山田 太郎"
     )
     .frame(width: 900, height: 300)
     .modelContainer(makeSampleModelContainer()!)
-    .environmentObject(makeSampleAppController())
-    .environmentObject(ViewConfig())
+    .environmentObject(appCtrl)
+    .environmentObject(viewConf)
 }

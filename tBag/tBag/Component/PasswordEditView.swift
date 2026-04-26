@@ -14,181 +14,223 @@ struct PasswordEditView: View {
     @EnvironmentObject var appController: AppController
     @Environment(\.modelContext) private var modelContext
     @Environment(\.displayToast) var toast
-    @Bindable var item: Item
+    @Environment(\.cryptoService) var cryptoService
+    @State private var viewModel: PasswordEditViewModel?
     @State private var isOpenPassword: Bool = false
+    var item: Item
     
     init(_ item: Item) {
         self.item = item
     }
     
     var body: some View {
+        if let viewModel = viewModel {
+            renderContent(viewModel: viewModel)
+        } else {
+            ProgressView()
+                .onAppear {
+                    viewModel = PasswordEditViewModel(item: item, appController: appController, cryptoService: cryptoService)
+                }
+        }
+    }
+    
+    @ViewBuilder
+    func renderContent(viewModel: PasswordEditViewModel) -> some View {
         ScrollView(.vertical) {
             VStack {
-                IconEditView(item)
+                IconEditView(viewModel.item)
                     .padding(4)
 
-                FormCard("Rubi", systemImage: "character.textbox.ja") {
-                    TextField("あいうえお", text: $item.sortValue)
-#if os(iOS)
-                        .textInputAutocapitalization(.never)
-                        .keyboardType(.default)
-#endif
-                        .disableAutocorrection(true)
-                        .textContentType(.name)
-                }
-                FormCard("Caption", systemImage: "character.bubble") {
-                    TextField("item title", text: $item.caption)
-#if os(iOS)
-                        .textInputAutocapitalization(.never)
-                        .keyboardType(.default)
-#endif
-                        .textContentType(.name)
-                        .disableAutocorrection(true)
-                }
-                FormCard("AccountID", systemImage: "person.circle") {
-                    TextField("hoge123", text: stringBinding(Item.PasswordAttributeKeys.accountId.rawValue))
-#if os(iOS)
-                        .textInputAutocapitalization(.never)
-                        .keyboardType(.default)
-                        .textContentType(.username)
-#endif
-                        .disableAutocorrection(true)
-                } copyText: {
-                    item.get(key: "accountId", myRsa: try? appController.myRsa, defaultString: "" )
-                }
-                FormCard("Password", systemImage: "lock.circle") {
-                    HStack {
-                        if isOpenPassword {
-                            TextField("password", text: stringBinding(Item.PasswordAttributeKeys.password.rawValue))
-#if os(iOS)
-                                .textInputAutocapitalization(.never)
-                                .keyboardType(.default)
-#endif
-                                .textContentType(.password)
-                                .disableAutocorrection(true)
-                                .font(.custom("Courier New", size: 23))
-                                .bold()
-                        } else {
-                            SecureField("password", text: stringBinding(Item.PasswordAttributeKeys.password.rawValue))
-#if os(iOS)
-                                .textInputAutocapitalization(.never)
-                                .keyboardType(.default)
-#endif
-                                .font(.custom("Courier New", size: 23))
-                                .textContentType(.password)
-                                .disableAutocorrection(true)
-                        }
-                        Button {
-                            isOpenPassword = !isOpenPassword
-                        } label: {
-                            Label("", systemImage: "eyes")
-                                .foregroundColor(.secondary)
-                        }
-#if os(macOS)
-                        .buttonStyle(.plain)
-#endif
-                    }
-                } copyText: {
-                    item.get(key: "password", myRsa: try? appController.myRsa, defaultString: "" )
-                }
-                FormCard("email", systemImage: "mail") {
-                    TextField("hoge @ example.com", text: stringBinding(Item.PasswordAttributeKeys.email.rawValue))
-#if os(iOS)
-                        .textInputAutocapitalization(.never)
-                        .keyboardType(.default)
-#endif
-                        .textContentType(.emailAddress)
-                        .disableAutocorrection(true)
-                } copyText: {
-                    item.get(key: "email", myRsa: try? appController.myRsa, defaultString: "" )
-                }
-                FormCard("Tags", systemImage: "tag") {
-                    FlowLayout(spacing: 24) {
-                        Toggle(isOn: tagBinding(Item.PasswordFilter.home.rawValue)) {
-                            Image(systemName: "house")
-                        }
-                        Toggle(isOn: tagBinding(Item.PasswordFilter.office.rawValue)) {
-                            Image(systemName: "network")
-                        }
-                        Toggle(isOn: tagBinding(Item.PasswordFilter.deleted.rawValue)) {
-                            Image(systemName: "trash")
-                        }
-                    }.frame(maxWidth: .infinity, alignment: .leading)
-                }
-                FormCard("Remarks", systemImage: "doc.plaintext") {
-                    TextField("Remarks", text: stringBinding("remarks"), axis: .vertical)
-#if os(iOS)
-                        .textInputAutocapitalization(.never)
-                        .keyboardType(.default)
-#endif
-                        .disableAutocorrection(true)
-                        .textFieldStyle(.plain)
-                        .padding(8)
-                        .frame(minHeight: 48, alignment: .top)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 10)
-                                .stroke(Color.gray, lineWidth: 0.5)
-                        )
-                }
-                .padding(.bottom, 12)
+                rubiSection(viewModel: viewModel)
+                captionSection(viewModel: viewModel)
+                accountIdSection(viewModel: viewModel)
+                passwordSection(viewModel: viewModel)
+                emailSection(viewModel: viewModel)
+                tagsSection(viewModel: viewModel)
+                remarksSection(viewModel: viewModel)
             }
             .padding(.leading)
             .padding(.trailing)
             
-            Button(item.id) {
-#if os(iOS)
-                UIPasteboard.general.string = item.id
-#elseif os(macOS)
-                let pasteboard = NSPasteboard.general
-                pasteboard.clearContents()
-                pasteboard.setString(item.id, forType: .string)
-#endif
-                toast?("Copy item ID")
-            }
-#if os(macOS)
-            .buttonStyle(.plain)
-#endif
-            .font(.footnote)
-            .foregroundColor(.secondary)
-            .padding(.bottom)
+            itemIdButton(viewModel: viewModel)
         }
-        .navigationTitle(item.isEmpty() ? "New Item" : item.caption)
+        .navigationTitle(viewModel.item.isEmpty() ? "New Item" : viewModel.item.caption)
         .background(BackgroundRasterLines())
     }
 
-    func stringBinding(_ key: String) -> Binding<String> {
-        return Binding(
-            get: {
-                let value = item.get(key: key, myRsa: try? appController.myRsa, defaultString: "")
-                return value
-            },
-            set: {
-                try? item
-                    .set(key: key, planeText: $0, recipientPublicKey: try appController.myPublicKey, owner: appController.accountId)
+    @ViewBuilder
+    private func rubiSection(viewModel: PasswordEditViewModel) -> some View {
+        FormCard("Rubi", systemImage: "character.textbox.ja") {
+            TextField("あいうえお", text: Bindable(viewModel.item).sortValue)
+#if os(iOS)
+                .textInputAutocapitalization(.never)
+                .keyboardType(.default)
+#endif
+                .disableAutocorrection(true)
+                .textContentType(.name)
+        }
+    }
+
+    @ViewBuilder
+    private func captionSection(viewModel: PasswordEditViewModel) -> some View {
+        FormCard("Caption", systemImage: "character.bubble") {
+            TextField("item title", text: Bindable(viewModel.item).caption)
+#if os(iOS)
+                .textInputAutocapitalization(.never)
+                .keyboardType(.default)
+#endif
+                .textContentType(.name)
+                .disableAutocorrection(true)
+        }
+    }
+
+    @ViewBuilder
+    private func accountIdSection(viewModel: PasswordEditViewModel) -> some View {
+        FormCard("AccountID", systemImage: "person.circle") {
+            TextField("hoge123", text: stringBinding(viewModel: viewModel, key: Item.PasswordAttributeKeys.accountId.rawValue))
+#if os(iOS)
+                .textInputAutocapitalization(.never)
+                .keyboardType(.default)
+                .textContentType(.username)
+#endif
+                .disableAutocorrection(true)
+        } copyText: {
+            viewModel.getPlainValue(key: "accountId")
+        }
+    }
+
+    @ViewBuilder
+    private func passwordSection(viewModel: PasswordEditViewModel) -> some View {
+        FormCard("Password", systemImage: "lock.circle") {
+            HStack {
+                if isOpenPassword {
+                    TextField("password", text: stringBinding(viewModel: viewModel, key: Item.PasswordAttributeKeys.password.rawValue))
+#if os(iOS)
+                        .textInputAutocapitalization(.never)
+                        .keyboardType(.default)
+#endif
+                        .textContentType(.password)
+                        .disableAutocorrection(true)
+                        .font(.custom("Courier New", size: 23))
+                        .bold()
+                } else {
+                    SecureField("password", text: stringBinding(viewModel: viewModel, key: Item.PasswordAttributeKeys.password.rawValue))
+#if os(iOS)
+                        .textInputAutocapitalization(.never)
+                        .keyboardType(.default)
+#endif
+                        .font(.custom("Courier New", size: 23))
+                        .textContentType(.password)
+                        .disableAutocorrection(true)
+                }
+                Button {
+                    isOpenPassword = !isOpenPassword
+                } label: {
+                    Label("", systemImage: "eyes")
+                        .foregroundColor(.secondary)
+                }
+#if os(macOS)
+                .buttonStyle(.plain)
+#endif
             }
+        } copyText: {
+            viewModel.getPlainValue(key: "password")
+        }
+    }
+
+    @ViewBuilder
+    private func emailSection(viewModel: PasswordEditViewModel) -> some View {
+        FormCard("email", systemImage: "mail") {
+            TextField("hoge @ example.com", text: stringBinding(viewModel: viewModel, key: Item.PasswordAttributeKeys.email.rawValue))
+#if os(iOS)
+                .textInputAutocapitalization(.never)
+                .keyboardType(.default)
+#endif
+                .textContentType(.emailAddress)
+                .disableAutocorrection(true)
+        } copyText: {
+            viewModel.getPlainValue(key: "email")
+        }
+    }
+
+    @ViewBuilder
+    private func tagsSection(viewModel: PasswordEditViewModel) -> some View {
+        FormCard("Tags", systemImage: "tag") {
+            FlowLayout(spacing: 24) {
+                Toggle(isOn: tagBinding(viewModel: viewModel, key: Item.PasswordFilter.home.rawValue)) {
+                    Image(systemName: "house")
+                }
+                Toggle(isOn: tagBinding(viewModel: viewModel, key: Item.PasswordFilter.office.rawValue)) {
+                    Image(systemName: "network")
+                }
+                Toggle(isOn: tagBinding(viewModel: viewModel, key: Item.PasswordFilter.deleted.rawValue)) {
+                    Image(systemName: "trash")
+                }
+            }.frame(maxWidth: .infinity, alignment: .leading)
+        }
+    }
+
+    @ViewBuilder
+    private func remarksSection(viewModel: PasswordEditViewModel) -> some View {
+        FormCard("Remarks", systemImage: "doc.plaintext") {
+            // Use an invisible Text view to automatically expand the height of the ZStack,
+            // while the TextEditor overlays it to provide true multi-line editing with proper Return key behavior.
+            ZStack(alignment: .topLeading) {
+                let textContent = viewModel.getPlainValue(key: "remarks")
+                Text(textContent.isEmpty ? " " : textContent)
+                    .foregroundColor(.clear)
+                    .padding(8)
+                    .frame(maxWidth: .infinity, minHeight: 48, alignment: .topLeading)
+                
+                TextEditor(text: stringBinding(viewModel: viewModel, key: "remarks"))
+#if os(iOS)
+                    .textInputAutocapitalization(.never)
+                    .keyboardType(.default)
+#endif
+                    .disableAutocorrection(true)
+                    .scrollContentBackground(.hidden)
+                    .background(Color.clear)
+                    .padding(4)
+            }
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(Color.gray, lineWidth: 0.5)
+            )
+        }
+        .padding(.bottom, 12)
+    }
+
+    @ViewBuilder
+    private func itemIdButton(viewModel: PasswordEditViewModel) -> some View {
+        Button(viewModel.item.id) {
+#if os(iOS)
+            UIPasteboard.general.string = viewModel.item.id
+#elseif os(macOS)
+            let pasteboard = NSPasteboard.general
+            pasteboard.clearContents()
+            pasteboard.setString(viewModel.item.id, forType: .string)
+#endif
+            toast?("Copy item ID")
+        }
+#if os(macOS)
+        .buttonStyle(.plain)
+#endif
+        .font(.footnote)
+        .foregroundColor(.secondary)
+        .padding(.bottom)
+    }
+
+    func stringBinding(viewModel: PasswordEditViewModel, key: String) -> Binding<String> {
+        return Binding(
+            get: { viewModel.getPlainValue(key: key) },
+            set: { viewModel.setPlainValue(key: key, value: $0) }
         )
     }
     
-    func tagBinding(_ key: String) -> Binding<Bool> {
+    func tagBinding(viewModel: PasswordEditViewModel, key: String) -> Binding<Bool> {
         return Binding(
-            get: {
-                guard let myRsa = try? appController.myRsa else {
-                    return false
-                }
-                return item.containsTag(key, myRsa: myRsa)
-            },
-            set: {
-                do {
-                    let myRsa = try appController.myRsa
-                    if $0 {
-                        item.addTag(key, myRsa: myRsa, owner: appController.accountId)
-                    } else {
-                        item.removeTag(key, myRsa: myRsa, owner: appController.accountId)
-                    }
-                } catch {
-                    toast?("Cannot access the tag \(key)")
-                }
-            }
+            get: { viewModel.containsTag(key) },
+            set: { _ in viewModel.toggleTag(key) }
         )
     }
 }
@@ -200,7 +242,7 @@ struct PasswordEditView: View {
         timestamp: Date(),
         sortValue: "ほげたろう",
         caption: "ホゲ太郎",
-        attrubutes: [:]
+        attributes: [:]
     )
     let fakeAppController = AppController()
     let fakeConfig = ViewConfig()
