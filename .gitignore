@@ -68,3 +68,6 @@ fastlane/Preview.html
 fastlane/screenshots/**/*.png
 fastlane/test_output
 tBag/tBag/Secrets.xcconfig
+
+# AI Assistant
+.ai/
