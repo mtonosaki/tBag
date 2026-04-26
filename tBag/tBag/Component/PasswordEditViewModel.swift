@@ -29,12 +29,12 @@ class PasswordEditViewModel {
         }
         
         guard let myRsa = try? appController.myRsa,
-              let sealedString = item.attributes[key] else {
+              let attributeData = item.attributes[key] else {
             return defaultString
         }
         
         do {
-            let plainText = try cryptoService.open(sealedString: sealedString, myRsa: myRsa)
+            let plainText = try cryptoService.open(sealedString: attributeData.encryptedValue, myRsa: myRsa)
             planeTextCache[key] = plainText
             return plainText
         } catch {
@@ -47,10 +47,30 @@ class PasswordEditViewModel {
         
         do {
             let salt = "\(appController.accountId)/\(Info.encryptSalt)"
-            let sealed = try cryptoService.seal(plainText: value, recipientPublicKey: myPublicKey, salt: salt)
-            item.attributes[key] = sealed
+            let newSealed = try cryptoService.seal(plainText: value, recipientPublicKey: myPublicKey, salt: salt)
+            let now = Date()
+            
+            // Check if there is an existing attribute
+            if let oldData = item.attributes[key] {
+                let timeDiff = now.timeIntervalSince(oldData.timestamp)
+                
+                // If 10 minutes (600 seconds) have passed, archive the old value to history
+                if timeDiff >= 600 {
+                    var newHistoriesMap = item.attributeHistories
+                    var historiesForKey = newHistoriesMap[key] ?? []
+                    historiesForKey.append(oldData)
+                    newHistoriesMap[key] = historiesForKey
+                    item.attributeHistories = newHistoriesMap
+                }
+            }
+            
+            // Re-assign the attributes dictionary to ensure SwiftData tracks the change
+            var newAttributes = item.attributes
+            newAttributes[key] = AttributeData(encryptedValue: newSealed, timestamp: now)
+            item.attributes = newAttributes
+            
             planeTextCache[key] = value
-            item.timestamp = Date()
+            item.timestamp = now
         } catch {
             print("Failed to encrypt: \(error)")
         }

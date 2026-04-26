@@ -9,8 +9,6 @@ import Tono
 import Foundation
 
 extension Item {
-    // Note: PasswordFilter and PasswordAttributeKeys are now defined in Item.swift
-    
     func isHome(rsa: Rsa) -> Bool {
         containsTag(Item.PasswordFilter.home.rawValue, rsa: rsa)
     }
@@ -22,9 +20,9 @@ extension Item {
     }
     
     private func containsTag(_ tag: String, rsa: Rsa) -> Bool {
-        guard let sealedString = self.attributes[GeneralAttributeKeys.tags.rawValue] else { return false }
+        guard let attributeData = self.attributes[GeneralAttributeKeys.tags.rawValue] else { return false }
         do {
-            let tagsString = try CryptoService.shared.open(sealedString: sealedString, myRsa: rsa)
+            let tagsString = try CryptoService.shared.open(sealedString: attributeData.encryptedValue, myRsa: rsa)
             let tags = tagsString.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }
             return tags.contains(tag)
         } catch {
@@ -40,7 +38,7 @@ struct ItemBuilder {
         let tags = [Item.PasswordFilter.home.rawValue, Item.PasswordFilter.office.rawValue].sorted().joined(separator: ",")
         
         if let sealed = try? CryptoService.shared.seal(plainText: tags, recipientPublicKey: myRsa.getMyPublicKey(), salt: salt) {
-            newItem.attributes[Item.GeneralAttributeKeys.tags.rawValue] = sealed
+            newItem.attributes[Item.GeneralAttributeKeys.tags.rawValue] = AttributeData(encryptedValue: sealed, timestamp: Date())
         }
         return newItem
     }

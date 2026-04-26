@@ -52,10 +52,10 @@ struct PasswordListRecord: View {
 
     private func getAccountId() -> String {
         guard let myRsa = try? appController.myRsa,
-              let sealedString = item.attributes["accountId"] else {
+              let attributeData = item.attributes["accountId"] else {
             return ""
         }
-        return (try? CryptoService.shared.open(sealedString: sealedString, myRsa: myRsa)) ?? ""
+        return (try? CryptoService.shared.open(sealedString: attributeData.encryptedValue, myRsa: myRsa)) ?? ""
     }
 }
 
@@ -64,7 +64,7 @@ struct PasswordListRecord: View {
     let items: [Item] = [
         Item(ownerId: ownerId, type: .password, timestamp: Date(), sortValue: "", caption: "", attributes: [:]),
         Item(ownerId: ownerId, type: .password, timestamp: Date(), sortValue: "hoge", caption: "HOGE", attributes: [
-            "accountId": "hoge@example.com"
+            "accountId": AttributeData(encryptedValue: "hoge@example.com", timestamp: Date())
         ])
     ]
     let fakeAppController = AppController()

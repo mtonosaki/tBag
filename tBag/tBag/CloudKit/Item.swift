@@ -9,12 +9,16 @@ import Foundation
 import SwiftData
 import Tono
 
+struct AttributeData: Codable, Hashable {
+    var encryptedValue: String
+    var timestamp: Date
+}
+
 @Model
 final class Item: Codable, Hashable {
     typealias AttributeKey = String
-    typealias AttributeEncryptString = String
     typealias PlaneString = String
-    
+
     var id: String = UUID().uuidString
     var ownerId: String = "no-id"
     var type: String = ItemType.planeText.rawValue
@@ -22,7 +26,9 @@ final class Item: Codable, Hashable {
     var sortValue: String = ""
     var caption: String = ""
     var iconFileName: String?
-    
+    var attributes: [AttributeKey: AttributeData] = [:]
+    var attributeHistories: [AttributeKey: [AttributeData]] = [:]
+
     public enum GeneralAttributeKeys: String {
         case tags
     }
@@ -32,7 +38,7 @@ final class Item: Codable, Hashable {
         case password
         case email
     }
-    
+
     public enum PasswordFilter: String {
         case home = "#home"
         case office = "#office"
@@ -54,21 +60,20 @@ final class Item: Codable, Hashable {
         case caption
         case iconFileName
         case attributes
+        case attributeHistories
     }
 
-    var attributes: [AttributeKey: AttributeEncryptString] = [:]
-    
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
     }
-    
+
     public static func == (lhs: Item, rhs: Item) -> Bool {
         return lhs.id == rhs.id
     }
-    
+
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        
+
         self.id = try container.decode(String.self, forKey: .id)
         self.ownerId = try container.decode(String.self, forKey: .ownerId)
         self.type = try container.decode(String.self, forKey: .type)
@@ -76,9 +81,10 @@ final class Item: Codable, Hashable {
         self.sortValue = try container.decode(String.self, forKey: .sortValue)
         self.caption = try container.decode(String.self, forKey: .caption)
         self.iconFileName = try container.decodeIfPresent(String.self, forKey: .iconFileName)
-        self.attributes = try container.decode([AttributeKey: SealedEnvelopeBase64String].self, forKey: .attributes)
+        self.attributes = try container.decode([AttributeKey: AttributeData].self, forKey: .attributes)
+        self.attributeHistories = try container.decodeIfPresent([AttributeKey: [AttributeData]].self, forKey: .attributeHistories) ?? [:]
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(id, forKey: .id)
@@ -89,9 +95,10 @@ final class Item: Codable, Hashable {
         try container.encode(caption, forKey: .caption)
         try container.encodeIfPresent(iconFileName, forKey: .iconFileName)
         try container.encode(attributes, forKey: .attributes)
+        try container.encode(attributeHistories, forKey: .attributeHistories)
     }
 
-    init(ownerId: String, type: ItemType, timestamp: Date, sortValue: String, caption: String, attributes: [String: String]) {
+    init(ownerId: String, type: ItemType, timestamp: Date, sortValue: String, caption: String, attributes: [String: AttributeData]) {
         self.ownerId = ownerId
         self.type = type.rawValue
         self.timestamp = timestamp
