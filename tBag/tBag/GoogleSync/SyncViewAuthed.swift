@@ -196,6 +196,7 @@ struct SyncViewAuthed: View {
         loadedItems.forEach {
             context.insert($0)
         }
+        viewConfig.cancelButtonTitle = "← Back"
     }
     
     func saveIconsToCloud() async throws {
@@ -221,6 +222,7 @@ struct SyncViewAuthed: View {
             self.progressValue = progress
             if let status = status { self.status = status }
         }
+        viewConfig.cancelButtonTitle = "← Back"
     }
 }
 

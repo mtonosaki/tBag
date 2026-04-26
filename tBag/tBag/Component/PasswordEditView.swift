@@ -116,14 +116,15 @@ struct PasswordEditView: View {
                     }.frame(maxWidth: .infinity, alignment: .leading)
                 }
                 FormCard("Remarks", systemImage: "doc.plaintext") {
-                    TextEditor(text: stringBinding("remarks"))
+                    TextField("Remarks", text: stringBinding("remarks"), axis: .vertical)
 #if os(iOS)
                         .textInputAutocapitalization(.never)
                         .keyboardType(.default)
 #endif
                         .disableAutocorrection(true)
-                        .frame(minHeight: 48)
-                        .padding(4)
+                        .textFieldStyle(.plain)
+                        .padding(8)
+                        .frame(minHeight: 48, alignment: .top)
                         .overlay(
                             RoundedRectangle(cornerRadius: 10)
                                 .stroke(Color.gray, lineWidth: 0.5)

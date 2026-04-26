@@ -175,10 +175,14 @@ struct PasswordListSideView: View {
     
     private func performDelete() {
         withAnimation {
-            let itemMap = Dictionary(uniqueKeysWithValues: groupedItems.flatMap { $0.value }.map { ($0.id, $0) })
+            let itemMap = Dictionary(
+                groupedItems.flatMap { $0.value }.map { ($0.id, $0) },
+                uniquingKeysWith: { first, _ in first }
+            )
             for itemId in itemsPendingDeletion {
-                let item = itemMap[itemId]!
-                modelContext.delete(item)
+                if let item = itemMap[itemId] {
+                    modelContext.delete(item)
+                }
             }
             selectedItemId = nil
             itemsPendingDeletion = []
