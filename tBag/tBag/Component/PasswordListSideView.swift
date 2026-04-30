@@ -14,6 +14,7 @@ struct PasswordListSideView: View {
     @Binding var selectedItemId: String?
     @EnvironmentObject var appController: AppController
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.displayToast) private var toast
     @Query(filter: #Predicate<Item>{ $0.type == "pw"}) private var items: [Item]
 
     @State private var isHome = true
@@ -163,7 +164,27 @@ struct PasswordListSideView: View {
     }
     
     private func addItemFromClipboard() {
+        #if os(macOS)
+        let clipboardString = NSPasteboard.general.string(forType: .string)
+        #else
+        let clipboardString = UIPasteboard.general.string
+        #endif
         
+        guard let jsonString = clipboardString, let jsonData = jsonString.data(using: .utf8) else { return }
+        
+        do {
+            let newItem = try ItemBuilder.createItem(
+                fromJson: jsonData,
+                ownerAccountId: appController.accountId,
+                myRsa: appController.myRsa
+            )
+            withAnimation {
+                modelContext.insert(newItem)
+                selectedItemId = newItem.id
+            }
+        } catch {
+            print("Failed to restore from clipboard: \(error)")
+        }
     }
     
     private func requestDelete(ids: Set<String>) {
