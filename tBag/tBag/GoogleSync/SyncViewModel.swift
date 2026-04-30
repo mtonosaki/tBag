@@ -66,13 +66,37 @@ class SyncViewModel {
             
             print("Successfully restored items from Google Drive. Count: \(loadedItems.count)")
             
-            try context.delete(model: Item.self)
-            print("Successfully deleted existing items from context.")
-            
-            loadedItems.forEach {
-                context.insert($0)
+            let fetchDescriptor = FetchDescriptor<Item>()
+            let existingItems = try context.fetch(fetchDescriptor)
+            var existingDict = [String: Item]()
+            for item in existingItems {
+                existingDict[item.id] = item
             }
-            print("Successfully inserted new items into context.")
+            
+            for loadedItem in loadedItems {
+                if let existing = existingDict[loadedItem.id] {
+                    // Update existing item to preserve its CloudKit identity
+                    existing.ownerId = loadedItem.ownerId
+                    existing.type = loadedItem.type
+                    existing.timestamp = loadedItem.timestamp
+                    existing.sortValue = loadedItem.sortValue
+                    existing.caption = loadedItem.caption
+                    existing.iconFileName = loadedItem.iconFileName
+                    existing.attributes = loadedItem.attributes
+                    existing.attributeHistories = loadedItem.attributeHistories
+                    existingDict.removeValue(forKey: loadedItem.id)
+                } else {
+                    // Insert if it does not exist locally
+                    context.insert(loadedItem)
+                }
+            }
+            
+            // Delete any local items that are not present in the restored data
+            for (_, itemToDelete) in existingDict {
+                context.delete(itemToDelete)
+            }
+            
+            print("Successfully merged items into context.")
             viewConfig.cancelButtonTitle = "← Back"
         } catch {
             print("Restore error encountered: \(error)")

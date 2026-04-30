@@ -29,17 +29,15 @@ final class Item: Codable, Hashable {
     var attributes: [AttributeKey: AttributeData] = [:]
     var attributeHistories: [AttributeKey: [AttributeData]] = [:]
 
-    public enum GeneralAttributeKeys: String {
+    public enum AttributeKeys: String {
         case tags
-    }
-
-    public enum PasswordAttributeKeys: String {
         case accountId
         case password
         case email
+        case remarks
     }
 
-    public enum PasswordFilter: String {
+    public enum Groups: String {
         case home = "#home"
         case office = "#office"
         case deleted = "#deleted"

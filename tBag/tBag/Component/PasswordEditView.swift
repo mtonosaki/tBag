@@ -87,7 +87,7 @@ struct PasswordEditView: View {
     @ViewBuilder
     private func accountIdSection(viewModel: PasswordEditViewModel) -> some View {
         FormCard("AccountID", systemImage: "person.circle") {
-            TextField("hoge123", text: stringBinding(viewModel: viewModel, key: Item.PasswordAttributeKeys.accountId.rawValue))
+            TextField("hoge123", text: stringBinding(viewModel: viewModel, key: Item.AttributeKeys.accountId.rawValue))
 #if os(iOS)
                 .textInputAutocapitalization(.never)
                 .keyboardType(.default)
@@ -95,7 +95,7 @@ struct PasswordEditView: View {
 #endif
                 .disableAutocorrection(true)
         } copyText: {
-            viewModel.getPlainValue(key: "accountId")
+            viewModel.getPlainValue(key: Item.AttributeKeys.accountId.rawValue)
         }
     }
 
@@ -104,7 +104,7 @@ struct PasswordEditView: View {
         FormCard("Password", systemImage: "lock.circle") {
             HStack {
                 if isOpenPassword {
-                    TextField("password", text: stringBinding(viewModel: viewModel, key: Item.PasswordAttributeKeys.password.rawValue))
+                    TextField("password", text: stringBinding(viewModel: viewModel, key: Item.AttributeKeys.password.rawValue))
 #if os(iOS)
                         .textInputAutocapitalization(.never)
                         .keyboardType(.default)
@@ -114,7 +114,7 @@ struct PasswordEditView: View {
                         .font(.custom("Courier New", size: 23))
                         .bold()
                 } else {
-                    SecureField("password", text: stringBinding(viewModel: viewModel, key: Item.PasswordAttributeKeys.password.rawValue))
+                    SecureField("password", text: stringBinding(viewModel: viewModel, key: Item.AttributeKeys.password.rawValue))
 #if os(iOS)
                         .textInputAutocapitalization(.never)
                         .keyboardType(.default)
@@ -134,14 +134,14 @@ struct PasswordEditView: View {
 #endif
             }
         } copyText: {
-            viewModel.getPlainValue(key: "password")
+            viewModel.getPlainValue(key: Item.AttributeKeys.password.rawValue)
         }
     }
 
     @ViewBuilder
     private func emailSection(viewModel: PasswordEditViewModel) -> some View {
         FormCard("email", systemImage: "mail") {
-            TextField("hoge @ example.com", text: stringBinding(viewModel: viewModel, key: Item.PasswordAttributeKeys.email.rawValue))
+            TextField("hoge @ example.com", text: stringBinding(viewModel: viewModel, key: Item.AttributeKeys.email.rawValue))
 #if os(iOS)
                 .textInputAutocapitalization(.never)
                 .keyboardType(.default)
@@ -149,7 +149,7 @@ struct PasswordEditView: View {
                 .textContentType(.emailAddress)
                 .disableAutocorrection(true)
         } copyText: {
-            viewModel.getPlainValue(key: "email")
+            viewModel.getPlainValue(key: Item.AttributeKeys.email.rawValue)
         }
     }
 
@@ -157,13 +157,13 @@ struct PasswordEditView: View {
     private func tagsSection(viewModel: PasswordEditViewModel) -> some View {
         FormCard("Tags", systemImage: "tag") {
             FlowLayout(spacing: 24) {
-                Toggle(isOn: tagBinding(viewModel: viewModel, key: Item.PasswordFilter.home.rawValue)) {
+                Toggle(isOn: tagBinding(viewModel: viewModel, key: Item.Groups.home.rawValue)) {
                     Image(systemName: "house")
                 }
-                Toggle(isOn: tagBinding(viewModel: viewModel, key: Item.PasswordFilter.office.rawValue)) {
+                Toggle(isOn: tagBinding(viewModel: viewModel, key: Item.Groups.office.rawValue)) {
                     Image(systemName: "network")
                 }
-                Toggle(isOn: tagBinding(viewModel: viewModel, key: Item.PasswordFilter.deleted.rawValue)) {
+                Toggle(isOn: tagBinding(viewModel: viewModel, key: Item.Groups.deleted.rawValue)) {
                     Image(systemName: "trash")
                 }
             }.frame(maxWidth: .infinity, alignment: .leading)
@@ -173,16 +173,14 @@ struct PasswordEditView: View {
     @ViewBuilder
     private func remarksSection(viewModel: PasswordEditViewModel) -> some View {
         FormCard("Remarks", systemImage: "doc.plaintext") {
-            // Use an invisible Text view to automatically expand the height of the ZStack,
-            // while the TextEditor overlays it to provide true multi-line editing with proper Return key behavior.
             ZStack(alignment: .topLeading) {
-                let textContent = viewModel.getPlainValue(key: "remarks")
+                let textContent = viewModel.getPlainValue(key: Item.AttributeKeys.remarks.rawValue)
                 Text(textContent.isEmpty ? " " : textContent)
                     .foregroundColor(.clear)
                     .padding(8)
                     .frame(maxWidth: .infinity, minHeight: 48, alignment: .topLeading)
                 
-                TextEditor(text: stringBinding(viewModel: viewModel, key: "remarks"))
+                TextEditor(text: stringBinding(viewModel: viewModel, key: Item.AttributeKeys.remarks.rawValue))
 #if os(iOS)
                     .textInputAutocapitalization(.never)
                     .keyboardType(.default)

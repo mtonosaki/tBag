@@ -81,6 +81,11 @@ struct PasswordListSideView: View {
                         } label: {
                             Label("Sync", systemImage: "arrow.trianglehead.2.clockwise.rotate.90")
                         }
+                        Button {
+                            addItemFromClipboard()
+                        } label: {
+                            Label("Restore from Clipboard", systemImage: "document.on.clipboard")
+                        }
                     }
                 }
             }
@@ -155,6 +160,10 @@ struct PasswordListSideView: View {
         } catch {
             print("Failed to add item: \(error)")
         }
+    }
+    
+    private func addItemFromClipboard() {
+        
     }
     
     private func requestDelete(ids: Set<String>) {

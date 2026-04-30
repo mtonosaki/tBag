@@ -77,13 +77,13 @@ class PasswordEditViewModel {
     }
     
     func containsTag(_ tag: String) -> Bool {
-        let tagsString = getPlainValue(key: Item.GeneralAttributeKeys.tags.rawValue)
+        let tagsString = getPlainValue(key: Item.AttributeKeys.tags.rawValue)
         let tags = tagsString.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }
         return tags.contains(tag)
     }
     
     func toggleTag(_ tag: String) {
-        let tagsString = getPlainValue(key: Item.GeneralAttributeKeys.tags.rawValue)
+        let tagsString = getPlainValue(key: Item.AttributeKeys.tags.rawValue)
         var tags = tagsString.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }.filter { !$0.isEmpty }
         
         if tags.contains(tag) {
@@ -93,6 +93,6 @@ class PasswordEditViewModel {
         }
         
         let newTagsString = tags.sorted().joined(separator: ",")
-        setPlainValue(key: Item.GeneralAttributeKeys.tags.rawValue, value: newTagsString)
+        setPlainValue(key: Item.AttributeKeys.tags.rawValue, value: newTagsString)
     }
 }
