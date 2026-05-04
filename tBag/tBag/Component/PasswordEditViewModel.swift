@@ -23,7 +23,17 @@ class PasswordEditViewModel {
         self.cryptoService = cryptoService
     }
     
-    func getPlainValue(key: String, defaultString: String = "") -> String {
+    func getPlainValue(_ sealedString: SealedEnvelopeBase64String, defaultString: PlainString = "") -> PlainString {
+        guard let myRsa = try? appController.myRsa else {
+            return defaultString
+        }
+        guard let plainText = try? cryptoService.open(sealedString: sealedString, myRsa: myRsa) else {
+            return defaultString
+        }
+        return plainText
+    }
+    
+    func getPlainValue(key: AttributeKey, defaultString: PlainString = "") -> PlainString {
         if let cached = planeTextCache[key] {
             return cached
         }
@@ -32,14 +42,14 @@ class PasswordEditViewModel {
               let attributeData = item.attributes[key] else {
             return defaultString
         }
-        
-        do {
-            let plainText = try cryptoService.open(sealedString: attributeData.encryptedValue, myRsa: myRsa)
-            planeTextCache[key] = plainText
-            return plainText
-        } catch {
+        guard attributeData.isEmpty == false else {
             return defaultString
         }
+        guard let plainText = try? cryptoService.open(sealedString: attributeData[0].encryptedValue, myRsa: myRsa) else {
+            return defaultString
+        }
+        planeTextCache[key] = plainText
+        return plainText
     }
     
     func setPlainValue(key: String, value: String) {
@@ -47,30 +57,23 @@ class PasswordEditViewModel {
         
         do {
             let salt = "\(appController.accountId)/\(Info.encryptSalt)"
-            let newSealed = try cryptoService.seal(plainText: value, recipientPublicKey: myPublicKey, salt: salt)
+            let sealedString = try cryptoService.seal(plainText: value, recipientPublicKey: myPublicKey, salt: salt)
             let now = Date()
-            
-            // Check if there is an existing attribute
-            if let oldData = item.attributes[key] {
-                let timeDiff = now.timeIntervalSince(oldData.timestamp)
-                
-                // If 10 minutes (600 seconds) have passed, archive the old value to history
-                if timeDiff >= 600 {
-                    var newHistoriesMap = item.attributeHistories
-                    var historiesForKey = newHistoriesMap[key] ?? []
-                    historiesForKey.append(oldData)
-                    newHistoriesMap[key] = historiesForKey
-                    item.attributeHistories = newHistoriesMap
-                }
+
+            if !item.attributes.contains(where: { $0.key == key }) {
+                item.attributes[key] = []
             }
-            
-            // Re-assign the attributes dictionary to ensure SwiftData tracks the change
-            var newAttributes = item.attributes
-            newAttributes[key] = AttributeData(encryptedValue: newSealed, timestamp: now)
-            item.attributes = newAttributes
+            var history = item.attributes[key]!
+            if history.count == 0 {
+                let newAttribute = AttributeData(encryptedValue: sealedString)
+                history.insert(newAttribute, at: 0)
+            } else {
+                history[0].encryptedValue = sealedString
+            }
+            item.attributes[key] = history
             
             planeTextCache[key] = value
-            item.timestamp = now
+            item.updatedAt = now
         } catch {
             print("Failed to encrypt: \(error)")
         }

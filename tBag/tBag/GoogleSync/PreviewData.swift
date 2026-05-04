@@ -31,7 +31,7 @@ func makeSampleAppController() -> AppController {
 
 extension Item {
     static func makePasswordDummy(_ caption: String) -> Item {
-        let item = Item(ownerId: "hoge-owner")
+        let item = ItemBuilder.build(ownerId: "hoge-owner")
         item.caption = caption
         item.sortValue = caption
         item.type = ItemType.password.rawValue

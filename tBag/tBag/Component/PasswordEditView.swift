@@ -86,8 +86,10 @@ struct PasswordEditView: View {
 
     @ViewBuilder
     private func accountIdSection(viewModel: PasswordEditViewModel) -> some View {
-        FormCard("AccountID", systemImage: "person.circle") {
-            TextField("hoge123", text: stringBinding(viewModel: viewModel, key: Item.AttributeKeys.accountId.rawValue))
+        @Bindable var item = viewModel.item
+        let key = Item.AttributeKeys.accountId.rawValue
+        FormCard("AccountID", systemImage: "person.circle", history: $item.attributes[key]) {
+            TextField("hoge123", text: stringBinding(viewModel: viewModel, key: key))
 #if os(iOS)
                 .textInputAutocapitalization(.never)
                 .keyboardType(.default)
@@ -95,7 +97,9 @@ struct PasswordEditView: View {
 #endif
                 .disableAutocorrection(true)
         } copyText: {
-            viewModel.getPlainValue(key: Item.AttributeKeys.accountId.rawValue)
+            viewModel.getPlainValue(key: key)
+        } decodeHistory: { sealedString in
+            viewModel.getPlainValue(sealedString)
         }
     }
 
@@ -157,13 +161,13 @@ struct PasswordEditView: View {
     private func tagsSection(viewModel: PasswordEditViewModel) -> some View {
         FormCard("Tags", systemImage: "tag") {
             FlowLayout(spacing: 24) {
-                Toggle(isOn: tagBinding(viewModel: viewModel, key: Item.Groups.home.rawValue)) {
+                Toggle(isOn: tagBinding(viewModel: viewModel, key: TagGroups.home.rawValue)) {
                     Image(systemName: "house")
                 }
-                Toggle(isOn: tagBinding(viewModel: viewModel, key: Item.Groups.office.rawValue)) {
+                Toggle(isOn: tagBinding(viewModel: viewModel, key: TagGroups.office.rawValue)) {
                     Image(systemName: "network")
                 }
-                Toggle(isOn: tagBinding(viewModel: viewModel, key: Item.Groups.deleted.rawValue)) {
+                Toggle(isOn: tagBinding(viewModel: viewModel, key: TagGroups.deleted.rawValue)) {
                     Image(systemName: "trash")
                 }
             }.frame(maxWidth: .infinity, alignment: .leading)
@@ -234,10 +238,10 @@ struct PasswordEditView: View {
 }
 
 #Preview {
-    let sampleItem = Item(
+    let sampleItem = ItemBuilder.build(
         ownerId: UUID().uuidString,
         type: .password,
-        timestamp: Date(),
+        createdAt: Date(),
         sortValue: "ほげたろう",
         caption: "ホゲ太郎",
         attributes: [:]

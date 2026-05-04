@@ -30,7 +30,7 @@ struct PasswordListRecord: View {
                     .foregroundColor(.blue)
                     .opacity(0.3)
                     .padding(.trailing)
-                Text(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))
+                Text(item.updatedAt, format: Date.FormatStyle(date: .numeric, time: .standard))
             }
         } else {
             HStack {
@@ -40,7 +40,7 @@ struct PasswordListRecord: View {
                     Text(item.caption)
                         .font(.headline)
                     HStack {
-                        Text(getAccountId())
+                        Text(getAccountIdForDisplay())
                             .opacity(0.5)
                             .font(.subheadline)
                     }
@@ -50,21 +50,20 @@ struct PasswordListRecord: View {
         }
     }
 
-    private func getAccountId() -> String {
-        guard let myRsa = try? appController.myRsa,
-              let attributeData = item.attributes["accountId"] else {
-            return ""
+    private func getAccountIdForDisplay() -> String {
+        guard let myRsa = try? appController.myRsa, let attributeData = item.attributes["accountId"], attributeData.isEmpty == false else {
+            return "(n/a)"
         }
-        return (try? CryptoService.shared.open(sealedString: attributeData.encryptedValue, myRsa: myRsa)) ?? ""
+        return (try? CryptoService.shared.open(sealedString: attributeData[0].encryptedValue, myRsa: myRsa)) ?? "(n/a)"
     }
 }
 
 #Preview {
     let ownerId = UUID().uuidString
     let items: [Item] = [
-        Item(ownerId: ownerId, type: .password, timestamp: Date(), sortValue: "", caption: "", attributes: [:]),
-        Item(ownerId: ownerId, type: .password, timestamp: Date(), sortValue: "hoge", caption: "HOGE", attributes: [
-            "accountId": AttributeData(encryptedValue: "hoge@example.com", timestamp: Date())
+        ItemBuilder.build(ownerId: ownerId, type: .password, createdAt: Date(), sortValue: "", caption: "", attributes: [:]),
+        ItemBuilder.build(ownerId: ownerId, type: .password, createdAt: Date(), sortValue: "hoge", caption: "HOGE", attributes: [
+            "accountId": [AttributeData(createdAt: Date(), encryptedValue: "hoge@example.com")]
         ])
     ]
     let fakeAppController = AppController()

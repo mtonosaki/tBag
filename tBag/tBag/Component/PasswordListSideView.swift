@@ -82,11 +82,13 @@ struct PasswordListSideView: View {
                         } label: {
                             Label("Sync", systemImage: "arrow.trianglehead.2.clockwise.rotate.90")
                         }
+#if os(macOS)
                         Button {
                             addItemFromClipboard()
                         } label: {
                             Label("Restore from Clipboard", systemImage: "document.on.clipboard")
                         }
+#endif
                     }
                 }
             }
