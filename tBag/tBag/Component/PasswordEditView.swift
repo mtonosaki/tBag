@@ -15,8 +15,10 @@ struct PasswordEditView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.displayToast) var toast
     @Environment(\.cryptoService) var cryptoService
+    
     @State private var viewModel: PasswordEditViewModel?
     @State private var isOpenPassword: Bool = false
+    
     var item: Item
     
     init(_ item: Item) {
@@ -238,7 +240,7 @@ struct PasswordEditView: View {
 }
 
 #Preview {
-    let sampleItem = ItemBuilder.build(
+    let sampleItem = Item(
         ownerId: UUID().uuidString,
         type: .password,
         createdAt: Date(),

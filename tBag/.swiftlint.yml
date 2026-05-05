@@ -1,9 +1,13 @@
 disabled_rules:
   - trailing_whitespace
   - line_length
+  - static_over_final_class
 type_name:
   excluded:
     - tBagApp
+    - tBagTests
+    - tBagUITests
+    - tBagUITestsLaunchTests
 
 included:
   - tBag

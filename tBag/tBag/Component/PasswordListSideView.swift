@@ -155,7 +155,7 @@ struct PasswordListSideView: View {
     private func addItem() {
         do {
             let rsa = try appController.myRsa
-            let newItem = ItemBuilder.createNewPasswordItem(ownerAccountId: appController.accountId, myRsa: rsa)
+            let newItem = ItemBuilder.build(ownerAccountId: appController.accountId, myRsa: rsa)
             withAnimation {
                 modelContext.insert(newItem)
                 selectedItemId = newItem.id
@@ -175,8 +175,8 @@ struct PasswordListSideView: View {
         guard let jsonString = clipboardString, let jsonData = jsonString.data(using: .utf8) else { return }
         
         do {
-            let newItem = try ItemBuilder.createItem(
-                fromJson: jsonData,
+            let newItem = try ItemBuilder.build(
+                fromTSecretClipboardJson: jsonData,
                 ownerAccountId: appController.accountId,
                 myRsa: appController.myRsa
             )

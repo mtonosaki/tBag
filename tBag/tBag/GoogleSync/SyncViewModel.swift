@@ -78,7 +78,6 @@ class SyncViewModel {
                     // Update existing item to preserve its CloudKit identity
                     existing.ownerId = loadedItem.ownerId
                     existing.type = loadedItem.type
-                    existing.updatedAt = loadedItem.updatedAt
                     existing.sortValue = loadedItem.sortValue
                     existing.caption = loadedItem.caption
                     existing.iconFileName = loadedItem.iconFileName

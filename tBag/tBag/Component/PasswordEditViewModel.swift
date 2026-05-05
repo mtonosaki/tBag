@@ -59,7 +59,7 @@ class PasswordEditViewModel {
             let salt = "\(appController.accountId)/\(Info.encryptSalt)"
             let sealedString = try cryptoService.seal(plainText: value, recipientPublicKey: myPublicKey, salt: salt)
             let now = Date()
-
+            
             if !item.attributes.contains(where: { $0.key == key }) {
                 item.attributes[key] = []
             }
@@ -67,13 +67,25 @@ class PasswordEditViewModel {
             if history.count == 0 {
                 let newAttribute = AttributeData(encryptedValue: sealedString)
                 history.insert(newAttribute, at: 0)
+                print("---- Attribute: NEW")
+
             } else {
-                history[0].encryptedValue = sealedString
+                let diffSeconds = now.timeIntervalSince(history[0].updatedAt)
+                if diffSeconds < 86400 {
+                    history[0].encryptedValue = sealedString
+                    history[0].updatedAt = Date()
+                    print("---- Attribute: UPDATE")
+
+                } else {
+                    let newAttribute = AttributeData(encryptedValue: sealedString)
+                    history.insert(newAttribute, at: 0)
+                    print("---- Attribute: ADD")
+                }
             }
             item.attributes[key] = history
             
             planeTextCache[key] = value
-            item.updatedAt = now
+            
         } catch {
             print("Failed to encrypt: \(error)")
         }

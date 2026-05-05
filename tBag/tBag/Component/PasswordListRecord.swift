@@ -30,7 +30,7 @@ struct PasswordListRecord: View {
                     .foregroundColor(.blue)
                     .opacity(0.3)
                     .padding(.trailing)
-                Text(item.updatedAt, format: Date.FormatStyle(date: .numeric, time: .standard))
+                Text(item.createdAt, format: Date.FormatStyle(date: .numeric, time: .standard))
             }
         } else {
             HStack {
@@ -61,8 +61,8 @@ struct PasswordListRecord: View {
 #Preview {
     let ownerId = UUID().uuidString
     let items: [Item] = [
-        ItemBuilder.build(ownerId: ownerId, type: .password, createdAt: Date(), sortValue: "", caption: "", attributes: [:]),
-        ItemBuilder.build(ownerId: ownerId, type: .password, createdAt: Date(), sortValue: "hoge", caption: "HOGE", attributes: [
+        Item(ownerId: ownerId, type: .password, createdAt: Date(), sortValue: "", caption: "", attributes: [:]),
+        Item(ownerId: ownerId, type: .password, createdAt: Date(), sortValue: "hoge", caption: "HOGE", attributes: [
             "accountId": [AttributeData(createdAt: Date(), encryptedValue: "hoge@example.com")]
         ])
     ]

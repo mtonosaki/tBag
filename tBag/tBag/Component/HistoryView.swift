@@ -10,8 +10,17 @@ import Tono
 
 struct HistoryView: View {
     var history: [AttributeData]
-    var openEnvelope: (_ sealedString : SealedEnvelopeBase64String ) -> PlainString
-        
+    var openEnvelope: (_ sealedString: SealedEnvelopeBase64String ) -> PlainString
+    
+    init(history: [AttributeData]? = nil, openEnvelope: @escaping (_: SealedEnvelopeBase64String) -> PlainString) {
+        if history == nil {
+            self.history = []
+        } else {
+            self.history = history!
+        }
+        self.openEnvelope = openEnvelope
+    }
+    
     var body: some View {
         VStack(alignment: .leading) {
             Text("History")
@@ -43,6 +52,7 @@ struct HistoryView: View {
         }
     }
 }
+
 struct HistoryBadge: View {
     @Binding var count: Int
         

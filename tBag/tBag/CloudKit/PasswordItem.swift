@@ -21,6 +21,8 @@ extension Item {
     
     private func containsTag(_ tag: String, rsa: Rsa) -> Bool {
         guard let attributeData = self.attributes[AttributeKeys.tags.rawValue] else { return false }
+        guard attributeData.isEmpty == false else { return false }
+        
         do {
             let tagsString = try CryptoService.shared.open(sealedString: attributeData[0].encryptedValue, myRsa: rsa)
             let tags = tagsString.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }
@@ -30,5 +32,3 @@ extension Item {
         }
     }
 }
-
-
