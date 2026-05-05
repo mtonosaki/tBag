@@ -134,8 +134,10 @@ struct AttributeData: Codable, Hashable {
     }
 }
 
-public enum TagGroups: String {
+public enum TagGroups: String, CaseIterable, Identifiable {
     case home = "#home"
     case office = "#office"
     case deleted = "#deleted"
+    
+    public var id: Self { self }
 }

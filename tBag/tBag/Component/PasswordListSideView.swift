@@ -16,15 +16,17 @@ struct PasswordListSideView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.displayToast) private var toast
     @Query(filter: #Predicate<Item>{ $0.type == "pw"}) private var items: [Item]
-
+    
     @State private var isHome = true
     @State private var isOffice = true
     @State private var isDeleted = false
     @State private var searchText: String = ""
-
+    
     @State private var showDeleteAlert = false
     @State private var itemsPendingDeletion: Set<String> = []
-
+    
+    private let timer = Timer.publish(every: 10, on: .main, in: .common).autoconnect()
+    
     var body: some View {
         ScrollViewReader { proxy in
             List(selection: $selectedItemId) {
@@ -32,7 +34,7 @@ struct PasswordListSideView: View {
                     Section(header: Text(firstLetter)) {
                         let sectionItems = groupedItems[firstLetter]?
                             .filter(isShowItem)
-                            .sorted(by: {$0.caption < $1.caption})
+                            .sorted(by: {$0.sortValue < $1.sortValue})
                         ?? []
                         ForEach(sectionItems) { item in
                             PasswordListRecord(item).tag(item.id)
@@ -113,6 +115,9 @@ struct PasswordListSideView: View {
                 Text("This action cannot be undone.")
             }
         }
+        .onReceive(timer) { _ in
+            auditItems()
+        }
     }
     
     private var groupedItems: [String: [Item]] {
@@ -120,7 +125,7 @@ struct PasswordListSideView: View {
         let filteredItems = items.filter(isShowItem)
         
         for item in filteredItems {
-            if let firstCharacter = item.caption.first {
+            if let firstCharacter = item.sortValue.first {
                 let key = String(firstCharacter).uppercased()
                 grouped[key, default: []].append(item)
             } else {
@@ -138,14 +143,14 @@ struct PasswordListSideView: View {
     func isShowItem(_ item: Item) -> Bool {
         let rsa = appController.myRsaNoThrow
         let isShow = [self.isHome, self.isOffice, self.isDeleted].allSatisfy({$0})
-            || [!self.isHome, !self.isOffice, !self.isDeleted, !item.isHome(rsa: rsa), !item.isOffice(rsa: rsa), !item.isDeleted(rsa: rsa)].allSatisfy({$0})
-            || self.isHome && item.isHome(rsa: rsa)
-            || self.isOffice && item.isOffice(rsa: rsa)
-            || self.isDeleted && item.isDeleted(rsa: rsa)
+        || [!self.isHome, !self.isOffice, !self.isDeleted, !item.isHome(rsa: rsa), !item.isOffice(rsa: rsa), !item.isDeleted(rsa: rsa)].allSatisfy({$0})
+        || self.isHome && item.isHome(rsa: rsa)
+        || self.isOffice && item.isOffice(rsa: rsa)
+        || self.isDeleted && item.isDeleted(rsa: rsa)
         if !isShow { return false }
         
         if searchText.isEmpty { return isShow }
-
+        
         let searchTargets = [item.caption, item.sortValue]
         let keyword = Japanese.def.getKeyJp(searchText)
         let isHit = searchTargets.map { Japanese.def.getKeyJp($0).contains(keyword) }.contains(true)
@@ -166,11 +171,11 @@ struct PasswordListSideView: View {
     }
     
     private func addItemFromClipboard() {
-        #if os(macOS)
+#if os(macOS)
         let clipboardString = NSPasteboard.general.string(forType: .string)
-        #else
+#else
         let clipboardString = UIPasteboard.general.string
-        #endif
+#endif
         
         guard let jsonString = clipboardString, let jsonData = jsonString.data(using: .utf8) else { return }
         
@@ -218,6 +223,59 @@ struct PasswordListSideView: View {
             }
             selectedItemId = nil
             itemsPendingDeletion = []
+        }
+    }
+    
+    private func auditItems() {
+        guard let myRsa = try? appController.myRsa else {
+            return
+        }
+        let noTagItems = findItemsWithoutTags(using: myRsa)
+        guard !noTagItems.isEmpty else {
+            return
+        }
+        withAnimation {
+            applyDeletedTag(to: noTagItems, using: myRsa)
+            try? modelContext.save()
+        }
+    }
+    
+    private func findItemsWithoutTags(using myRsa: Rsa) -> [Item] {
+        return items.filter { item in
+            guard let sealedTagsHistory = item.attributes[Item.AttributeKeys.tags.rawValue],
+                  let latestTagHistory = sealedTagsHistory.first else {
+                return true
+            }
+            
+            let sealedLatestTags = latestTagHistory.encryptedValue
+            guard let plainLatestTags = try? CryptoService.shared.open(sealedString: sealedLatestTags, myRsa: myRsa) else {
+                return true
+            }
+            
+            let hasAnyTag = TagGroups.allCases.contains { plainLatestTags.contains($0.rawValue) }
+            return !hasAnyTag
+        }
+    }
+    
+    private func applyDeletedTag(to targetItems: [Item], using myRsa: Rsa) {
+        let salt = "\(appController.accountId)/\(Info.encryptSalt)"
+        guard let sealedTag = try? CryptoService.shared.seal(plainText: TagGroups.deleted.rawValue, recipientPublicKey: myRsa.getMyPublicKey(), salt: salt) else {
+            return
+        }
+        
+        let newHistory = AttributeData(encryptedValue: sealedTag)
+        
+        for item in targetItems {
+            var newAttributes = item.attributes
+            if var tagsHistory = newAttributes[Item.AttributeKeys.tags.rawValue], !tagsHistory.isEmpty {
+                tagsHistory[0] = newHistory
+                newAttributes[Item.AttributeKeys.tags.rawValue] = tagsHistory
+            } else {
+                newAttributes[Item.AttributeKeys.tags.rawValue] = [newHistory]
+            }
+            
+            item.attributes = newAttributes
+            print("add #deleted tag to \(item.caption)")
         }
     }
 }
