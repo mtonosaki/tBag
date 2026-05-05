@@ -36,7 +36,7 @@ struct AccountView: View {
 
                     HStack {
                         Button {
-                            guard KeychainStore.shared.set(Item.AttributeKeys.accountId.rawValue, accountIdEdit) else {
+                            guard KeychainStore.shared.set("accountId", accountIdEdit) else {
                                 toast?("Keychain access error")
                                 return
                             }
