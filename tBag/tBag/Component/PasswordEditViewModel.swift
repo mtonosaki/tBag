@@ -67,19 +67,16 @@ class PasswordEditViewModel {
             if history.count == 0 {
                 let newAttribute = AttributeData(encryptedValue: sealedString)
                 history.insert(newAttribute, at: 0)
-                print("---- Attribute: NEW")
 
             } else {
                 let diffSeconds = now.timeIntervalSince(history[0].updatedAt)
                 if diffSeconds < 86400 {
                     history[0].encryptedValue = sealedString
                     history[0].updatedAt = Date()
-                    print("---- Attribute: UPDATE")
 
                 } else {
                     let newAttribute = AttributeData(encryptedValue: sealedString)
                     history.insert(newAttribute, at: 0)
-                    print("---- Attribute: ADD")
                 }
             }
             item.attributes[key] = history

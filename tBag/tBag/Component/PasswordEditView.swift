@@ -150,8 +150,10 @@ struct PasswordEditView: View {
 
     @ViewBuilder
     private func emailSection(viewModel: PasswordEditViewModel) -> some View {
-        FormCard("email", systemImage: "mail") {
-            TextField("hoge @ example.com", text: stringBinding(viewModel: viewModel, key: Item.AttributeKeys.email.rawValue))
+        @Bindable var item = viewModel.item
+        let key = Item.AttributeKeys.email.rawValue
+        FormCard("email", systemImage: "mail", history: $item.attributes[key]) {
+            TextField("hoge @ example.com", text: stringBinding(viewModel: viewModel, key: key))
 #if os(iOS)
                 .textInputAutocapitalization(.never)
                 .keyboardType(.default)
@@ -159,7 +161,9 @@ struct PasswordEditView: View {
                 .textContentType(.emailAddress)
                 .disableAutocorrection(true)
         } copyText: {
-            viewModel.getPlainValue(key: Item.AttributeKeys.email.rawValue)
+            viewModel.getPlainValue(key: key)
+        } decodeHistory: { sealedString in
+            viewModel.getPlainValue(sealedString)
         }
     }
 
