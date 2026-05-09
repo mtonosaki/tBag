@@ -25,30 +25,32 @@ struct FormCard<Content: View>: View {
         history: Binding<[AttributeData]?>,
         @ViewBuilder content: () -> Content,
         copyText: @escaping () -> String?,
-        decodeHistory: @escaping (_ sealedString: SealedEnvelopeBase64String) -> PlainString
+        openEnvelope: @escaping (_ sealedString: SealedEnvelopeBase64String) -> PlainString
     ) {
         self.text = text
         self.systemImage = systemImage
         self.content = content()
         self.copyText = copyText
         self._history = history
-        self.openEnvelope = decodeHistory
+        self.openEnvelope = openEnvelope
+    }
+
+    init(
+        _ text: String,
+        systemImage: String,
+        history: Binding<[AttributeData]?>,
+        @ViewBuilder content: () -> Content,
+        openEnvelope: @escaping (_ sealedString: SealedEnvelopeBase64String) -> PlainString
+    ) {
+        self.init(text, systemImage: systemImage, history: history, content: content, copyText: {nil}, openEnvelope: openEnvelope)
     }
 
     init(_ text: String, systemImage: String, @ViewBuilder content: () -> Content, copyText: @escaping () -> String?) {
-        self.text = text
-        self.systemImage = systemImage
-        self.content = content()
-        self.copyText = copyText
-        self._history = .constant([])
+        self.init(text, systemImage: systemImage, history: .constant([]), content: content, copyText: copyText, openEnvelope: {_ in ""})
     }
 
     init(_ text: String, systemImage: String, @ViewBuilder content: () -> Content) {
-        self.text = text
-        self.systemImage = systemImage
-        self.content = content()
-        self.copyText = { nil }
-        self._history = .constant([])
+        self.init(text, systemImage: systemImage, history: .constant([]), content: content, copyText: {nil}, openEnvelope: {_ in ""})
     }
 
     var body: some View {
@@ -152,8 +154,8 @@ struct FormCard<Content: View>: View {
         TextField("input here", text: $text)
     } copyText: {
         return text
-    } decodeHistory: { index in
-        return "hoge-\(index)"
+    } openEnvelope: { sealedValue in
+        return "hoge-\(sealedValue)"
     }
         .padding()
 }

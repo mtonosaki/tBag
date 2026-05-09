@@ -100,7 +100,7 @@ struct PasswordEditView: View {
                 .disableAutocorrection(true)
         } copyText: {
             viewModel.getPlainValue(key: key)
-        } decodeHistory: { sealedString in
+        } openEnvelope: { sealedString in
             viewModel.getPlainValue(sealedString)
         }
     }
@@ -143,7 +143,7 @@ struct PasswordEditView: View {
             }
         } copyText: {
             viewModel.getPlainValue(key: Item.AttributeKeys.password.rawValue)
-        } decodeHistory: { sealedString in
+        } openEnvelope: { sealedString in
             viewModel.getPlainValue(sealedString)
         }
     }
@@ -162,7 +162,7 @@ struct PasswordEditView: View {
                 .disableAutocorrection(true)
         } copyText: {
             viewModel.getPlainValue(key: key)
-        } decodeHistory: { sealedString in
+        } openEnvelope: { sealedString in
             viewModel.getPlainValue(sealedString)
         }
     }
@@ -186,15 +186,17 @@ struct PasswordEditView: View {
 
     @ViewBuilder
     private func remarksSection(viewModel: PasswordEditViewModel) -> some View {
-        FormCard("Remarks", systemImage: "doc.plaintext") {
+        @Bindable var item = viewModel.item
+        let key = Item.AttributeKeys.remarks.rawValue
+        FormCard("Remarks", systemImage: "doc.plaintext", history: $item.attributes[key]) {
             ZStack(alignment: .topLeading) {
-                let textContent = viewModel.getPlainValue(key: Item.AttributeKeys.remarks.rawValue)
+                let textContent = viewModel.getPlainValue(key: key)
                 Text(textContent.isEmpty ? " " : textContent)
                     .foregroundColor(.clear)
                     .padding(8)
                     .frame(maxWidth: .infinity, minHeight: 48, alignment: .topLeading)
                 
-                TextEditor(text: stringBinding(viewModel: viewModel, key: Item.AttributeKeys.remarks.rawValue))
+                TextEditor(text: stringBinding(viewModel: viewModel, key: key))
 #if os(iOS)
                     .textInputAutocapitalization(.never)
                     .keyboardType(.default)
@@ -208,7 +210,10 @@ struct PasswordEditView: View {
                 RoundedRectangle(cornerRadius: 10)
                     .stroke(Color.gray, lineWidth: 0.5)
             )
+        } openEnvelope: { sealedString in
+            viewModel.getPlainValue(sealedString)
         }
+        
         .padding(.bottom, 12)
     }
 
