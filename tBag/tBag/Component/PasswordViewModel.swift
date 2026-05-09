@@ -15,7 +15,8 @@ class PasswordViewModel {
     var cryptoService: CryptoServiceProtocol
     var appController: AppController
     
-    private var planeTextCache: [String: String] = [:]
+    private var planeTextCacheCurrent: [String: String] = [:]
+    private var planeTextCachePrevious: [String: String] = [:]
 
     init(item: Item, appController: AppController, cryptoService: CryptoServiceProtocol = CryptoService.shared) {
         self.item = item
@@ -33,9 +34,9 @@ class PasswordViewModel {
         return plainText
     }
     
-    func getPlainValue(key: AttributeKey, defaultString: PlainString = "") -> PlainString {
-        if let cached = planeTextCache[key] {
-            return cached
+    func getPlainValue(key: AttributeKey, defaultString: PlainString = "", isPrevious: Bool = false) -> PlainString {
+        if let cachedPlainText = isPrevious ? planeTextCachePrevious[key] : planeTextCacheCurrent[key] {
+            return cachedPlainText
         }
         
         guard let myRsa = try? appController.myRsa,
@@ -45,10 +46,19 @@ class PasswordViewModel {
         guard attributeData.isEmpty == false else {
             return defaultString
         }
-        guard let plainText = try? cryptoService.open(sealedString: attributeData[0].encryptedValue, myRsa: myRsa) else {
+        if isPrevious && attributeData.count < 2 {
             return defaultString
         }
-        planeTextCache[key] = plainText
+        let encryptValue = attributeData[isPrevious ? 1 : 0].encryptedValue
+        print("---[A] slow key: \(key)")
+        guard let plainText = try? cryptoService.open(sealedString: encryptValue, myRsa: myRsa) else {
+            return defaultString
+        }
+        if isPrevious {
+            planeTextCachePrevious[key] = plainText
+        } else {
+            planeTextCacheCurrent[key] = plainText
+        }
         return plainText
     }
     
@@ -62,7 +72,6 @@ class PasswordViewModel {
         
         do {
             let salt = "\(appController.accountId)/\(Info.encryptSalt)"
-            let sealedString = try cryptoService.seal(plainText: value, recipientPublicKey: myPublicKey, salt: salt)
             let now = Date()
             
             if !item.attributes.contains(where: { $0.key == key }) {
@@ -70,6 +79,8 @@ class PasswordViewModel {
             }
             var history = item.attributes[key]!
             if history.count == 0 {
+                print("---[B] slow key: \(key)")
+                let sealedString = try cryptoService.seal(plainText: value, recipientPublicKey: myPublicKey, salt: salt)
                 let newAttribute = AttributeData(encryptedValue: sealedString)
                 history.insert(newAttribute, at: 0)
 
@@ -77,14 +88,16 @@ class PasswordViewModel {
                 // remove last history when user edit back to the original one.
                 var isBackToOriginal: Bool = false
                 if history.count >= 2 {
-                    let previousValue = (try? cryptoService.open(sealedString: history[1].encryptedValue, myRsa: appController.myRsaNoThrow)) ?? ""
+                    let previousValue = getPlainValue(key: key, defaultString: "", isPrevious: true)
                     if value == previousValue {
                         history.remove(at: 0)
+                        planeTextCachePrevious.removeValue(forKey: key)
                         isBackToOriginal = true
                     }
                 }
 
                 if !isBackToOriginal {
+                    let sealedString = try cryptoService.seal(plainText: value, recipientPublicKey: myPublicKey, salt: salt)
                     let diffSeconds = now.timeIntervalSince(history[0].updatedAt)
                     if diffSeconds < 86400 {
                         history[0].encryptedValue = sealedString
@@ -93,11 +106,12 @@ class PasswordViewModel {
                     } else {
                         let newAttribute = AttributeData(encryptedValue: sealedString)
                         history.insert(newAttribute, at: 0)
+                        planeTextCachePrevious.removeValue(forKey: key)
                     }
                 }
             }
             item.attributes[key] = history
-            planeTextCache[key] = value
+            planeTextCacheCurrent[key] = value
             
         } catch {
             print("Failed to encrypt: \(error)")

@@ -70,6 +70,8 @@ class ViewConfig: ObservableObject {
         authViewModel: AuthViewModel(userDisplayName: "Hoge Taro")
     )
     .frame(width: 500, height: 300)
+#if DEBUG
     .modelContainer(makeSampleModelContainer()!)
     .environmentObject(makeSampleAppController())
+#endif
 }

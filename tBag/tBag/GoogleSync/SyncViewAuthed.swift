@@ -159,6 +159,7 @@ struct SyncViewAuthed: View {
 }
 
 #Preview {
+#if DEBUG
     let authVM = AuthViewModel(userDisplayName: "Hoge Taro")
     let appCtrl = makeSampleAppController()
     let viewConf = ViewConfig()
@@ -173,4 +174,5 @@ struct SyncViewAuthed: View {
     .modelContainer(makeSampleModelContainer()!)
     .environmentObject(appCtrl)
     .environmentObject(viewConf)
+#endif
 }
