@@ -10,13 +10,13 @@ import PhotosUI
 import Tono
 import ImageIO
 
-struct PasswordEditView: View {
+struct PasswordView: View {
     @EnvironmentObject var appController: AppController
     @Environment(\.modelContext) private var modelContext
     @Environment(\.displayToast) var toast
     @Environment(\.cryptoService) var cryptoService
     
-    @State private var viewModel: PasswordEditViewModel?
+    @State private var viewModel: PasswordViewModel?
     @State private var isOpenPassword: Bool = false
     
     var item: Item
@@ -31,13 +31,13 @@ struct PasswordEditView: View {
         } else {
             ProgressView()
                 .onAppear {
-                    viewModel = PasswordEditViewModel(item: item, appController: appController, cryptoService: cryptoService)
+                    viewModel = PasswordViewModel(item: item, appController: appController, cryptoService: cryptoService)
                 }
         }
     }
     
     @ViewBuilder
-    func renderContent(viewModel: PasswordEditViewModel) -> some View {
+    func renderContent(viewModel: PasswordViewModel) -> some View {
         ScrollView(.vertical) {
             VStack {
                 IconEditView(viewModel.item)
@@ -61,7 +61,7 @@ struct PasswordEditView: View {
     }
 
     @ViewBuilder
-    private func rubiSection(viewModel: PasswordEditViewModel) -> some View {
+    private func rubiSection(viewModel: PasswordViewModel) -> some View {
         FormCard("Rubi", systemImage: "character.textbox.ja") {
             TextField("あいうえお", text: Bindable(viewModel.item).sortValue)
 #if os(iOS)
@@ -74,7 +74,7 @@ struct PasswordEditView: View {
     }
 
     @ViewBuilder
-    private func captionSection(viewModel: PasswordEditViewModel) -> some View {
+    private func captionSection(viewModel: PasswordViewModel) -> some View {
         FormCard("Caption", systemImage: "character.bubble") {
             TextField("item title", text: Bindable(viewModel.item).caption)
 #if os(iOS)
@@ -87,7 +87,7 @@ struct PasswordEditView: View {
     }
 
     @ViewBuilder
-    private func accountIdSection(viewModel: PasswordEditViewModel) -> some View {
+    private func accountIdSection(viewModel: PasswordViewModel) -> some View {
         @Bindable var item = viewModel.item
         let key = Item.AttributeKeys.accountId.rawValue
         FormCard("AccountID", systemImage: "person.circle", history: $item.attributes[key]) {
@@ -106,7 +106,7 @@ struct PasswordEditView: View {
     }
 
     @ViewBuilder
-    private func passwordSection(viewModel: PasswordEditViewModel) -> some View {
+    private func passwordSection(viewModel: PasswordViewModel) -> some View {
         @Bindable var item = viewModel.item
         let key = Item.AttributeKeys.password.rawValue
         FormCard("Password", systemImage: "lock.circle", history: $item.attributes[key]) {
@@ -149,7 +149,7 @@ struct PasswordEditView: View {
     }
 
     @ViewBuilder
-    private func emailSection(viewModel: PasswordEditViewModel) -> some View {
+    private func emailSection(viewModel: PasswordViewModel) -> some View {
         @Bindable var item = viewModel.item
         let key = Item.AttributeKeys.email.rawValue
         FormCard("email", systemImage: "mail", history: $item.attributes[key]) {
@@ -168,7 +168,7 @@ struct PasswordEditView: View {
     }
 
     @ViewBuilder
-    private func tagsSection(viewModel: PasswordEditViewModel) -> some View {
+    private func tagsSection(viewModel: PasswordViewModel) -> some View {
         FormCard("Tags", systemImage: "tag") {
             FlowLayout(spacing: 24) {
                 Toggle(isOn: tagBinding(viewModel: viewModel, key: TagGroups.home.rawValue)) {
@@ -185,7 +185,7 @@ struct PasswordEditView: View {
     }
 
     @ViewBuilder
-    private func remarksSection(viewModel: PasswordEditViewModel) -> some View {
+    private func remarksSection(viewModel: PasswordViewModel) -> some View {
         @Bindable var item = viewModel.item
         let key = Item.AttributeKeys.remarks.rawValue
         FormCard("Remarks", systemImage: "doc.plaintext", history: $item.attributes[key]) {
@@ -218,7 +218,7 @@ struct PasswordEditView: View {
     }
 
     @ViewBuilder
-    private func itemIdButton(viewModel: PasswordEditViewModel) -> some View {
+    private func itemIdButton(viewModel: PasswordViewModel) -> some View {
         Button(viewModel.item.id) {
 #if os(iOS)
             UIPasteboard.general.string = viewModel.item.id
@@ -237,14 +237,14 @@ struct PasswordEditView: View {
         .padding(.bottom)
     }
 
-    func stringBinding(viewModel: PasswordEditViewModel, key: String) -> Binding<String> {
+    func stringBinding(viewModel: PasswordViewModel, key: String) -> Binding<String> {
         return Binding(
             get: { viewModel.getPlainValue(key: key) },
             set: { viewModel.setPlainValue(key: key, value: $0) }
         )
     }
     
-    func tagBinding(viewModel: PasswordEditViewModel, key: String) -> Binding<Bool> {
+    func tagBinding(viewModel: PasswordViewModel, key: String) -> Binding<Bool> {
         return Binding(
             get: { viewModel.containsTag(key) },
             set: { _ in viewModel.toggleTag(key) }
@@ -263,7 +263,7 @@ struct PasswordEditView: View {
     )
     let fakeAppController = AppController()
     let fakeConfig = ViewConfig()
-    PasswordEditView(sampleItem)
+    PasswordView(sampleItem)
         .environmentObject(fakeAppController)
         .environmentObject(fakeConfig)
 }

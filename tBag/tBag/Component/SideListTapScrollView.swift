@@ -8,7 +8,7 @@
 import SwiftUI
 import SwiftData
 
-struct ScrollLetter: View {
+struct SideListTapScrollView: View {
     let firstLetter: String
     let proxy: ScrollViewProxy
 

@@ -9,7 +9,7 @@ import SwiftUI
 import SwiftData
 import Tono
 
-struct PasswordListSideView: View {
+struct SideListView: View {
     @Binding var page: PageType
     @Binding var selectedItemId: String?
     @EnvironmentObject var appController: AppController
@@ -37,7 +37,7 @@ struct PasswordListSideView: View {
                             .sorted(by: {$0.sortValue < $1.sortValue})
                         ?? []
                         ForEach(sectionItems) { item in
-                            PasswordListRecord(item).tag(item.id)
+                            SideListRecord(item).tag(item.id)
                                 .contextMenu {
                                     Button(role: .destructive) {
                                         requestDelete(ids: [item.id])
@@ -97,7 +97,7 @@ struct PasswordListSideView: View {
             .overlay(alignment: .trailing) {
                 VStack(spacing: 0) {
                     ForEach(sectionHeaders, id: \.self) { firstLetter in
-                        ScrollLetter(firstLetter: firstLetter, proxy: proxy)
+                        SideListTapScrollView(firstLetter: firstLetter, proxy: proxy)
                     }
                 }
 #if os(macOS)

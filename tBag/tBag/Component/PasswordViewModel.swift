@@ -10,7 +10,7 @@ import SwiftData
 import Tono
 
 @Observable
-class PasswordEditViewModel {
+class PasswordViewModel {
     var item: Item
     var cryptoService: CryptoServiceProtocol
     var appController: AppController
@@ -53,6 +53,11 @@ class PasswordEditViewModel {
     }
     
     func setPlainValue(key: String, value: String) {
+        // ignore when NOT updated.
+        guard getPlainValue(key: key) != value else {
+            return
+        }
+        
         guard let myPublicKey = try? appController.myPublicKey else { return }
         
         do {
@@ -69,18 +74,29 @@ class PasswordEditViewModel {
                 history.insert(newAttribute, at: 0)
 
             } else {
-                let diffSeconds = now.timeIntervalSince(history[0].updatedAt)
-                if diffSeconds < 86400 {
-                    history[0].encryptedValue = sealedString
-                    history[0].updatedAt = Date()
+                // remove last history when user edit back to the original one.
+                var isBackToOriginal: Bool = false
+                if history.count >= 2 {
+                    let previousValue = (try? cryptoService.open(sealedString: history[1].encryptedValue, myRsa: appController.myRsaNoThrow)) ?? ""
+                    if value == previousValue {
+                        history.remove(at: 0)
+                        isBackToOriginal = true
+                    }
+                }
 
-                } else {
-                    let newAttribute = AttributeData(encryptedValue: sealedString)
-                    history.insert(newAttribute, at: 0)
+                if !isBackToOriginal {
+                    let diffSeconds = now.timeIntervalSince(history[0].updatedAt)
+                    if diffSeconds < 86400 {
+                        history[0].encryptedValue = sealedString
+                        history[0].updatedAt = Date()
+                        
+                    } else {
+                        let newAttribute = AttributeData(encryptedValue: sealedString)
+                        history.insert(newAttribute, at: 0)
+                    }
                 }
             }
             item.attributes[key] = history
-            
             planeTextCache[key] = value
             
         } catch {

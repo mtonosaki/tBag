@@ -8,7 +8,7 @@
 import SwiftUI
 import Tono
 
-struct PasswordListRecord: View {
+struct SideListRecord: View {
     @EnvironmentObject var appController: AppController
     
     let item: Item
@@ -72,11 +72,11 @@ struct PasswordListRecord: View {
     List {
         ForEach(items) { item in
             NavigationLink {
-                PasswordEditView(item)
+                PasswordView(item)
                     .environmentObject(fakeAppController)
                     .environmentObject(fakeConfig)
             } label: {
-                PasswordListRecord(item)
+                SideListRecord(item)
                     .environmentObject(fakeAppController)
                     .environmentObject(fakeConfig)
             }
