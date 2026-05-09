@@ -135,6 +135,7 @@ struct FormCard<Content: View>: View {
                     .buttonStyle(.plain)
 #endif
                 }
+                .presentationDetents([.medium, .large])
                 
             }
         }

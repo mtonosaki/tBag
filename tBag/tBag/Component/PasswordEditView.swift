@@ -107,10 +107,12 @@ struct PasswordEditView: View {
 
     @ViewBuilder
     private func passwordSection(viewModel: PasswordEditViewModel) -> some View {
-        FormCard("Password", systemImage: "lock.circle") {
+        @Bindable var item = viewModel.item
+        let key = Item.AttributeKeys.password.rawValue
+        FormCard("Password", systemImage: "lock.circle", history: $item.attributes[key]) {
             HStack {
                 if isOpenPassword {
-                    TextField("password", text: stringBinding(viewModel: viewModel, key: Item.AttributeKeys.password.rawValue))
+                    TextField("password", text: stringBinding(viewModel: viewModel, key: key))
 #if os(iOS)
                         .textInputAutocapitalization(.never)
                         .keyboardType(.default)
@@ -120,7 +122,7 @@ struct PasswordEditView: View {
                         .font(.custom("Courier New", size: 23))
                         .bold()
                 } else {
-                    SecureField("password", text: stringBinding(viewModel: viewModel, key: Item.AttributeKeys.password.rawValue))
+                    SecureField("password", text: stringBinding(viewModel: viewModel, key: key))
 #if os(iOS)
                         .textInputAutocapitalization(.never)
                         .keyboardType(.default)
@@ -141,6 +143,8 @@ struct PasswordEditView: View {
             }
         } copyText: {
             viewModel.getPlainValue(key: Item.AttributeKeys.password.rawValue)
+        } decodeHistory: { sealedString in
+            viewModel.getPlainValue(sealedString)
         }
     }
 
